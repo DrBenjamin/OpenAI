@@ -35,16 +35,23 @@ if ('model' not in st.session_state):
 #### Main program
 ### Reading PDF documents
 ## Model selection
-pdf = st.selectbox(label = 'What PDF document to use?', options = ["LEAM.pdf", "LLM.pdf"], index = 0)
+pdf = st.selectbox(label = 'What PDF document to use?', options = ["LEAM.pdf", "LLM.pdf", "AIDH.pdf", "KW.pdf"], index = 0)
 
 # creating a pdf reader object
-reader = PyPDF2.PdfReader('LLM.pdf')
+reader = PyPDF2.PdfReader('PDFs/' + pdf)
 
 # print the number of pages in pdf file
 st.write(len(reader.pages))
 
+# Select pages
+pages_range = st.slider(label = 'Select a range of pages', min_value = 1, max_value = len(reader.pages), value = (1, 1))
+
 # print the text of the first page
-sty.scrollableTextbox(response_answer[reader.pages[0].extract_text(), height = 128, border = True)
+pagez = []
+for i in range(pages_range[0], pages_range[1] + 1, 1):
+	pagez.append(i)
+number = st.radio(label = 'Select a page for preview', options = pagez, horizontal = True, index = 0)
+sty.scrollableTextbox(reader.pages[number].extract_text(), height = 128, border = True)
 
 
 
@@ -89,7 +96,7 @@ with st.form("OpenAI"):
   submitted = st.form_submit_button('Ask OpenAI')
   if submitted:
     # Set API key
-    openai.api_key = "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"
+    openai.api_key = st.secrets['openai']['key']
     
     # Using ChatGPT from OpenAI
     response_answer = openai.Completion.create(model = model, prompt = question, temperature = temp, max_tokens = tokens, top_p = 1.0, frequency_penalty = 0.0, presence_penalty = 0.0)
