@@ -28,7 +28,7 @@ used_tokens = 0
 st.subheader('Use data from a PDF source')
 pdf_text = ' "'
 index = 0
-pdf_usage = st.checkbox('Include a PDF source?')
+pdf_usage = st.checkbox('Include a PDF source to feed ChatGPT with data?')
 if pdf_usage:
 	st.write('**:green[Use your own PDF]**')
 	documents = ["LEAM.pdf", "LLM.pdf", "KW.pdf", "AIDH.pdf", "PC.pdf"]
@@ -43,8 +43,8 @@ if pdf_usage:
 	
 	
 	## Source selection
-	st.write('**:green[or a provided PDF about LLM / Foundation AI]**')
-	pdf = st.selectbox(label = 'What PDF document to use?', options = documents, index = index)
+	st.write('**:green[or a provided PDF about AI / Programming]**')
+	pdf = st.selectbox(label = 'Choose PDF document?', options = documents, index = index)
 	
 	# Creating a pdf reader object
 	reader = PyPDF2.PdfReader('PDFs/' + pdf)
