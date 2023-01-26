@@ -1,0 +1,15 @@
+##### `requirements.txt`
+##### OpenAI
+##### Open-Source, hostet on https://github.com/DrBenjamin/OpenAI
+##### Please reach out to ben@benbox.org for any questions
+### All needed libraries (and their versions)
+streamlit == 1.17.0
+mysql-connector-python == 8.0.29
+extra_streamlit_components == 0.1.56
+streamlit-scrollable-textbox
+streamlit_image_select
+xlsxwriter
+python-docx
+openai
+deepl
+PyPDF2
