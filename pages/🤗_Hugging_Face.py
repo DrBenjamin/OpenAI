@@ -44,10 +44,10 @@ with st.form('Hugging Face'):
   
   
   ## Submit button
-	submitted = st.form_submit_button('Submit')
-	 if submitted:
-	   API_URL = "https://api-inference.huggingface.co/models/gpt2"
-	   headers = {"Authorization": st.secrets['hugging_face']['key']}
-	   output = query({"inputs": query_text,})
-	   if output[0]['generated_text'] is not None:
-	     sty.scrollableTextbox(output[0]['generated_text'], height = 128, border = True)
+  submitted = st.form_submit_button('Submit')
+  if submitted:
+    API_URL = "https://api-inference.huggingface.co/models/gpt2"
+    headers = {"Authorization": st.secrets['hugging_face']['key']}
+    output = query({"inputs": query_text,})
+    if output[0]['generated_text'] is not None:
+      sty.scrollableTextbox(output[0]['generated_text'], height = 128, border = True)
