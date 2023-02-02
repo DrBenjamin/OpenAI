@@ -4,7 +4,7 @@
 ##### Please reach out to ben@benbox.org for any questions
 #### Loading needed Python libraries
 import streamlit as st
-import streamlit.components.v1 as stc
+import streamlit_scrollable_textbox as sty
 import requests
 
 
@@ -30,31 +30,24 @@ if ('qrcode' not in st.session_state):
   
   
 #### Functions
-### Function: generate_qrcode = QR Code generator
-def generate_qrcode(data):
-  # Encoding data using make() function
-  image = qrcode.make(data)
-  
-  # Saving image as png in a buffer
-  byteIO = io.BytesIO()
-  image.save(byteIO, format = 'PNG')
-
-  # Return qrcode
-  return byteIO.getvalue()
+### Function: query = Hugging Face gpt2
+def query(payload):
+	response = requests.post(API_URL, headers = headers, json = payload)
+	return response.json()
 
 
 
 
 #### Main program
-API_URL = "https://api-inference.huggingface.co/models/gpt2"
-headers = {"Authorization": st.secrets['hugging_face']['key']}
-
-def query(payload):
-	response = requests.post(API_URL, headers = headers, json = payload)
-	return response.json()
-	
-#output = query({"inputs": "Can you please let us know more details about your ",})
-
-query_text = st.text_input(label = 'Question: ')
-output = query({"inputs": query_text,})
-st.write(output[0]['generated_text'])
+with st.form('Hugging Face')
+  query_text = st.text_input(label = 'Question: ')
+  
+  
+  ## Submit button
+	submitted = st.form_submit_button('Submit')
+	 if submitted:
+	  API_URL = "https://api-inference.huggingface.co/models/gpt2"
+    headers = {"Authorization": st.secrets['hugging_face']['key']}
+    output = query({"inputs": query_text,})
+    if output[0]['generated_text'] is not None:
+      sty.scrollableTextbox(output[0]['generated_text'], height = 128, border = True)
