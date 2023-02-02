@@ -7,7 +7,6 @@ import streamlit as st
 import streamlit_scrollable_textbox as sty
 import openai
 import PyPDF2
-import os
 
 
 
