@@ -1,4 +1,4 @@
-##### `🤗 - Hugging_Face.py`
+##### `🤗_Hugging_Face.py`
 ##### OpenAI ChatGPT Demo
 ##### Open-Source, hostet on https://github.com/DrBenjamin/OpenAI
 ##### Please reach out to ben@benbox.org for any questions
