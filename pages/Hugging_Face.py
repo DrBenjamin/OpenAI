@@ -5,11 +5,6 @@
 #### Loading needed Python libraries
 import streamlit as st
 import streamlit.components.v1 as stc
-from streamlit_ws_localstorage import injectWebsocketCode, getOrCreateUID
-import io
-import webbrowser
-from streamlit_qrcode_scanner import qrcode_scanner
-import qrcode
 import requests
 
 
