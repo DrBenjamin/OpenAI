@@ -110,7 +110,7 @@ with col1:
 	  
 	  
 	  # Tokens selection
-	  tokens = st.slider("Answer's max tokens", 1, 1024, 128)
+	  tokens = st.slider("Answer's max tokens", 1, 4000, 128)
 	   
 	    
 	  ## Submit button
@@ -120,7 +120,7 @@ with col1:
 	    openai.api_key = st.secrets['openai']['key']
 	    
 	    # Using ChatGPT from OpenAI
-	    response_answer = openai.Completion.create(model = model, prompt = question + pdf_text, temperature = temp, max_tokens = tokens, top_p = 1.0, frequency_penalty = 0.0, presence_penalty = 0.0)
+	    response_answer = openai.Completion.create(model = model, prompt = question + pdf_text, temperature = temp, max_tokens = tokens, top_p = 1.0, frequency_penalty = 0.0, presence_penalty = 0.0, stop = ["\"\"\""])
 	    answer = response_answer['choices'][0]['text']
 	    used_tokens = response_answer['usage']['total_tokens']
 
