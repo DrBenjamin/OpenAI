@@ -71,7 +71,7 @@ if pdf_usage:
 ### OpenAI ChatGPT
 ## Model selection
 st.subheader('Choose a model')
-model = st.selectbox(label = 'What model to use?', options = ["text-davinci-003", "text-curie-001", "text-babbage-001", "text-ada-001", "code-davinci-002"], index = 0)
+model = st.selectbox(label = 'What model to use?', options = ["text-davinci-003", "text-curie-001", "text-babbage-001", "text-ada-001", "code-davinci-002", "code-cushman-001"], index = 0)
 
 # Show info about model and set variable costs
 if model == "text-davinci-003":
@@ -87,7 +87,10 @@ elif model == "text-ada-001":
   st.write(':green[Capability of this model:] Capable of very simple tasks, usually the fastest model in the GPT-3 series, and lowest cost.')
   cost_co_eff = 0.0004
 elif model == "code-davinci-002":
-  st.write(':green[Capability of this model:] Most capable Codex model. It is particularly good at translating natural language to code. In addition to completing code, also supports inserting completions within code.')
+  st.write(':green[Capability of this model:] Most capable Codex model. It is particularly good at translating natural language to code. In addition to completing code, also supports inserting completions within code. Max request is 4,000 tokens')
+  cost_co_eff = 0.02
+elif model == "code-cushman-001":
+  st.write(':green[Capability of this model:] Translating natural language to code. Max request is 2,048 tokens')
   cost_co_eff = 0.02
 else:
   cost_co_eff = 0.02
@@ -124,7 +127,7 @@ with col1:
 with col2:
 	st.subheader('Examples')
 	if pdf_usage:
-		if model != "code-davinci-002":
+		if model != "code-davinci-002" and "code-cushman-001":
 			st.markdown('If you included PDF data type in something like\n\n*:orange[Please summarise this:]*\n\nor\n\n*:orange[Summarise this in 5 sentences:]*')
 		else:
 			st.markdown('If you included PDF data and choosen "Code-Davinci" model you can type in something like\n\n*:orange[Write a Python program to use ChatGPT like this:]*')
