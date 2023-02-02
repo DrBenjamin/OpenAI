@@ -39,7 +39,7 @@ def query(payload):
 
 
 #### Main program
-with st.form('Hugging Face')
+with st.form('Hugging Face'):
   query_text = st.text_input(label = 'Question: ')
   
   
