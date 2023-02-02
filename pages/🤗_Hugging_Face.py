@@ -15,12 +15,7 @@ st.set_page_config(
   page_title = "Hugging Face Models",
   page_icon = "images/Hugging_Face.png",
   layout = "centered",
-  initial_sidebar_state = "expanded",
-  menu_items = { 
-         'Get Help': st.secrets['custom']['menu_items_help'],
-         'Report a bug': st.secrets['custom']['menu_items_bug'],
-         'About': st.secrets['custom']['menu_items_about']
-        }
+  initial_sidebar_state = "expanded"
 ) 
 
 
