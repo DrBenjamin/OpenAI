@@ -41,6 +41,7 @@ def query(payload):
 #### Main program
 ### Form
 st.header('GPT2 language model')
+output = None
 with st.form('Hugging Face'):
   query_text = st.text_input(label = 'Question: ')
   
