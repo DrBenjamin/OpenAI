@@ -1,6 +1,6 @@
-##### QRCodeScanner.py`
-##### QR Code Scanner for HR Staff Portal
-##### Open-Source, hostet on https://github.com/DrBenjamin/QRCodeScanner
+##### `🤗 - Hugging_Face.py`
+##### OpenAI ChatGPT Demo
+##### Open-Source, hostet on https://github.com/DrBenjamin/OpenAI
 ##### Please reach out to ben@benbox.org for any questions
 #### Loading needed Python libraries
 import streamlit as st

@@ -1,4 +1,7 @@
-##### `OpenAI.py`
+##### `🤖 - OpenAI.py`
+##### OpenAI ChatGPT Demo
+##### Open-Source, hostet on https://github.com/DrBenjamin/OpenAI
+##### Please reach out to ben@benbox.org for any questions
 #### Loading needed Python libraries
 import streamlit as st
 import streamlit_scrollable_textbox as sty
