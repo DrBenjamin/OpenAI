@@ -56,5 +56,5 @@ with st.form('Hugging Face'):
 
 ### Outside the form
 ## Output
-if output[0]['generated_text'] is not None:
+if output is not None:
   sty.scrollableTextbox(output[0]['generated_text'], height = 128, border = True)
