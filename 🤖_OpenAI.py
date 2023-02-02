@@ -23,7 +23,7 @@ st.set_page_config(
 
 
 #### Main program
-st.header('OpenAI ChatGPT Playground')
+st.header('OpenAI ChatGPT language model')
 answer = ''
 used_tokens = 0
 ### PDF documents

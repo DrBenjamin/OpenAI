@@ -39,6 +39,8 @@ def query(payload):
 
 
 #### Main program
+### Form
+st.header('GPT2 language model')
 with st.form('Hugging Face'):
   query_text = st.text_input(label = 'Question: ')
   
@@ -49,5 +51,10 @@ with st.form('Hugging Face'):
     API_URL = "https://api-inference.huggingface.co/models/gpt2"
     headers = {"Authorization": st.secrets['hugging_face']['key']}
     output = query({"inputs": query_text,})
-    if output[0]['generated_text'] is not None:
-      sty.scrollableTextbox(output[0]['generated_text'], height = 128, border = True)
+
+
+
+### Outside the form
+## Output
+if output[0]['generated_text'] is not None:
+  sty.scrollableTextbox(output[0]['generated_text'], height = 128, border = True)
