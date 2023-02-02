@@ -134,8 +134,8 @@ with col2:
 			st.markdown('If you included PDF data type in something like\n\n*:orange[Please summarise this:]*\n\nor\n\n*:orange[Summarise this in 5 sentences:]*')
 		else:
 			st.markdown('If you included PDF data and choosen "Code-Davinci" model you can type in something like\n\n*:orange[Write a Python program to use ChatGPT like this:]*')
-	elif model == "code-davinci-002":
-		st.markdown('If choosen "Code-Davinci" model you can type in something like\n\n*:orange[Please write an Python script to use OpenAI ChatGPT and print out the source code]*')
+	elif model == "code-davinci-002" or "code-cushman-001":
+		st.markdown('If choosen "Code-Davinci" model you can type in something like\n\n*:orange[1. Create a list of first names 2. Create a list of last names 3. Combine them randomly into a list of 100 full names]*')
 	elif model == "text-curie-001":
 		st.markdown('If choosen "Curie" model you can type in something like\n\n*:orange[Extract a keyword in this text "Saturdays it is often raining!"]*')
 	elif model == "text-babbage-001":
