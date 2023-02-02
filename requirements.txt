@@ -6,4 +6,5 @@
 streamlit == 1.17.0
 streamlit-scrollable-textbox
 openai
+google.colab
 PyPDF2
