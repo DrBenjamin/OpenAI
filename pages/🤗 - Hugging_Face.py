@@ -52,7 +52,7 @@ def generate_qrcode(data):
 
 #### Main program
 API_URL = "https://api-inference.huggingface.co/models/gpt2"
-headers = {"Authorization": "Bearer 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"}
+headers = {"Authorization": st.secrets['hugging_face']['key']}
 
 def query(payload):
 	response = requests.post(API_URL, headers = headers, json = payload)
