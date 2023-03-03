@@ -22,8 +22,18 @@ st.set_page_config(
 
 
 
+#### Session states
+if 'messages' not in st.session_state:
+    st.session_state['messages'] = ''
+
+
+
+
 #### Main program
 st.header('OpenAI ChatGPT language model')
+
+# Set API key
+openai.api_key = st.secrets['openai']['key']
 answer = ''
 used_tokens = 0
 
@@ -45,20 +55,19 @@ if pdf_usage:
         file.close()
         documents.append(uploaded_file.name)
         index = 4
-
-
+    
     ## Source selection
     st.write('**:green[or a provided PDF about AI / Programming]**')
     pdf = st.selectbox(label = 'Choose PDF document?', options = documents, index = index)
-
+    
     # Creating a pdf reader object
     reader = PyPDF2.PdfReader('PDFs/' + pdf)
-
+    
     # Select pages
     if len(reader.pages) > 1:
         pages_range = st.slider(label = 'Select a range of pages you want to use for the dialog with ChatGPT',
                                 min_value = 1, max_value = len(reader.pages), value = (1, 1))
-
+        
         # print the text of the first page
         pagez = []
         for i in range(pages_range[0], pages_range[1], 1):
@@ -84,109 +93,152 @@ model = st.selectbox(label = 'What model to use?',
                                 "code-davinci-002", "code-cushman-001"], index = 0)
 
 # Show info about model and set variable costs
+chat_usage = False
 if model == "gpt-3.5-turbo":
     cost_co_eff = 0.002
-    st.write(':green[Capability of this model:] Best model for many non-chat use cases. :red[Costs:] ' + str(cost_co_eff) + '$ (per 1K tokens)')
+    st.write(':green[Capability of this model:] Best model, also for many non-chat use cases. :red[Costs:] ' + str(cost_co_eff) + '$ (per 1K tokens)')
+    chat_usage = st.checkbox('Have an ongoing Chat?')
 elif model == "text-davinci-003":
     cost_co_eff = 0.02
     st.write(
-        ':green[Capability of this model:] Most capable GPT-3 model. Can do any task the other models can do, often with higher quality, longer output and better instruction-following. Also supports inserting completions within text. :red[Costs:] ' + str(cost_co_eff) + '$ (per 1K tokens)')
+        ':green[Capability of this model:] Most capable GPT-3 model. Can do any task the other models can do, often with higher quality, longer output and better instruction-following. Also supports inserting completions within text. :red[Costs:] ' + str(
+            cost_co_eff) + '$ (per 1K tokens)')
 elif model == "text-curie-001":
     cost_co_eff = 0.002
-    st.write(':green[Capability of this model:] Very capable, but faster and lower cost than Davinci. :red[Costs:] ' + str(cost_co_eff) + '$ (per 1K tokens)')
+    st.write(':green[Capability of this model:] Very capable, but faster and lower cost than Davinci. :red[Costs:] ' + str(
+        cost_co_eff) + '$ (per 1K tokens)')
 elif model == "text-babbage-001":
     cost_co_eff = 0.0005
-    st.write(':green[Capability of this model:] Capable of straightforward tasks, very fast, and lower cost. :red[Costs:] ' + str(cost_co_eff) + '$ (per 1K tokens)')
+    st.write(':green[Capability of this model:] Capable of straightforward tasks, very fast, and lower cost. :red[Costs:] ' + str(
+        cost_co_eff) + '$ (per 1K tokens)')
 elif model == "text-ada-001":
     cost_co_eff = 0.0004
     st.write(
-        ':green[Capability of this model:] Capable of very simple tasks, usually the fastest model in the GPT-3 series, and lowest cost. :red[Costs:] ' + str(cost_co_eff) + '$ (per 1K tokens)')
+        ':green[Capability of this model:] Capable of very simple tasks, usually the fastest model in the GPT-3 series, and lowest cost. :red[Costs:] ' + str(
+            cost_co_eff) + '$ (per 1K tokens)')
 elif model == "code-davinci-002":
     cost_co_eff = 0.02
     st.write(
-        ':green[Capability of this model:] Most capable Codex model. It is particularly good at translating natural language to code. In addition to completing code, also supports inserting completions within code. Max request is 4,000 tokens :red[Costs:] ' + str(cost_co_eff) + '$ (per 1K tokens)')
+        ':green[Capability of this model:] Most capable Codex model. It is particularly good at translating natural language to code. In addition to completing code, also supports inserting completions within code. Max request is 4,000 tokens :red[Costs:] ' + str(
+            cost_co_eff) + '$ (per 1K tokens)')
 elif model == "code-cushman-001":
     cost_co_eff = 0.02
-    st.write(':green[Capability of this model:] Translating natural language to code. Max request is 2,048 tokens :red[Costs:] ' + str(cost_co_eff) + '$ (per 1K tokens)')
+    st.write(':green[Capability of this model:] Translating natural language to code. Max request is 2,048 tokens :red[Costs:] ' + str(
+        cost_co_eff) + '$ (per 1K tokens)')
 else:
     cost_co_eff = 0.02
 
+# Columns
 col1, col2 = st.columns(2)
+if not chat_usage:
+    with col1:
+        ## Form (to prevent unessessary requests)
+        with st.form("OpenAI"):
+            # Text input
+            st.subheader('Communicate')
+            question = st.text_input('What question do you want to ask OpenAI Chat-GPT?')
+            
+            # Temperature selection
+            temp = st.slider('Which temperature?', 0.0, 1.0, .3)
+            
+            # Tokens selection
+            tokens = st.slider("Answer's max tokens", 1, 4000, 128)
+            
+            ## Submit button
+            submitted = st.form_submit_button('Submit')
+            if submitted:
+                # Using ChatGPT from OpenAI
+                if model == 'gpt-3.5-turbo':
+                    response_answer = openai.ChatCompletion.create(
+                        model = "gpt-3.5-turbo",
+                        messages = [
+                            {"role": "system", "content": "You are a helpful assistant."},
+                            {"role": "user", "content": question + pdf_text},
+                        ]
+                    )
+                    answer = response_answer['choices'][0]['message']['content']
+                else:
+                    response_answer = openai.Completion.create(model = model, prompt = question + pdf_text, temperature = temp,
+                                                               max_tokens = tokens, top_p = 1.0, frequency_penalty = 0.0,
+                                                               presence_penalty = 0.0, stop = ["\"\"\""])
+                    answer = response_answer['choices'][0]['text']
+                used_tokens = response_answer['usage']['total_tokens']
+    with col2:
+        st.subheader('Examples')
+        if pdf_usage:
+            if model != "code-davinci-002" and "code-cushman-001":
+                st.markdown(
+                    'If you included PDF data type in something like\n\n*:orange[Please summarise this:]*\n\nor\n\n*:orange[Summarise this in 5 sentences:]*')
+            else:
+                st.markdown(
+                    'If you included PDF data and choosen "Code-Davinci" model you can type in something like\n\n*:orange[Write a Python program to use ChatGPT like this:]*')
+        else:
+            if model == "code-davinci-002" or model == "code-cushman-001":
+                st.markdown(
+                    'If choosen "Code-Davinci" or "Code-Crushman" model you can type in something like\n\n*:orange[1. Create a list of first names 2. Create a list of last names 3. Combine them randomly into a list of 100 full names]*')
+            elif model == "text-curie-001":
+                st.markdown(
+                    'If choosen "Curie" model you can type in something like\n\n*:orange[Extract a keyword in this text "Saturdays it is often raining!"]*')
+            elif model == "text-babbage-001":
+                st.markdown(
+                    'If choosen "Babbage" model you can type in something like\n\n*:orange[Improve this text "Saturdays it is often raining!"]*')
+            elif model == "text-ada-001":
+                st.markdown(
+                    'If choosen "Ada" model you can type in something like\n\n*:orange[Rephrase this text "Saturdays it is often raining!"]*')
+            else:
+                st.markdown(
+                    'Type in something like\n\n*:orange[Write me a short poem] or :orange[What is the last newspaper you have read?]*')
+            st.markdown(
+                '**Temperature**\n\n:green[*0 = each answer will be the same*]\n\n:green[*1 = more "creative" answers*]')
+            st.markdown('**Tokens**\n\n:green[*1 token ~= 4 chars in English*]')
+ 
+ 
+    
+    ### Outside columns
+    ## Show answer
+    if answer != '':
+        sty.scrollableTextbox(answer, height = 128, border = True)
+        
+        # Show costs per query
+        costs = float(used_tokens) / 1000 * cost_co_eff
+        if costs >= 0.0001:
+            st.write(':red[Costs: ' + str(round(costs, 4)) + '$]')
+        else:
+            st.write(':red[Costs: < 0.0001$]')
 
-with col1:
-    ## Form (to prevent unessessary requests)
-    with st.form("OpenAI"):
-        # Text input
-        st.subheader('Communicate')
-        question = st.text_input('What question do you want to ask OpenAI Chat-GPT?')
 
-        # Temperature selection
-        temp = st.slider('Which temperature?', 0.0, 1.0, .3)
-
-        # Tokens selection
-        tokens = st.slider("Answer's max tokens", 1, 4000, 128)
-
+## Chat-Bot
+else:
+    if st.session_state['messages'] == '':
+        messages_input = [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "assistant", "content": "How can I help you?"}
+        ]
+    else:
+        messages_input = st.session_state['messages']
+    end = False
+    with st.form('Chat'):
+        for i in range(len(messages_input)):
+            if i > 0:
+                if i % 2 == 1:
+                    st.write(':blue[ChatBot:] ', messages_input[i]['content'])
+                elif i % 2 == 0:
+                    st.write(':red[User:] ', messages_input[i]['content'])
+        chat_input = st.text_input(label = 'User:')
+        
 
         ## Submit button
         submitted = st.form_submit_button('Submit')
         if submitted:
-            # Set API key
-            openai.api_key = st.secrets['openai']['key']
-
-            # Using ChatGPT from OpenAI
-            if model == 'gpt-3.5-turbo':
-                response_answer = openai.ChatCompletion.create(
-                    model = "gpt-3.5-turbo",
-                    messages = [
-                        {"role": "system", "content": "You are a helpful assistant."},
-                        {"role": "user", "content": question + pdf_text},
-                    ]
-                )
-                answer = response_answer['choices'][0]['message']['content']
-            else:
-                response_answer = openai.Completion.create(model = model, prompt = question + pdf_text, temperature = temp,
-                                                       max_tokens = tokens, top_p = 1.0, frequency_penalty = 0.0,
-                                                       presence_penalty = 0.0, stop = ["\"\"\""])
-                answer = response_answer['choices'][0]['text']
-            used_tokens = response_answer['usage']['total_tokens']
-with col2:
-    st.subheader('Examples')
-    if pdf_usage:
-        if model != "code-davinci-002" and "code-cushman-001":
-            st.markdown(
-                'If you included PDF data type in something like\n\n*:orange[Please summarise this:]*\n\nor\n\n*:orange[Summarise this in 5 sentences:]*')
-        else:
-            st.markdown(
-                'If you included PDF data and choosen "Code-Davinci" model you can type in something like\n\n*:orange[Write a Python program to use ChatGPT like this:]*')
-    elif model == "code-davinci-002" or "code-cushman-001":
-        st.markdown(
-            'If choosen "Code-Davinci" model you can type in something like\n\n*:orange[1. Create a list of first names 2. Create a list of last names 3. Combine them randomly into a list of 100 full names]*')
-    elif model == "text-curie-001":
-        st.markdown(
-            'If choosen "Curie" model you can type in something like\n\n*:orange[Extract a keyword in this text "Saturdays it is often raining!"]*')
-    elif model == "text-babbage-001":
-        st.markdown(
-            'If choosen "Babbage" model you can type in something like\n\n*:orange[Improve this text "Saturdays it is often raining!"]*')
-    elif model == "text-ada-001":
-        st.markdown(
-            'If choosen "Ada" model you can type in something like\n\n*:orange[Rephrase this text "Saturdays it is often raining!"]*')
-    else:
-        st.markdown(
-            'Type in something like\n\n*:orange[Write me a short poem] or :orange[What is the last newspaper you have read?]*')
-    st.markdown(
-        '**Temperature**\n\n:green[*0 = each answer will be the same*]\n\n:green[*1 = more "creative" answers*]')
-    st.markdown('**Tokens**\n\n:green[*1 token ~= 4 chars in English*]')
-
-
-
-### Outside columns
-## Show answer
-if answer != '':
-    sty.scrollableTextbox(answer, height = 128, border = True)
-
-    # Show costs per query
-    costs = float(used_tokens) / 1000 * cost_co_eff
-    if costs >= 0.0001:
-        st.write(':red[Costs: ' + str(round(costs, 4)) + '$]')
-    else:
-        st.write(':red[Costs: < 0.0001$]')
+            messages_input.append({"role": "user", "content": chat_input})
+            response_answer = openai.ChatCompletion.create(
+                model = "gpt-3.5-turbo",
+                messages = messages_input
+            )
+            answer = response_answer['choices'][0]['message']['content']
+            messages_input.append({"role": "assistant", "content": answer})
+            st.session_state['messages'] = messages_input
+            st.experimental_rerun()
+        
+    
+    
