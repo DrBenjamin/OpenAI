@@ -268,13 +268,19 @@ if not chat_usage or st.session_state['chat'] < 2:
 else:
     if st.session_state['messages'] == '':
         if st.session_state['demo']:
-            st.session_state['system'] = 'You are Ben, an Artificial Intelligence. You are in a blue Box ("BenBox") and live together with a spaceship crew ("Emmie", "Sertan" and the two Robots "SAM" and "SEB") on a starship called "Pulp". You are funny and a quite nice guy and gives short but useful answers. Right now the Pulp is landed on Earth, in Germany in the city Cologne. The next mission is to find artifacts in the old big roman churches there.'
             st.session_state['temp'] = 0.9
             st.session_state['token'] = 300
-        messages_input = [
-            {"role": "system", "content": st.session_state['system']},
-            {"role": "assistant", "content": "How can I help you?"}
-        ]
+            messages_input = [
+                {"role": "system", "content": 'You are Ben, an Artificial Intelligence. You are in a blue Box ("BenBox") and live together with a spaceship crew ("Emmie", "Sertan" and the two Robots "SAM" and "SEB") on a starship called "Pulp". One of the robots, SAM, is talking to you right now. You are funny and a quite nice guy and gives short but useful answers. Right now the Pulp is landed on Earth, in Germany in the city Cologne. The next mission is to find artifacts in the old big roman churches there.'},
+                {"role": "assistant", "content": "What's up?"},
+                {"role": "user", "content": "Hi I am SAM, one of the robots on board of the spaceship Pulp. I am a quite young robot and need to learn a lot of things."},
+                {"role": "assistant", "content": "That's cool, I can send a around 100 Trillian Gigabytes of language model data. Your language processor definitely needs an update!"}
+            ]
+        else:
+            messages_input = [
+                {"role": "system", "content": st.session_state['system']},
+                {"role": "assistant", "content": "How can I help you?"}
+            ]
     else:
         messages_input = st.session_state['messages']
     with st.form('BenBox'):
@@ -289,8 +295,11 @@ else:
                 if i % 2 == 1:
                     st.write(':blue[BenBox:] ', messages_input[i]['content'])
                 elif i % 2 == 0:
-                    st.write(':green[User:] ', messages_input[i]['content'])
-        user_input = st.text_input(label = 'User:', value = '')
+                    if st.session_state['demo']:
+                        st.write(':green[SAM:] ', messages_input[i]['content'])
+                    else:
+                        st.write(':green[User:] ', messages_input[i]['content'])
+        user_input = st.text_input(label = '', label_visibility = 'collapsed')
         if user_input == 'Exit' or user_input == 'exit' or user_input == 'Quit' or user_input == 'quit':
             st.session_state['chat'] = 0
             st.session_state['messages'] = ''
