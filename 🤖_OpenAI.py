@@ -25,7 +25,14 @@ st.set_page_config(
 #### Session states
 if 'messages' not in st.session_state:
     st.session_state['messages'] = ''
-
+if 'system' not in st.session_state:
+    st.session_state['system'] = ''
+if 'temp' not in st.session_state:
+    st.session_state['temp'] = .3
+if 'token' not in st.session_state:
+    st.session_state['token'] = 128
+if 'used_tokens' not in st.session_state:
+    st.session_state['used_tokens'] = 0
 
 
 
@@ -130,7 +137,7 @@ else:
 
 # Columns
 col1, col2 = st.columns(2)
-if not chat_usage:
+if not chat_usage or st.session_state['system'] == '':
     with col1:
         ## Form (to prevent unessessary requests)
         with st.form("OpenAI"):
@@ -140,29 +147,37 @@ if not chat_usage:
             
             # Temperature selection
             temp = st.slider('Which temperature?', 0.0, 1.0, .3)
+            if chat_usage:
+                st.session_state['temp'] = temp
             
             # Tokens selection
             tokens = st.slider("Answer's max tokens", 1, 4000, 128)
+            if chat_usage:
+                st.session_state['token'] = tokens
             
             ## Submit button
             submitted = st.form_submit_button('Submit')
             if submitted:
-                # Using ChatGPT from OpenAI
-                if model == 'gpt-3.5-turbo':
-                    response_answer = openai.ChatCompletion.create(
-                        model = "gpt-3.5-turbo",
-                        messages = [
-                            {"role": "system", "content": "You are a helpful assistant."},
-                            {"role": "user", "content": question + pdf_text},
-                        ]
-                    )
-                    answer = response_answer['choices'][0]['message']['content']
+                if not chat_usage:
+                    # Using ChatGPT from OpenAI
+                    if model == 'gpt-3.5-turbo':
+                        response_answer = openai.ChatCompletion.create(
+                            model = "gpt-3.5-turbo",
+                            messages = [
+                                {"role": "system", "content": "You are a helpful assistant."},
+                                {"role": "user", "content": question + pdf_text},
+                            ]
+                        )
+                        answer = response_answer['choices'][0]['message']['content']
+                    else:
+                        response_answer = openai.Completion.create(model = model, prompt = question + pdf_text, temperature = temp,
+                                                                   max_tokens = tokens, top_p = 1.0, frequency_penalty = 0.0,
+                                                                   presence_penalty = 0.0, stop = ["\"\"\""])
+                        answer = response_answer['choices'][0]['text']
+                    used_tokens = response_answer['usage']['total_tokens']
                 else:
-                    response_answer = openai.Completion.create(model = model, prompt = question + pdf_text, temperature = temp,
-                                                               max_tokens = tokens, top_p = 1.0, frequency_penalty = 0.0,
-                                                               presence_penalty = 0.0, stop = ["\"\"\""])
-                    answer = response_answer['choices'][0]['text']
-                used_tokens = response_answer['usage']['total_tokens']
+                    st.session_state['system'] = question
+                    st.experimental_rerun()
     with col2:
         st.subheader('Examples')
         if pdf_usage:
@@ -186,8 +201,11 @@ if not chat_usage:
                 st.markdown(
                     'If choosen "Ada" model you can type in something like\n\n*:orange[Rephrase this text "Saturdays it is often raining!"]*')
             else:
-                st.markdown(
-                    'Type in something like\n\n*:orange[Write me a short poem] or :orange[What is the last newspaper you have read?]*')
+                if chat_usage:
+                    st.markdown('Type in something like\n\n*:orange[You are a helpful assistant] or :orange[You are a cynical and humorous assistant.]*')
+                else:
+                    st.markdown(
+                        'Type in something like\n\n*:orange[Write me a short poem] or :orange[What is the last newspaper you have read?]*')
             st.markdown(
                 '**Temperature**\n\n:green[*0 = each answer will be the same*]\n\n:green[*1 = more "creative" answers*]')
             st.markdown('**Tokens**\n\n:green[*1 token ~= 4 chars in English*]')
@@ -211,20 +229,20 @@ if not chat_usage:
 else:
     if st.session_state['messages'] == '':
         messages_input = [
-            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "system", "content": st.session_state['system']},
             {"role": "assistant", "content": "How can I help you?"}
         ]
     else:
         messages_input = st.session_state['messages']
-    end = False
+    st.write(':red[Costs of this Chat: ' + str(round(st.session_state['used_tokens'] /1000 * 0.002, 4)) + '$.]')
     with st.form('Chat'):
         for i in range(len(messages_input)):
             if i > 0:
                 if i % 2 == 1:
                     st.write(':blue[ChatBot:] ', messages_input[i]['content'])
                 elif i % 2 == 0:
-                    st.write(':red[User:] ', messages_input[i]['content'])
-        chat_input = st.text_input(label = 'User:')
+                    st.write(':green[User:] ', messages_input[i]['content'])
+        chat_input = st.text_input(label = 'User:', value = '')
         
 
         ## Submit button
@@ -233,9 +251,12 @@ else:
             messages_input.append({"role": "user", "content": chat_input})
             response_answer = openai.ChatCompletion.create(
                 model = "gpt-3.5-turbo",
-                messages = messages_input
+                messages = messages_input,
+                temperature = st.session_state['temp'],
+                max_tokens = st.session_state['token']
             )
             answer = response_answer['choices'][0]['message']['content']
+            st.session_state['used_tokens'] += response_answer['usage']['total_tokens']
             messages_input.append({"role": "assistant", "content": answer})
             st.session_state['messages'] = messages_input
             st.experimental_rerun()
