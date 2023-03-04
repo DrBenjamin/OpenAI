@@ -5,8 +5,12 @@
 #### Loading needed Python libraries
 import streamlit as st
 import streamlit_scrollable_textbox as sty
+import io
 import openai
 import PyPDF2
+from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageFont
 
 
 
@@ -23,6 +27,8 @@ st.set_page_config(
 
 
 #### Session states
+if 'benbox' not in st.session_state:
+    st.session_state['benbox'] = ''
 if 'messages' not in st.session_state:
     st.session_state['messages'] = ''
 if 'system' not in st.session_state:
@@ -33,6 +39,31 @@ if 'token' not in st.session_state:
     st.session_state['token'] = 128
 if 'used_tokens' not in st.session_state:
     st.session_state['used_tokens'] = 0
+if 'demo' not in st.session_state:
+    st.session_state['demo'] = False
+if 'chat' not in st.session_state:
+    st.session_state['chat'] = 0
+
+
+
+
+#### Functions
+### Function benbox() = Write costs to image
+def benbox(image, text, text2, text3):
+    # Open an Image
+    img = Image.open(image)
+    
+    # Call draw Method to add 2D graphics in an image
+    I1 = ImageDraw.Draw(img)
+    I1.text((12, 16), text, font = ImageFont.truetype('images/Menlo.ttc', 14), fill = (158, 38, 26))
+    I1.text((12, 48), text2, font = ImageFont.truetype('images/Menlo.ttc', 14), fill = (158, 38, 26))
+    I1.text((12, 80), text3, font = ImageFont.truetype('images/Menlo.ttc', 14), fill = (158, 38, 26))
+    
+    # Save the edited image to buffer
+    s = io.BytesIO()
+    img.save(s, 'png')
+    st.session_state['benbox'] = s.getvalue()
+
 
 
 
@@ -134,12 +165,14 @@ elif model == "code-cushman-001":
         cost_co_eff) + '$ (per 1K tokens)')
 else:
     cost_co_eff = 0.02
-
-# Columns
-col1, col2 = st.columns(2)
-if not chat_usage or st.session_state['system'] == '':
+  
+    
+## Show Configuration and Explanations
+if not chat_usage or st.session_state['chat'] < 2:
+    # Columns
+    col1, col2 = st.columns(2)
     with col1:
-        ## Form (to prevent unessessary requests)
+        ## Form (to prevent unnecessary requests)
         with st.form("OpenAI"):
             # Text input
             st.subheader('Communicate')
@@ -147,13 +180,16 @@ if not chat_usage or st.session_state['system'] == '':
             
             # Temperature selection
             temp = st.slider('Which temperature?', 0.0, 1.0, .3)
-            if chat_usage:
-                st.session_state['temp'] = temp
-            
+
             # Tokens selection
             tokens = st.slider("Answer's max tokens", 1, 4000, 128)
+            
+            # Store if Chat-Bot
             if chat_usage:
+                st.session_state['temp'] = temp
                 st.session_state['token'] = tokens
+                st.session_state['chat'] += 1
+            
             
             ## Submit button
             submitted = st.form_submit_button('Submit')
@@ -203,12 +239,15 @@ if not chat_usage or st.session_state['system'] == '':
             else:
                 if chat_usage:
                     st.markdown('Type in something like\n\n*:orange[You are a helpful assistant] or :orange[You are a cynical and humorous assistant.]*')
+                    st.write('or use the Demo')
+                    st.session_state['demo'] = st.checkbox(label = 'BenBox Demo (press submit)')
                 else:
                     st.markdown(
                         'Type in something like\n\n*:orange[Write me a short poem] or :orange[What is the last newspaper you have read?]*')
             st.markdown(
                 '**Temperature**\n\n:green[*0 = each answer will be the same*]\n\n:green[*1 = more "creative" answers*]')
-            st.markdown('**Tokens**\n\n:green[*1 token ~= 4 chars in English*]')
+            if not chat_usage:
+                st.markdown('**Tokens**\n\n:green[*1 token ~= 4 chars in English*]')
  
  
     
@@ -228,27 +267,44 @@ if not chat_usage or st.session_state['system'] == '':
 ## Chat-Bot
 else:
     if st.session_state['messages'] == '':
+        if st.session_state['demo']:
+            st.session_state['system'] = 'You are Ben, an Artificial Intelligence. You are in a blue Box ("BenBox") and live together with a spaceship crew ("Emmie", "Sertan" and the two Robots "SAM" and "SEB") on a starship called "Pulp". You are funny and a quite nice guy and gives short but useful answers. Right now the Pulp is landed on Earth, in Germany in the city Cologne. The next mission is to find artifacts in the old big roman churches there.'
+            st.session_state['temp'] = 0.9
+            st.session_state['token'] = 300
         messages_input = [
             {"role": "system", "content": st.session_state['system']},
             {"role": "assistant", "content": "How can I help you?"}
         ]
     else:
         messages_input = st.session_state['messages']
-    st.write(':red[Costs of this Chat: ' + str(round(st.session_state['used_tokens'] /1000 * 0.002, 4)) + '$.]')
-    with st.form('Chat'):
+    with st.form('BenBox'):
+        if st.session_state['demo']:
+            benbox(image = st.secrets['benbox']['image'], text = st.secrets['benbox']['costs'] + str(round(st.session_state['used_tokens'] / 1000 * 0.002, 4)) + '$', text2 = st.secrets['benbox']['costs2'], text3 = st.secrets['benbox']['costs3'])
+            if st.session_state['benbox'] != '':
+                st.image(st.session_state['benbox'])
+            else:
+                st.image(st.secrets['benbox']['image'])
         for i in range(len(messages_input)):
             if i > 0:
                 if i % 2 == 1:
-                    st.write(':blue[ChatBot:] ', messages_input[i]['content'])
+                    st.write(':blue[BenBox:] ', messages_input[i]['content'])
                 elif i % 2 == 0:
                     st.write(':green[User:] ', messages_input[i]['content'])
-        chat_input = st.text_input(label = 'User:', value = '')
-        
+        user_input = st.text_input(label = 'User:', value = '')
+        if user_input == 'Exit' or user_input == 'exit' or user_input == 'Quit' or user_input == 'quit':
+            st.session_state['chat'] = 0
+            st.session_state['messages'] = ''
+            st.experimental_rerun()
+        if not st.session_state['demo']:
+            st.markdown(':orange[If you are tired talking to the Chat-Bot just type "Quit" or "Exit".]')
+            st.markdown(':red[Costs of this Chat are ' + str(round(st.session_state['used_tokens'] / 1000 * 0.002, 4)) + '$]')
+        else:
+            st.markdown(':orange[If you are tired talking to Ben just type "Quit" or "Exit" (he will be in a huff).]')
 
         ## Submit button
         submitted = st.form_submit_button('Submit')
         if submitted:
-            messages_input.append({"role": "user", "content": chat_input})
+            messages_input.append({"role": "user", "content": user_input})
             response_answer = openai.ChatCompletion.create(
                 model = "gpt-3.5-turbo",
                 messages = messages_input,
