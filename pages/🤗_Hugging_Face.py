@@ -22,7 +22,7 @@ os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
 #### Streamlit initial setup
 st.set_page_config(
-  page_title = "Hugging Face Models",
+  page_title = "Hugging Face Diffuser Models",
   page_icon = "images/Hugging_Face.png",
   layout = "centered",
   initial_sidebar_state = "expanded"
@@ -47,7 +47,7 @@ def predict_step(image):
 
 
 #### Models
-st.header('🤗 Hugginface Diffusers')
+st.header('🤗 Hugging Face Diffusers')
 st.write('State-of-the-art diffusion models for image, text and audio generation in PyTorch.')
 devices = ["mps", "cuda"]
 device = st.selectbox(label = 'Select device', options = devices, index = 0, disabled = True)
