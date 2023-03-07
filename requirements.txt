@@ -5,6 +5,6 @@
 ### All needed libraries (and their versions)
 streamlit == 1.19.0
 streamlit-scrollable-textbox
+torch
 openai
-#google.colab == 1.0.0
 PyPDF2
