@@ -6,6 +6,7 @@
 .DS_Store
 OpenAI.Rproj
 .idea
+temp.mp3
 
 # User-specific stuff
 .idea/**/workspace.xml

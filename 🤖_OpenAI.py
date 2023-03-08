@@ -177,6 +177,8 @@ if not chat_usage or st.session_state['chat'] < 2:
             if submitted:
                 # Check for audio data
                 if audio_file is not None:
+                    st.subheader('Preview used audio')
+                    st.audio(audio_file)
                     transcript = openai.Audio.transcribe(model, audio_file)
                     st.markdown('Transcript: :orange[' + str(transcript['text']) + ']')
     else:

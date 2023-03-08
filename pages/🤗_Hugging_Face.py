@@ -5,15 +5,17 @@
 #### Loading needed Python libraries
 import streamlit as st
 import numpy as np
+import audio2numpy as a2n
+from pydub import AudioSegment
 import cv2
 from PIL import Image
 import torch
 from diffusers import StableDiffusionPipeline
 from diffusers import StableDiffusionImg2ImgPipeline
 from diffusers import StableDiffusionControlNetPipeline, ControlNetModel, UniPCMultistepScheduler
+from transformers import pipeline
 from transformers import pipeline, set_seed
 from transformers import VisionEncoderDecoderModel, ViTImageProcessor, AutoTokenizer
-from transformers import WhisperProcessor, WhisperForConditionalGeneration
 from datasets import load_dataset
 import os
 os.environ['COMMANDLINE_ARGS'] = '--skip-torch-cuda-test --upcast-sampling --no-half-vae --no-half --use-cpu interrogate'
@@ -222,7 +224,7 @@ if model_id_or_path == "openai-gpt" or model_id_or_path == "gpt2-large":
             generated = generator(text_input, max_length = 50, num_return_sequences = 5)
             st.subheader('Diffuser result')
             st.write('Model :orange[' + model_id_or_path + ']')
-            st.write(generated)
+            st.write('Text: ":green[' + str(generated) + ']"')
 
 
 
@@ -250,7 +252,7 @@ if model_id_or_path == "nlpconnect/vit-gpt2-image-captioning":
                 output = predict_step(image)
                 st.subheader('Diffuser result')
                 st.write('Model :orange[nlpconnect/vit-gpt2-image-captioning]')
-                st.write(output)
+                st.write('Description: ":green[' + str(output) + ']"')
                 
                 
                 
@@ -263,19 +265,25 @@ if model_id_or_path == "openai/whisper-large-v2":
         submitted = st.form_submit_button('Submit')
         if submitted:
             if audio_file is not None:
-                # load model and processor
-                processor = WhisperProcessor.from_pretrained("openai/whisper-large-v2")
-                model = WhisperForConditionalGeneration.from_pretrained("openai/whisper-large-v2")
-                model.config.forced_decoder_ids = None
+                audio = audio_file.getvalue()
+                with open("images/temp.mp3", "wb") as binary_file:
+                    # Write bytes to file
+                    binary_file.write(audio)
+
+                # Calling the split_to_mono method on the stereo audio file
+                stereo_audio = AudioSegment.from_file("images/temp.mp3", format = "mp3")
+                mono_audios = stereo_audio.split_to_mono()
+                mono_audios[0].export("images/temp.mp3", format = "mp3")
                 
-                # load dummy dataset and read audio files
-                ds = load_dataset("hf-internal-testing/librispeech_asr_dummy", "clean", split = "validation")
-                sample = ds[0]["audio"]
-                input_features = processor(sample["array"], sampling_rate = sample["sampling_rate"], return_tensors = "pt").input_features
+                # Mp3 file to numpy array
+                audio, sr = a2n.audio_from_file('images/temp.mp3')
+                st.audio('images/temp.mp3')
+                if os.path.exists("images/temp.mp3"):
+                    os.remove("images/temp.mp3")
                 
-                # generate token ids
-                predicted_ids = model.generate(input_features)
-                # decode token ids to text
-                transcription = processor.batch_decode(predicted_ids, skip_special_tokens = False)
-                transcription = processor.batch_decode(predicted_ids, skip_special_tokens = True)
-                st.write(transcription)
+                # Load model and processor
+                pipe = pipeline("automatic-speech-recognition", model = "openai/whisper-large-v2", chunk_length_s = 30, device = device, ignore_warning = True)
+                prediction = pipe(audio, sampling_rate = sr)["text"]
+                st.subheader('Preview used audio')
+                st.write('Model :orange[' + model_id_or_path + ']')
+                st.write('Transcript: ":green[' + str(prediction) + ']"')
