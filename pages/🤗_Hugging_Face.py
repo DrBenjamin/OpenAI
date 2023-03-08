@@ -266,20 +266,20 @@ if model_id_or_path == "openai/whisper-large-v2":
         if submitted:
             if audio_file is not None:
                 audio = audio_file.getvalue()
-                with open("images/temp.mp3", "wb") as binary_file:
+                with open("temp.mp3", "wb") as binary_file:
                     # Write bytes to file
                     binary_file.write(audio)
 
                 # Calling the split_to_mono method on the stereo audio file
-                stereo_audio = AudioSegment.from_file("images/temp.mp3", format = "mp3")
+                stereo_audio = AudioSegment.from_file("temp.mp3", format = "mp3")
                 mono_audios = stereo_audio.split_to_mono()
-                mono_audios[0].export("images/temp.mp3", format = "mp3")
+                mono_audios[0].export("temp.mp3", format = "mp3")
                 
                 # Mp3 file to numpy array
-                audio, sr = a2n.audio_from_file('images/temp.mp3')
-                st.audio('images/temp.mp3')
-                if os.path.exists("images/temp.mp3"):
-                    os.remove("images/temp.mp3")
+                audio, sr = a2n.audio_from_file('temp.mp3')
+                st.audio('temp.mp3')
+                if os.path.exists("temp.mp3"):
+                    os.remove("temp.mp3")
                 
                 # Load model and processor
                 pipe = pipeline("automatic-speech-recognition", model = "openai/whisper-large-v2", chunk_length_s = 30, device = device, ignore_warning = True)
