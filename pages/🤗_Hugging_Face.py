@@ -51,8 +51,8 @@ def predict_step(image):
 #### Models
 st.header('🤗 Hugging Face Diffusers')
 st.write('State-of-the-art diffusion models for image, text and audio generation in PyTorch.')
-devices = ["mps", "cuda"]
-device = st.selectbox(label = 'Select device', options = devices, index = 0, disabled = True)
+devices = ["mps", "cpu"]
+device = st.selectbox(label = 'Select device', options = devices, index = 1, disabled = False)
 models = ["runwayml/stable-diffusion-v1-5", "stabilityai/stable-diffusion-2-1", "hakurei/waifu-diffusion", "stabilityai/stable-diffusion-2-base", "nlpconnect/vit-gpt2-image-captioning", "openai-gpt", "gpt2-large", "openai/whisper-large-v2"]
 model_id_or_path = st.selectbox(label = 'Select model', options = models)
 control_net_models = ["None", "lllyasviel/sd-controlnet-canny", "lllyasviel/sd-controlnet-scribble"]
