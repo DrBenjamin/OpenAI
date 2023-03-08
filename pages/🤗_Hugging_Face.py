@@ -257,7 +257,7 @@ if model_id_or_path == "nlpconnect/vit-gpt2-image-captioning":
                 
                 
                 
-#### Whisperer Model
+#### Whisper Model
 if model_id_or_path == "openai/whisper-large-v2":
     with st.form('Image2Text'):
         st.subheader('Audio 2 Text')
