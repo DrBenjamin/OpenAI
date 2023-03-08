@@ -6,7 +6,7 @@ Playground for using OpenAI ChatGPT and Hugging Face state-of-the-art diffusion 
 
 ## Local Installation to use the Hugging Face models
 
-Download the [Package](https://github.com/DrBenjamin/OpenAI/archive/refs/heads/main.zip) and install the needed libraries with
+Download the [Package](https://github.com/DrBenjamin/OpenAI/archive/refs/tags/v1.0.zip) and install the needed libraries with
 
 ```cmd
 python -m pip install -r requirements.txt
