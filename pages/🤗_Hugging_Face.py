@@ -13,6 +13,8 @@ from diffusers import StableDiffusionImg2ImgPipeline
 from diffusers import StableDiffusionControlNetPipeline, ControlNetModel, UniPCMultistepScheduler
 from transformers import pipeline, set_seed
 from transformers import VisionEncoderDecoderModel, ViTImageProcessor, AutoTokenizer
+from transformers import WhisperProcessor, WhisperForConditionalGeneration
+from datasets import load_dataset
 import os
 os.environ['COMMANDLINE_ARGS'] = '--skip-torch-cuda-test --upcast-sampling --no-half-vae --no-half --use-cpu interrogate'
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
@@ -51,7 +53,7 @@ st.header('🤗 Hugging Face Diffusers')
 st.write('State-of-the-art diffusion models for image, text and audio generation in PyTorch.')
 devices = ["mps", "cuda"]
 device = st.selectbox(label = 'Select device', options = devices, index = 0, disabled = True)
-models = ["runwayml/stable-diffusion-v1-5", "stabilityai/stable-diffusion-2-1", "hakurei/waifu-diffusion", "stabilityai/stable-diffusion-2-base", "nlpconnect/vit-gpt2-image-captioning", "openai-gpt", "gpt2-large"]
+models = ["runwayml/stable-diffusion-v1-5", "stabilityai/stable-diffusion-2-1", "hakurei/waifu-diffusion", "stabilityai/stable-diffusion-2-base", "nlpconnect/vit-gpt2-image-captioning", "openai-gpt", "gpt2-large", "openai/whisper-large-v2"]
 model_id_or_path = st.selectbox(label = 'Select model', options = models)
 control_net_models = ["None", "lllyasviel/sd-controlnet-canny", "lllyasviel/sd-controlnet-scribble"]
 if model_id_or_path == "runwayml/stable-diffusion-v1-5":
@@ -169,7 +171,7 @@ if model_id_or_path == "runwayml/stable-diffusion-v1-5" and control_net_model ==
     
 
 #### Stable diffusion txt 2 image
-if control_net_model == "None" and model_id_or_path != "nlpconnect/vit-gpt2-image-captioning" and model_id_or_path != "openai-gpt" and model_id_or_path != "gpt2-large":
+if control_net_model == "None" and model_id_or_path != "nlpconnect/vit-gpt2-image-captioning" and model_id_or_path != "openai-gpt" and model_id_or_path != "gpt2-large" and model_id_or_path != "openai/whisper-large-v2":
     with st.form('txt2img'):
         st.subheader('Text 2 Image')
         if model_id_or_path == "runwayml/stable-diffusion-v1-5" or model_id_or_path == "stabilityai/stable-diffusion-2-1":
@@ -249,3 +251,31 @@ if model_id_or_path == "nlpconnect/vit-gpt2-image-captioning":
                 st.subheader('Diffuser result')
                 st.write('Model :orange[nlpconnect/vit-gpt2-image-captioning]')
                 st.write(output)
+                
+                
+                
+                
+#### Whisperer Model
+if model_id_or_path == "openai/whisper-large-v2":
+    with st.form('Image2Text'):
+        st.subheader('Audio 2 Text')
+        audio_file = st.file_uploader(label = "Upload an audio file", type = 'mp3')
+        submitted = st.form_submit_button('Submit')
+        if submitted:
+            if audio_file is not None:
+                # load model and processor
+                processor = WhisperProcessor.from_pretrained("openai/whisper-large-v2")
+                model = WhisperForConditionalGeneration.from_pretrained("openai/whisper-large-v2")
+                model.config.forced_decoder_ids = None
+                
+                # load dummy dataset and read audio files
+                ds = load_dataset("hf-internal-testing/librispeech_asr_dummy", "clean", split = "validation")
+                sample = ds[0]["audio"]
+                input_features = processor(sample["array"], sampling_rate = sample["sampling_rate"], return_tensors = "pt").input_features
+                
+                # generate token ids
+                predicted_ids = model.generate(input_features)
+                # decode token ids to text
+                transcription = processor.batch_decode(predicted_ids, skip_special_tokens = False)
+                transcription = processor.batch_decode(predicted_ids, skip_special_tokens = True)
+                st.write(transcription)

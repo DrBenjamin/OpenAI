@@ -128,7 +128,7 @@ if pdf_usage:
 st.subheader('Choose a model')
 model = st.selectbox(label = 'What model to use?',
                      options = ["gpt-3.5-turbo", "text-davinci-003", "text-curie-001", "text-babbage-001", "text-ada-001",
-                                "code-davinci-002", "code-cushman-001"], index = 0)
+                                "code-davinci-002", "code-cushman-001", "whisper-1"], index = 0)
 
 # Show info about model and set variable costs
 chat_usage = False
@@ -169,86 +169,97 @@ else:
     
 ## Show Configuration and Explanations
 if not chat_usage or st.session_state['chat'] < 2:
-    # Columns
-    col1, col2 = st.columns(2)
-    with col1:
-        ## Form (to prevent unnecessary requests)
-        with st.form("OpenAI"):
-            # Text input
-            st.subheader('Communicate')
-            question = st.text_input('What question do you want to ask OpenAI Chat-GPT?')
-            
-            # Temperature selection
-            temp = st.slider('Which temperature?', 0.0, 1.0, .3)
-
-            # Tokens selection
-            tokens = st.slider("Answer's max tokens", 1, 4000, 128)
-            
-            # Store if Chat-Bot
-            if chat_usage:
-                st.session_state['temp'] = temp
-                st.session_state['token'] = tokens
-                st.session_state['chat'] += 1
-            
-            
-            ## Submit button
+    if model == "whisper-1":
+        with st.form('Whisperer'):
+            st.subheader('Audio 2 Text')
+            audio_file = st.file_uploader(label = "Upload an audio file", type = 'mp3')
             submitted = st.form_submit_button('Submit')
             if submitted:
-                if not chat_usage:
-                    # Using ChatGPT from OpenAI
-                    if model == 'gpt-3.5-turbo':
-                        response_answer = openai.ChatCompletion.create(
-                            model = "gpt-3.5-turbo",
-                            messages = [
-                                {"role": "system", "content": "You are a helpful assistant."},
-                                {"role": "user", "content": question + pdf_text},
-                            ]
-                        )
-                        answer = response_answer['choices'][0]['message']['content']
-                    else:
-                        response_answer = openai.Completion.create(model = model, prompt = question + pdf_text, temperature = temp,
-                                                                   max_tokens = tokens, top_p = 1.0, frequency_penalty = 0.0,
-                                                                   presence_penalty = 0.0, stop = ["\"\"\""])
-                        answer = response_answer['choices'][0]['text']
-                    used_tokens = response_answer['usage']['total_tokens']
-                else:
-                    st.session_state['system'] = question
-                    st.experimental_rerun()
-    with col2:
-        st.subheader('Examples')
-        if pdf_usage:
-            if model != "code-davinci-002" and "code-cushman-001":
-                st.markdown(
-                    'If you included PDF data type in something like\n\n*:orange[Please summarise this:]*\n\nor\n\n*:orange[Summarise this in 5 sentences:]*')
-            else:
-                st.markdown(
-                    'If you included PDF data and choosen "Code-Davinci" model you can type in something like\n\n*:orange[Write a Python program to use ChatGPT like this:]*')
-        else:
-            if model == "code-davinci-002" or model == "code-cushman-001":
-                st.markdown(
-                    'If choosen "Code-Davinci" or "Code-Crushman" model you can type in something like\n\n*:orange[1. Create a list of first names 2. Create a list of last names 3. Combine them randomly into a list of 100 full names]*')
-            elif model == "text-curie-001":
-                st.markdown(
-                    'If choosen "Curie" model you can type in something like\n\n*:orange[Extract a keyword in this text "Saturdays it is often raining!"]*')
-            elif model == "text-babbage-001":
-                st.markdown(
-                    'If choosen "Babbage" model you can type in something like\n\n*:orange[Improve this text "Saturdays it is often raining!"]*')
-            elif model == "text-ada-001":
-                st.markdown(
-                    'If choosen "Ada" model you can type in something like\n\n*:orange[Rephrase this text "Saturdays it is often raining!"]*')
-            else:
+                # Check for audio data
+                if audio_file is not None:
+                    transcript = openai.Audio.transcribe(model, audio_file)
+                    st.markdown('Transcript: :orange[' + str(transcript['text']) + ']')
+    else:
+        # Columns
+        col1, col2 = st.columns(2)
+        with col1:
+            ## Form (to prevent unnecessary requests)
+            with st.form("OpenAI"):
+                # Text input
+                st.subheader('Communicate')
+                question = st.text_input('What question do you want to ask OpenAI Chat-GPT?')
+                
+                # Temperature selection
+                temp = st.slider('Which temperature?', 0.0, 1.0, .3)
+    
+                # Tokens selection
+                tokens = st.slider("Answer's max tokens", 1, 4000, 128)
+                
+                # Store if Chat-Bot
                 if chat_usage:
-                    st.markdown('Type in something like\n\n*:orange[You are a helpful assistant] or :orange[You are a cynical and humorous assistant.]*')
-                    st.write('or use the Demo')
-                    st.session_state['demo'] = st.checkbox(label = 'BenBox Demo (press submit)')
+                    st.session_state['temp'] = temp
+                    st.session_state['token'] = tokens
+                    st.session_state['chat'] += 1
+                
+                
+                ## Submit button
+                submitted = st.form_submit_button('Submit')
+                if submitted:
+                    if not chat_usage:
+                        # Using ChatGPT from OpenAI
+                        if model == 'gpt-3.5-turbo':
+                            response_answer = openai.ChatCompletion.create(
+                                model = "gpt-3.5-turbo",
+                                messages = [
+                                    {"role": "system", "content": "You are a helpful assistant."},
+                                    {"role": "user", "content": question + pdf_text},
+                                ]
+                            )
+                            answer = response_answer['choices'][0]['message']['content']
+                        else:
+                            response_answer = openai.Completion.create(model = model, prompt = question + pdf_text, temperature = temp,
+                                                                       max_tokens = tokens, top_p = 1.0, frequency_penalty = 0.0,
+                                                                       presence_penalty = 0.0, stop = ["\"\"\""])
+                            answer = response_answer['choices'][0]['text']
+                        used_tokens = response_answer['usage']['total_tokens']
+                    else:
+                        st.session_state['system'] = question
+                        st.experimental_rerun()
+        with col2:
+            st.subheader('Examples')
+            if pdf_usage:
+                if model != "code-davinci-002" and "code-cushman-001":
+                    st.markdown(
+                        'If you included PDF data type in something like\n\n*:orange[Please summarise this:]*\n\nor\n\n*:orange[Summarise this in 5 sentences:]*')
                 else:
                     st.markdown(
-                        'Type in something like\n\n*:orange[Write me a short poem] or :orange[What is the last newspaper you have read?]*')
-            st.markdown(
-                '**Temperature**\n\n:green[*0 = each answer will be the same*]\n\n:green[*1 = more "creative" answers*]')
-            if not chat_usage:
-                st.markdown('**Tokens**\n\n:green[*1 token ~= 4 chars in English*]')
- 
+                        'If you included PDF data and choosen "Code-Davinci" model you can type in something like\n\n*:orange[Write a Python program to use ChatGPT like this:]*')
+            else:
+                if model == "code-davinci-002" or model == "code-cushman-001":
+                    st.markdown(
+                        'If choosen "Code-Davinci" or "Code-Crushman" model you can type in something like\n\n*:orange[1. Create a list of first names 2. Create a list of last names 3. Combine them randomly into a list of 100 full names]*')
+                elif model == "text-curie-001":
+                    st.markdown(
+                        'If choosen "Curie" model you can type in something like\n\n*:orange[Extract a keyword in this text "Saturdays it is often raining!"]*')
+                elif model == "text-babbage-001":
+                    st.markdown(
+                        'If choosen "Babbage" model you can type in something like\n\n*:orange[Improve this text "Saturdays it is often raining!"]*')
+                elif model == "text-ada-001":
+                    st.markdown(
+                        'If choosen "Ada" model you can type in something like\n\n*:orange[Rephrase this text "Saturdays it is often raining!"]*')
+                else:
+                    if chat_usage:
+                        st.markdown('Type in something like\n\n*:orange[You are a helpful assistant] or :orange[You are a cynical and humorous assistant.]*')
+                        st.write('or use the Demo')
+                        st.session_state['demo'] = st.checkbox(label = 'BenBox Demo (press submit)')
+                    else:
+                        st.markdown(
+                            'Type in something like\n\n*:orange[Write me a short poem] or :orange[What is the last newspaper you have read?]*')
+                st.markdown(
+                    '**Temperature**\n\n:green[*0 = each answer will be the same*]\n\n:green[*1 = more "creative" answers*]')
+                if not chat_usage:
+                    st.markdown('**Tokens**\n\n:green[*1 token ~= 4 chars in English*]')
+     
  
     
     ### Outside columns
@@ -309,22 +320,15 @@ else:
             st.markdown(':red[Costs of this Chat are ' + str(round(st.session_state['used_tokens'] / 1000 * 0.002, 4)) + '$]')
         else:
             st.markdown(':orange[If you are tired talking to Ben just type "Quit" or "Exit" (he will be in a huff).]')
-
+ 
+    
         ## Submit button
         submitted = st.form_submit_button('Submit')
         if submitted:
             messages_input.append({"role": "user", "content": user_input})
-            response_answer = openai.ChatCompletion.create(
-                model = "gpt-3.5-turbo",
-                messages = messages_input,
-                temperature = st.session_state['temp'],
-                max_tokens = st.session_state['token']
-            )
+            response_answer = openai.ChatCompletion.create(model = "gpt-3.5-turbo", messages = messages_input, temperature = st.session_state['temp'], max_tokens = st.session_state['token'])
             answer = response_answer['choices'][0]['message']['content']
             st.session_state['used_tokens'] += response_answer['usage']['total_tokens']
             messages_input.append({"role": "assistant", "content": answer})
             st.session_state['messages'] = messages_input
             st.experimental_rerun()
-        
-    
-    
