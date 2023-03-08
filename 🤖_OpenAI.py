@@ -298,7 +298,7 @@ else:
         messages_input = st.session_state['messages']
     with st.form('BenBox'):
         if st.session_state['demo']:
-            benbox(image = st.secrets['benbox']['image'], text = st.secrets['benbox']['costs'] + str(round(st.session_state['used_tokens'] / 1000 * 0.002, 4)) + '$', text2 = st.secrets['benbox']['costs2'], text3 = st.secrets['benbox']['costs3'])
+            benbox(image = st.secrets['benbox']['image'], text = 'Costs of this Chat with Ben are reasonable ' + str(round(st.session_state['used_tokens'] / 1000 * 0.002, 4)) + '$', text2 = 'Please pay NOT directly to the Chat-Bot!!!', text3 = 'He always buys `Chips` from the money...')
             if st.session_state['benbox'] != '':
                 st.image(st.session_state['benbox'])
             else:

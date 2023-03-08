@@ -4,7 +4,7 @@
 
 Playground for using OpenAI ChatGPT and Hugging Face state-of-the-art diffusion models for image, text and audio generation in PyTorch.
 
-## Installation of the Hugging Face models
+## Local Installation to use the Hugging Face models
 
 Download the [Package](https://github.com/DrBenjamin/OpenAI/archive/refs/heads/main.zip) and install the needed libraries with
 
@@ -16,6 +16,17 @@ Run the software with
 
 ```cmd
 python -m streamlit run 🤖_OpenAI.py
+```
+
+Click on `Hugging Face` in the left sidebar and choose a model from the selectbox. The model will be automatically downloaded (stored in `User/.cache` folder). Create the file `.streamlit/secrets.toml` with this content:
+
+```toml
+[openai]
+key = "openai-api-key"
+image = "images/BenBox_small.png"
+
+[hugging_face]
+key = "hugging-face-key"
 ```
 
 ## Demo
