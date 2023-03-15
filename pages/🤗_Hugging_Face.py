@@ -9,6 +9,8 @@ import audio2numpy as a2n
 from pydub import AudioSegment
 import cv2
 from PIL import Image
+from PyQt5 import QtCore, QtGui, QtWidgets, uic
+from PyQt5.QtCore import Qt
 import torch
 from diffusers import StableDiffusionPipeline
 from diffusers import StableDiffusionImg2ImgPipeline

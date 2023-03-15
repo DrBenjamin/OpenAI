@@ -127,12 +127,16 @@ if pdf_usage:
 ## Model selection
 st.subheader('Choose a model')
 model = st.selectbox(label = 'What model to use?',
-                     options = ["gpt-3.5-turbo", "text-davinci-003", "text-curie-001", "text-babbage-001", "text-ada-001",
+                     options = ["gpt-4-0314", "gpt-3.5-turbo", "text-davinci-003", "text-curie-001", "text-babbage-001", "text-ada-001",
                                 "code-davinci-002", "code-cushman-001", "whisper-1"], index = 0)
 
 # Show info about model and set variable costs
 chat_usage = False
-if model == "gpt-3.5-turbo":
+if model == "gpt-4-0314":
+    cost_co_eff = 0.05
+    st.write(':green[Capability of this model:] More capable than any GPT-3.5 model, able to do more complex tasks, and optimized for chat. Will be updated with our latest model iteration. :red[Costs:] \$0.03/1k for prompt tokens and \$0.06/1k for sampled tokens.')
+    chat_usage = st.checkbox('Have an ongoing Chat?')
+elif model == "gpt-3.5-turbo":
     cost_co_eff = 0.002
     st.write(':green[Capability of this model:] Best model, also for many non-chat use cases. :red[Costs:] ' + str(cost_co_eff) + '$ (per 1K tokens)')
     chat_usage = st.checkbox('Have an ongoing Chat?')
@@ -189,7 +193,7 @@ if not chat_usage or st.session_state['chat'] < 2:
             with st.form("OpenAI"):
                 # Text input
                 st.subheader('Communicate')
-                question = st.text_input('What question do you want to ask OpenAI Chat-GPT?')
+                question = st.text_input('What question do you want to ask OpenAI ChatGPT?')
                 
                 # Temperature selection
                 temp = st.slider('Which temperature?', 0.0, 1.0, .3)
@@ -207,26 +211,29 @@ if not chat_usage or st.session_state['chat'] < 2:
                 ## Submit button
                 submitted = st.form_submit_button('Submit')
                 if submitted:
-                    if not chat_usage:
-                        # Using ChatGPT from OpenAI
-                        if model == 'gpt-3.5-turbo':
-                            response_answer = openai.ChatCompletion.create(
-                                model = "gpt-3.5-turbo",
-                                messages = [
-                                    {"role": "system", "content": "You are a helpful assistant."},
-                                    {"role": "user", "content": question + pdf_text},
-                                ]
-                            )
-                            answer = response_answer['choices'][0]['message']['content']
+                    try:
+                        if not chat_usage:
+                            # Using ChatGPT from OpenAI
+                            if model == 'gpt-3.5-turbo' or model == 'gpt-4-0314':
+                                response_answer = openai.ChatCompletion.create(
+                                    model = model,
+                                    messages = [
+                                        {"role": "system", "content": "You are a helpful assistant."},
+                                        {"role": "user", "content": question + pdf_text},
+                                    ]
+                                )
+                                answer = response_answer['choices'][0]['message']['content']
+                            else:
+                                response_answer = openai.Completion.create(model = model, prompt = question + pdf_text, temperature = temp,
+                                                                           max_tokens = tokens, top_p = 1.0, frequency_penalty = 0.0,
+                                                                           presence_penalty = 0.0, stop = ["\"\"\""])
+                                answer = response_answer['choices'][0]['text']
+                            used_tokens = response_answer['usage']['total_tokens']
                         else:
-                            response_answer = openai.Completion.create(model = model, prompt = question + pdf_text, temperature = temp,
-                                                                       max_tokens = tokens, top_p = 1.0, frequency_penalty = 0.0,
-                                                                       presence_penalty = 0.0, stop = ["\"\"\""])
-                            answer = response_answer['choices'][0]['text']
-                        used_tokens = response_answer['usage']['total_tokens']
-                    else:
-                        st.session_state['system'] = question
-                        st.experimental_rerun()
+                            st.session_state['system'] = question
+                            st.experimental_rerun()
+                    except:
+                        st.error(body = 'Connection timeout!', icon = "🚨")
         with col2:
             st.subheader('Examples')
             if pdf_usage:
@@ -328,7 +335,7 @@ else:
         submitted = st.form_submit_button('Submit')
         if submitted:
             messages_input.append({"role": "user", "content": user_input})
-            response_answer = openai.ChatCompletion.create(model = "gpt-3.5-turbo", messages = messages_input, temperature = st.session_state['temp'], max_tokens = st.session_state['token'])
+            response_answer = openai.ChatCompletion.create(model = model, messages = messages_input, temperature = st.session_state['temp'], max_tokens = st.session_state['token'])
             answer = response_answer['choices'][0]['message']['content']
             st.session_state['used_tokens'] += response_answer['usage']['total_tokens']
             messages_input.append({"role": "assistant", "content": answer})
