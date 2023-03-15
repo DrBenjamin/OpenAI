@@ -167,6 +167,9 @@ elif model == "code-cushman-001":
     cost_co_eff = 0.02
     st.write(':green[Capability of this model:] Translating natural language to code. Max request is 2,048 tokens :red[Costs:] ' + str(
         cost_co_eff) + '$ (per 1K tokens)')
+elif model == "whisper-1":
+    cost_co_eff = 0.006
+    st.write(':green[Capability of this model:] Whisper is an automatic speech recognition (ASR) system trained on 680,000 hours of multilingual and multitask supervised data collected from the web. :red[Costs:] ' + str(cost_co_eff) + '$ (per 1K tokens)')
 else:
     cost_co_eff = 0.02
   
