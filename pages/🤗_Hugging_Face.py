@@ -9,16 +9,16 @@ import audio2numpy as a2n
 from pydub import AudioSegment
 import cv2
 from PIL import Image
-from PyQt5 import QtCore, QtGui, QtWidgets, uic
-from PyQt5.QtCore import Qt
+#from PyQt5 import QtCore, QtGui, QtWidgets, uic
+#from PyQt5.QtCore import Qt
 import torch
 from diffusers import StableDiffusionPipeline
 from diffusers import StableDiffusionImg2ImgPipeline
 from diffusers import StableDiffusionControlNetPipeline, ControlNetModel, UniPCMultistepScheduler
-from transformers import pipeline
+#from transformers import pipeline
 from transformers import pipeline, set_seed
 from transformers import VisionEncoderDecoderModel, ViTImageProcessor, AutoTokenizer
-from datasets import load_dataset
+#from datasets import load_dataset
 import os
 os.environ['COMMANDLINE_ARGS'] = '--skip-torch-cuda-test --upcast-sampling --no-half-vae --no-half --use-cpu interrogate'
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
