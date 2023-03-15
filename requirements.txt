@@ -14,3 +14,4 @@ transformers
 datasets
 audio2numpy
 pydub
+PyQt5
