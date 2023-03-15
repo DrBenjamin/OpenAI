@@ -232,8 +232,8 @@ if not chat_usage or st.session_state['chat'] < 2:
                         else:
                             st.session_state['system'] = question
                             st.experimental_rerun()
-                    except:
-                        st.error(body = 'Connection timeout!', icon = "🚨")
+                    except Exception as e:
+                        st.error(body = e, icon = "🚨")
         with col2:
             st.subheader('Examples')
             if pdf_usage:
