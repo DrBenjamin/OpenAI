@@ -233,7 +233,10 @@ if not chat_usage or st.session_state['chat'] < 2:
                             st.session_state['system'] = question
                             st.experimental_rerun()
                     except Exception as e:
-                        st.error(body = e, icon = "🚨")
+                        if str(e) == 'That model does not exist':
+                            st.error(body = str(e) + ' in the open API, wait for the beta access!', icon = "🚨")
+                        else:
+                            st.error(body = e, icon = "🚨")
         with col2:
             st.subheader('Examples')
             if pdf_usage:
@@ -343,4 +346,7 @@ else:
                 st.session_state['messages'] = messages_input
                 st.experimental_rerun()
             except Exception as e:
-                st.error(body = e, icon = "🚨")
+                if str(e) == 'That model does not exist':
+                    st.error(body = str(e) + ' in the open API, wait for the beta access!', icon = "🚨")
+                else:
+                    st.error(body = e, icon = "🚨")
