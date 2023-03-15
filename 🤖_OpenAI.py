@@ -335,9 +335,12 @@ else:
         submitted = st.form_submit_button('Submit')
         if submitted:
             messages_input.append({"role": "user", "content": user_input})
-            response_answer = openai.ChatCompletion.create(model = model, messages = messages_input, temperature = st.session_state['temp'], max_tokens = st.session_state['token'])
-            answer = response_answer['choices'][0]['message']['content']
-            st.session_state['used_tokens'] += response_answer['usage']['total_tokens']
-            messages_input.append({"role": "assistant", "content": answer})
-            st.session_state['messages'] = messages_input
-            st.experimental_rerun()
+            try:
+                response_answer = openai.ChatCompletion.create(model = model, messages = messages_input, temperature = st.session_state['temp'], max_tokens = st.session_state['token'])
+                answer = response_answer['choices'][0]['message']['content']
+                st.session_state['used_tokens'] += response_answer['usage']['total_tokens']
+                messages_input.append({"role": "assistant", "content": answer})
+                st.session_state['messages'] = messages_input
+                st.experimental_rerun()
+            except Exception as e:
+                st.error(body = e, icon = "🚨")
