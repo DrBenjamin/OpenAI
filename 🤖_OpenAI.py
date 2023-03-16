@@ -128,7 +128,7 @@ if pdf_usage:
 st.subheader('Choose a model')
 model = st.selectbox(label = 'What model to use?',
                      options = ["gpt-4-0314", "gpt-3.5-turbo", "text-davinci-003", "text-curie-001", "text-babbage-001", "text-ada-001",
-                                "code-davinci-002", "code-cushman-001", "whisper-1"], index = 0)
+                                "code-davinci-002", "code-davinci-edit-001", "code-cushman-001", "whisper-1"], index = 0)
 
 # Show info about model and set variable costs
 chat_usage = False
@@ -158,7 +158,7 @@ elif model == "text-ada-001":
     st.write(
         ':green[Capability of this model:] Capable of very simple tasks, usually the fastest model in the GPT-3 series, and lowest cost. :red[Costs:] ' + str(
             cost_co_eff) + '$ (per 1K tokens)')
-elif model == "code-davinci-002":
+elif model == "code-davinci-002" or model == "code-davinci-edit-001":
     cost_co_eff = 0.02
     st.write(
         ':green[Capability of this model:] Most capable Codex model. It is particularly good at translating natural language to code. In addition to completing code, also supports inserting completions within code. Max request is 4,000 tokens :red[Costs:] ' + str(
@@ -243,7 +243,7 @@ if not chat_usage or st.session_state['chat'] < 2:
         with col2:
             st.subheader('Examples')
             if pdf_usage:
-                if model != "code-davinci-002" and "code-cushman-001":
+                if model != "code-davinci-002" and model != "code-davinci-001" and model != "code-cushman-001":
                     st.markdown(
                         'If you included PDF data type in something like\n\n*:orange[Please summarise this:]*\n\nor\n\n*:orange[Summarise this in 5 sentences:]*')
                 else:
