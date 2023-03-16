@@ -158,7 +158,7 @@ elif model == "text-ada-001":
     st.write(
         ':green[Capability of this model:] Capable of very simple tasks, usually the fastest model in the GPT-3 series, and lowest cost. :red[Costs:] ' + str(
             cost_co_eff) + '$ (per 1K tokens)')
-elif model == "code-davinci-002" or model == "code-davinci-edit-001":
+elif model == "code-davinci-002" or model == "code-davinci-edit-001" or model == "code-davinci-edit-001":
     cost_co_eff = 0.02
     st.write(
         ':green[Capability of this model:] Most capable Codex model. It is particularly good at translating natural language to code. In addition to completing code, also supports inserting completions within code. Max request is 4,000 tokens :red[Costs:] ' + str(
