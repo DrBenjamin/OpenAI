@@ -248,7 +248,7 @@ if not chat_usage or st.session_state['chat'] < 2:
                         'If you included PDF data type in something like\n\n*:orange[Please summarise this:]*\n\nor\n\n*:orange[Summarise this in 5 sentences:]*')
                 else:
                     st.markdown(
-                        'If you included PDF data and choosen "Code-Davinci" model you can type in something like\n\n*:orange[Write a Python program to use ChatGPT like this:]*')
+                        'If you included PDF data and choosen "Code-Davinci" or "Code-Cushman" model you can type in something like\n\n*:orange[Write a Python program to use ChatGPT like this:]*')
             else:
                 if model == "code-davinci-002" or model == "code-cushman-001":
                     st.markdown(
