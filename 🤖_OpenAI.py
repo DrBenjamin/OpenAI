@@ -1,6 +1,6 @@
 ##### `🤖_OpenAI.py`
 ##### OpenAI ChatGPT Demo
-##### Open-Source, hostet on https://github.com/DrBenjamin/OpenAI
+##### Open-Source, hosted on https://github.com/DrBenjamin/OpenAI
 ##### Please reach out to ben@benbox.org for any questions
 #### Loading needed Python libraries
 import streamlit as st
@@ -84,7 +84,7 @@ index = 0
 pdf_usage = st.checkbox('Include a PDF source to feed ChatGPT with data?')
 if pdf_usage:
     st.write('**:green[Use your own PDF]**')
-    documents = ["LEAM.pdf", "LLM.pdf", "KW.pdf", "AIDH.pdf", "PC.pdf"]
+    documents = ["ChatGPT.pdf", "LEAM.pdf", "LLM.pdf", "KW.pdf", "AIDH.pdf", "PC.pdf"]
     uploaded_file = st.file_uploader(label = 'Choose a PDF file to upload', type = 'pdf')
     if uploaded_file is not None:
         file_name = os.path.join('PDFs', uploaded_file.name)
