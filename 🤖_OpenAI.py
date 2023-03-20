@@ -92,7 +92,7 @@ if pdf_usage:
         file.write(uploaded_file.getvalue())
         file.close()
         documents.append(uploaded_file.name)
-        index = 4
+        index = len(documents) - 1
     
     ## Source selection
     st.write('**:green[or a provided PDF about AI / Programming]**')
