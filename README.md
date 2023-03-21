@@ -29,9 +29,11 @@ image = "images/BenBox_small.png"
 key = "hugging-face-key"
 ```
 
-## Demo
+## Streamlit Cloud Demo
 
 [![Open in Streamlit][share_badge]][share_link]
+
+## Hugging Face Demo
 
 [![Open in Hugging Face][hugging_badge]][hugging_link]
 
