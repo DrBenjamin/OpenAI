@@ -65,6 +65,23 @@ def benbox(image, text, text2, text3):
     st.session_state['benbox'] = s.getvalue()
 
 
+### Function:
+def chat_message(reader):
+    output = []
+    st.experimental_show(len(reader.pages))
+    for i in range(len(reader.pages)):
+        input = reader.pages[i].extract_text()
+        input = input.split(';')
+        input = [word.strip() for word in input]
+        for item in input:
+            items = item.split('", "')
+            try:
+                output.append(dict(zip(('role', 'content'), (items[0][8:].replace('"', ''), items[1][11:].replace('"', '')))))
+            except Exception as e:
+                print(e)
+    return output
+
+
 
 
 #### Main program
@@ -84,7 +101,7 @@ index = 0
 pdf_usage = st.checkbox('Include a PDF source to feed ChatGPT with data?')
 if pdf_usage:
     st.write('**:green[Use your own PDF]**')
-    documents = ["ChatGPT.pdf", "LEAM.pdf", "LLM.pdf", "KW.pdf", "AIDH.pdf", "PC.pdf", "Source_Code.pdf"]
+    documents = ["ChatGPT.pdf", "LEAM.pdf", "LLM.pdf", "KW.pdf", "AIDH.pdf", "PC.pdf", "Source_Code.pdf", "Ben.pdf"]
     uploaded_file = st.file_uploader(label = 'Choose a PDF file to upload', type = 'pdf')
     if uploaded_file is not None:
         file_name = os.path.join('PDFs', uploaded_file.name)
@@ -108,8 +125,8 @@ if pdf_usage:
         
         # print the text of the first page
         pagez = []
-        for i in range(pages_range[0], pages_range[1], 1):
-            pagez.append(i)
+        for i in range(pages_range[0] - 1, pages_range[1], 1):
+            pagez.append(i + 1)
             pdf_text += reader.pages[i].extract_text()
         pdf_text += '"""'
         page = st.radio(
@@ -117,7 +134,7 @@ if pdf_usage:
             options = pagez, horizontal = True, index = 0)
         if page is None:
             page = 0
-        sty.scrollableTextbox(reader.pages[page].extract_text(), height = 256, border = True)
+        sty.scrollableTextbox(reader.pages[page - 1].extract_text(), height = 256, border = True)
     else:
         pdf_text += reader.pages[0].extract_text() + '"""'
         sty.scrollableTextbox(reader.pages[0].extract_text(), height = 256, border = True)
@@ -186,8 +203,11 @@ if not chat_usage or st.session_state['chat'] < 2:
             with st.form("OpenAI"):
                 # Text input
                 st.subheader('Communicate')
-                question = st.text_input('What question do you want to ask OpenAI ChatGPT?')
-                
+                if not (chat_usage and pdf_usage):
+                    question = st.text_input('What question do you want to ask OpenAI ChatGPT?', disabled = st.session_state['demo'])
+                else:
+                    question = ''
+                    
                 # Temperature selection
                 temp = st.slider('Which temperature?', 0.0, 1.0, .3)
     
@@ -233,7 +253,8 @@ if not chat_usage or st.session_state['chat'] < 2:
         with col2:
             st.subheader('Examples')
             if pdf_usage:
-                st.markdown('If you included PDF data type in something like\n\n*:orange[Please summarise this:]*\n\nor\n\n*:orange[Summarise this in 5 sentences:]*')
+                if not chat_usage:
+                    st.markdown('If you included PDF data type in something like\n\n*:orange[Please summarise this:]*\n\nor\n\n*:orange[Summarise this in 5 sentences:]*')
             else:
                 if model == "text-curie-001":
                     st.markdown(
@@ -249,8 +270,11 @@ if not chat_usage or st.session_state['chat'] < 2:
                         st.markdown('Type in something like\n\n*:orange[You are a helpful assistant] or :orange[You are a cynical and humorous assistant.]*')
                         st.write('or use the Demo')
                         st.session_state['demo'] = st.checkbox(label = 'BenBox Demo (press submit)')
+                        if st.session_state['demo']:
+                            st.experimental_rerun()
                     else:
                         st.markdown('Type in something like\n\n*:orange[Write me a short poem] or :orange[Write a Python program about fibonacci]*')
+                        st.session_state['demo'] = False
                 st.markdown('**Temperature**\n\n:green[*0 = each answer will be the same*]\n\n:green[*1 = more "creative" answers*]')
                 if not chat_usage:
                     st.markdown('**Tokens**\n\n:green[*1 token ~= 4 chars in English*]')
@@ -276,26 +300,40 @@ else:
         if st.session_state['demo']:
             st.session_state['temp'] = 0.9
             st.session_state['token'] = 300
-            messages_input = [
-                {"role": "system", "content": 'You are Ben, an Artificial Intelligence. You are in a blue Box ("BenBox") and live together with a spaceship crew ("Emmie", "Sertan" and the two Robots "SAM" and "SEB") on a starship called "Pulp". One of the robots, SAM, is talking to you right now. You are funny and a quite nice guy and gives short but useful answers. Right now the Pulp is landed on Earth, in Germany in the city Cologne. The next mission is to find artifacts in the old big roman churches there.'},
-                {"role": "assistant", "content": "What's up?"},
-                {"role": "user", "content": "Hi I am SAM, one of the robots on board of the spaceship Pulp. I am a quite young robot and need to learn a lot of things."},
-                {"role": "assistant", "content": "That's cool, I can send a around 100 Trillian Gigabytes of language model data. Your language processor definitely needs an update!"}
-            ]
+            reader = PyPDF2.PdfReader('PDFs/Ben.pdf')
+            messages_input = chat_message(reader)
         else:
-            messages_input = [
-                {"role": "system", "content": st.session_state['system']},
-                {"role": "assistant", "content": "How can I help you?"}
-            ]
+            if pdf_usage:
+                try:
+                    output = []
+                    input = pdf_text.split(';')
+                    input = [word.strip() for word in input]
+                    for item in input:
+                        items = item.split('", "')
+                        output.append(dict(zip(('role', 'content'), (items[0][8:].replace('"', '').replace(': ', ''), items[1][11:].replace('"', '')))))
+                    messages_input = output
+                except:
+                    if output[0]['role'] == 'system':
+                        messages_input = output
+                    else:
+                        messages_input = [
+                            {"role": "system", "content": pdf_text},
+                            {"role": "assistant", "content": "How can I help you?"}
+                        ]
+            else:
+                messages_input = [
+                    {"role": "system", "content": st.session_state['system']},
+                    {"role": "assistant", "content": "How can I help you?"}
+                ]
     else:
         messages_input = st.session_state['messages']
     with st.form('BenBox'):
         if st.session_state['demo']:
-            benbox(image = st.secrets['benbox']['image'], text = 'Costs of this Chat with Ben are reasonable ' + str(round(st.session_state['used_tokens'] / 1000 * 0.002, 4)) + '$', text2 = 'Please pay NOT directly to the Chat-Bot!!!', text3 = 'He always buys `Chips` from the money...')
+            benbox(image = 'images/BenBox_small.png', text = 'Costs of this Chat with Ben are reasonable ' + str(round(st.session_state['used_tokens'] / 1000 * 0.002, 4)) + '$', text2 = 'Please pay NOT directly to the Chat-Bot!!!', text3 = 'He always buys `Chips` from the money...')
             if st.session_state['benbox'] != '':
                 st.image(st.session_state['benbox'])
             else:
-                st.image(st.secrets['benbox']['image'])
+                st.image(images/BenBox_small.png)
         for i in range(len(messages_input)):
             if i > 0:
                 if i % 2 == 1:
