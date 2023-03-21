@@ -18,7 +18,7 @@ from PIL import ImageFont
 #### Streamlit initial setup
 st.set_page_config(
     page_title = "OpenAI",
-    page_icon = "https://www.benbox.org/R/OpenAI.png",
+    page_icon = "images/Logo.png",
     layout = "centered",
     initial_sidebar_state = "expanded"
 )

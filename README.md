@@ -31,8 +31,11 @@ key = "hugging-face-key"
 
 ## Demo
 
+Streamlit Cloud
 [![Open in Streamlit Cloud][share_badge]][share_link]
 
+Hugging Face
+[![Open in Hugging Face][hugging_badge]][hugging_link]
 
 [github_badge]: https://badgen.net/badge/icon/GitHub?icon=github&color=black&label
 [github_link]: https://github.com/DrBenjamin/OpenAI
@@ -40,8 +43,8 @@ key = "hugging-face-key"
 [share_badge]: https://static.streamlit.io/badges/streamlit_badge_black_white.svg
 [share_link]: https://ai-playground.streamlit.app/
 
-[share_badge]: https://static.streamlit.io/badges/streamlit_badge_black_white.svg
-[share_link]: https://ai-playground.streamlit.app/
+[hugging_badge]: images/Hugging_Face.svg
+[hugging_link]: https://huggingface.co/spaces/DrBenjamin/OpenAI
 
 
 
