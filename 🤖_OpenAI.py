@@ -79,7 +79,7 @@ used_tokens = 0
 
 ### PDF documents
 st.subheader('Use data from a PDF source')
-pdf_text = ' "'
+pdf_text = ' """'
 index = 0
 pdf_usage = st.checkbox('Include a PDF source to feed ChatGPT with data?')
 if pdf_usage:
@@ -111,7 +111,7 @@ if pdf_usage:
         for i in range(pages_range[0], pages_range[1], 1):
             pagez.append(i)
             pdf_text += reader.pages[i].extract_text()
-        pdf_text += '"'
+        pdf_text += '"""'
         page = st.radio(
             label = 'Page preview for selecting meaningful pages of the PDF source (use slider above to adjust)',
             options = pagez, horizontal = True, index = 0)
@@ -119,6 +119,7 @@ if pdf_usage:
             page = 0
         sty.scrollableTextbox(reader.pages[page].extract_text(), height = 256, border = True)
     else:
+        pdf_text += reader.pages[0].extract_text() + '"""'
         sty.scrollableTextbox(reader.pages[0].extract_text(), height = 256, border = True)
 
 
