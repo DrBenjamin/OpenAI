@@ -232,7 +232,7 @@ if not chat_usage or st.session_state['chat'] < 2:
         with col2:
             st.subheader('Examples')
             if pdf_usage:
-                st.markdown('If you included PDF data and choosen "Code-Davinci" or "Code-Cushman" model you can type in something like\n\n*:orange[Write a Python program to use ChatGPT like this:]*')
+                st.markdown('If you included PDF data type in something like\n\n*:orange[Please summarise this:]*\n\nor\n\n*:orange[Summarise this in 5 sentences:]*')
             else:
                 if model == "text-curie-001":
                     st.markdown(
@@ -249,10 +249,8 @@ if not chat_usage or st.session_state['chat'] < 2:
                         st.write('or use the Demo')
                         st.session_state['demo'] = st.checkbox(label = 'BenBox Demo (press submit)')
                     else:
-                        st.markdown(
-                            'Type in something like\n\n*:orange[Write me a short poem] or :orange[What is the last newspaper you have read?]*')
-                st.markdown(
-                    '**Temperature**\n\n:green[*0 = each answer will be the same*]\n\n:green[*1 = more "creative" answers*]')
+                        st.markdown('Type in something like\n\n*:orange[Write me a short poem] or :orange[Write a Python program about fibonacci]*')
+                st.markdown('**Temperature**\n\n:green[*0 = each answer will be the same*]\n\n:green[*1 = more "creative" answers*]')
                 if not chat_usage:
                     st.markdown('**Tokens**\n\n:green[*1 token ~= 4 chars in English*]')
      
