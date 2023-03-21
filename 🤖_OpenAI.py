@@ -126,9 +126,7 @@ if pdf_usage:
 ### OpenAI ChatGPT
 ## Model selection
 st.subheader('Choose a model')
-model = st.selectbox(label = 'What model to use?',
-                     options = ["gpt-4-0314", "gpt-3.5-turbo", "text-davinci-003", "text-curie-001", "text-babbage-001", "text-ada-001",
-                                "code-davinci-002", "code-davinci-edit-001", "code-cushman-001", "whisper-1"], index = 0)
+model = st.selectbox(label = 'What model to use?', options = ["gpt-4-0314", "gpt-3.5-turbo", "text-davinci-003", "text-curie-001", "text-babbage-001", "text-ada-001", "whisper-1"], index = 0)
 
 # Show info about model and set variable costs
 chat_usage = False
@@ -158,15 +156,6 @@ elif model == "text-ada-001":
     st.write(
         ':green[Capability of this model:] Capable of very simple tasks, usually the fastest model in the GPT-3 series, and lowest cost. :red[Costs:] ' + str(
             cost_co_eff) + '$ (per 1K tokens)')
-elif model == "code-davinci-002" or model == "code-davinci-edit-001" or model == "code-davinci-edit-001":
-    cost_co_eff = 0.02
-    st.write(
-        ':green[Capability of this model:] Most capable Codex model. It is particularly good at translating natural language to code. In addition to completing code, also supports inserting completions within code. Max request is 4,000 tokens :red[Costs:] ' + str(
-            cost_co_eff) + '$ (per 1K tokens)')
-elif model == "code-cushman-001":
-    cost_co_eff = 0.02
-    st.write(':green[Capability of this model:] Translating natural language to code. Max request is 2,048 tokens :red[Costs:] ' + str(
-        cost_co_eff) + '$ (per 1K tokens)')
 elif model == "whisper-1":
     cost_co_eff = 0.006
     st.write(':green[Capability of this model:] Whisper is an automatic speech recognition (ASR) system trained on 680,000 hours of multilingual and multitask supervised data collected from the web. :red[Costs:] ' + str(cost_co_eff) + '$ (per 1K tokens)')
@@ -243,17 +232,9 @@ if not chat_usage or st.session_state['chat'] < 2:
         with col2:
             st.subheader('Examples')
             if pdf_usage:
-                if model != "code-davinci-002" and model != "code-davinci-001" and model != "code-cushman-001":
-                    st.markdown(
-                        'If you included PDF data type in something like\n\n*:orange[Please summarise this:]*\n\nor\n\n*:orange[Summarise this in 5 sentences:]*')
-                else:
-                    st.markdown(
-                        'If you included PDF data and choosen "Code-Davinci" or "Code-Cushman" model you can type in something like\n\n*:orange[Write a Python program to use ChatGPT like this:]*')
+                st.markdown('If you included PDF data and choosen "Code-Davinci" or "Code-Cushman" model you can type in something like\n\n*:orange[Write a Python program to use ChatGPT like this:]*')
             else:
-                if model == "code-davinci-002" or model == "code-cushman-001":
-                    st.markdown(
-                        'If choosen "Code-Davinci" or "Code-Crushman" model you can type in something like\n\n*:orange[1. Create a list of first names 2. Create a list of last names 3. Combine them randomly into a list of 100 full names]*')
-                elif model == "text-curie-001":
+                if model == "text-curie-001":
                     st.markdown(
                         'If choosen "Curie" model you can type in something like\n\n*:orange[Extract a keyword in this text "Saturdays it is often raining!"]*')
                 elif model == "text-babbage-001":
