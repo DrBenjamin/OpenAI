@@ -43,7 +43,7 @@ Hugging Face
 [share_badge]: https://static.streamlit.io/badges/streamlit_badge_black_white.svg
 [share_link]: https://ai-playground.streamlit.app/
 
-[hugging_badge]: images/Hugging_Face.svg
+[hugging_badge]: https://badgen.net/badge/icon/HuggingFace?icon=huggingface&color=black&label
 [hugging_link]: https://huggingface.co/spaces/DrBenjamin/OpenAI
 
 
