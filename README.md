@@ -33,7 +33,7 @@ key = "hugging-face-key"
 
 [![Open in Streamlit Cloud][share_badge]][share_link]
 
-[![Open in Hugging Face][hugging_link]
+[![Open in Hugging Face]][hugging_link]
 
 [github_badge]: https://badgen.net/badge/icon/GitHub?icon=github&color=black&label
 [github_link]: https://github.com/DrBenjamin/OpenAI
