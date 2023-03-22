@@ -79,7 +79,7 @@ with st.sidebar.expander(" 🛠️ Settings ", expanded = False):
     if st.checkbox("Preview memory buffer"):
         st.write(st.session_state.entity_memory.buffer)
     MODEL = st.selectbox(label = 'Model', options = ['gpt-3.5-turbo', 'text-davinci-003'])
-    K = st.number_input(' (#)Summary of prompts to consider', min_value = 3,max_value = 1000)
+    K = st.number_input(' (#)Summary of prompts to consider', min_value = 3, max_value = 1000)
 
 # Set up the Streamlit app layout
 st.title("🧠 Memory Bot")
@@ -111,6 +111,7 @@ if user_input:
 
 # Allow to download as well
 download_str = []
+
 # Display the conversation history using an expander, and allow the user to download it
 with st.expander("Conversation", expanded = True):
     for i in range(len(st.session_state['generated']) - 1, -1, -1):
