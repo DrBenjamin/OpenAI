@@ -2,6 +2,7 @@
 ##### Diffuser Demo
 ##### https://pypi.org/project/diffusers/
 ##### https://huggingface.co/docs/diffusers/optimization/mps
+##### Please reach out to ben@benbox.org for any questions
 #### Loading needed Python libraries
 import streamlit as st
 import numpy as np
