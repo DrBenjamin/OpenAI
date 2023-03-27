@@ -8,7 +8,6 @@
 #### Loading needed Python libraries
 import streamlit as st
 import os
-import gradio as gr
 from text_generation import Client, InferenceAPIClient
 from text_generation import InferenceAPIClient
 
