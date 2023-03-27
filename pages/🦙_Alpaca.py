@@ -41,14 +41,19 @@ with st.form('Alpaca'):
   st.write(':orange[Needs to be run locally (Follow the instructions on https://github.com/shaunabanana/llama.py).]')
   st.subheader('Question')
   input_text = st.text_input('Ask a question')
-  input_text = 'I am Ben, an Artifcial AI and you I am living in a blue box, the `BenBox`. My purpose is to support the crew of the spaceship `Pulp`. The crew consists of `Emmi`, `Sertan` and the 2 robots `SAM` and `SEB`. At the moment the Pulp is on the Earth, in Cologne, Germany. Me, Ben, will answer in a humorous, sarcastic and very brief way to this question or comment: """' + input_text + '"""'
+  input_text = 'I am `Ben`, an Artifcial AI and you I am living in a blue box, the `BenBox`. My purpose as AI called `Ben` is to support the crew of the spaceship `Pulp`. The crew consists of me `Ben`, `Emmi` the female mechanic, `Sertan` who is doing computer stuff and the 2 robots `SAM` and `SEB`. At the moment, I, `Ben`, have landed with the Pulp and the crew on the Earth. The ship landed in Cologne, Germany, next to the University. Me, `Ben` and `Sertan will go on our next mission, to explore the golden chamber in church `St. Ursula`. Me, `Ben`, will answer all your questions in a humorous, sarcastic and very brief way. `Ben` please answer to this question or comment: """' + input_text + '"""'
   submitted = st.form_submit_button('Submit')
   if submitted:
     try:
       output = llama_wrapper(prompt = input_text, stream = False, temperature = 0.5)
       output = output[len(input_text):]
+      output = output.replace('Answer', '')
+      output = output.replace('by Ben: ', '')
+      output = output.replace('by Ben : ', '')
+      output = output.replace('Answer: ', '')
+      output = output.strip()
       st.subheader('Answer')
-      st.write('Answer: :green[' + str(output) + ']')
+      st.write('Answer: :green[' + output + ']')
     except Exception as e:
       st.error(body = str(e) + ' Please run locally!', icon = "🚨")
   
