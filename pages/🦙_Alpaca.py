@@ -5,8 +5,9 @@
 ##### Please reach out to ben@benbox.org for any questions
 #### Loading needed Python libraries
 import streamlit as st
-from llamacpypy import Llama
+#from llamacpypy import Llama
 import llamacpp
+from llama_cpp import Llama
 import os
 import subprocess
 
@@ -22,6 +23,9 @@ st.set_page_config(
 )
 
 
+
+
+#### Functions of the Python Wrapper
 def llama_stream(
         prompt = '',
         skip_prompt = True,
@@ -128,6 +132,7 @@ def llama(
 
 
 
+### Python Wrapper (functions above
 #text = []
 #for token in llama(prompt = 'What is your purpose?', repeat_penalty = 1.05, skip_prompt = False, interactive = False):
 #    print(token, end = '', flush = True)
@@ -139,14 +144,26 @@ def llama(
 #st.write(''.join(text))
 
 
+
+### llamacpypy
 #llama = Llama(model_name = 'models/7B/ggml-model-q4_0.bin', warm_start = True)
 #llama.load_model()
 #var = llama.generate("This is the weather report, we are reporting a clown fiesta happening at backer street. The clowns ")
 #st.write(var)
 
-model_path = "./models/7B/ggml-model-q4_0.bin"
-params = llamacpp.gpt_params(model_path, "Hi, I'm a llama.", 4096, 40, 0.1, 0.7, 2.0)
-model = llamacpp.PyLLAMA(model_path, params)
-text = model.predict("Hello, I'm a llama.", 10)
-st.write(text)
+
+
+### llamacpp
+#model_path = "./models/7B/ggml-model-q4_0.bin"
+#params = llamacpp.gpt_params(model_path, 4096, 40, 0.1, 0.7, 2.0)
+#model = llamacpp.PyLLAMA(model_path, params)
+#text = model.predict("Hello, I'm a llama.", 10)
+#st.write(text)
+
+
+
+### Llama cpp
+llm = Llama(model_path="models/7B/ggml-model-q4_0.bin")
+output = llm("Q: Name the planets in the solar system? A: ", max_tokens = 32, stop = ["Q:", "\n"], echo = True)
+st.write(output)
         
