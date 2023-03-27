@@ -9,6 +9,8 @@ openai
 PyPDF2
 opencv-python-headless
 torch == 1.13.1
+torchvision==0.1.9
+torchaudio==0.13.1
 langchain
 diffusers
 transformers

@@ -27,11 +27,20 @@ st.set_page_config(
 
 #### Main program
 st.header('💁‍ Open Assistant LLM')
+st.write('Conversational AI for everyone.')
+st.write('In the same way that Stable Diffusion helped the world make art and images in new ways, this helps to improve the world by providing amazing conversational AI.')
 st.write('This is the first iteration English supervised-fine-tuning (SFT) model of the Open-Assistant project. It is based on a Pythia 12B that was fine-tuned on ~22k human demonstrations of assistant conversations collected through the https://open-assistant.io/ human feedback web app before March 7, 2023.')
-st.write('Question: :green[Why is the sky blue?]')
-client = InferenceAPIClient("OpenAssistant/oasst-sft-1-pythia-12b")
-text = client.generate("<|prompter|>Why is the sky blue?<|endoftext|><|assistant|>").generated_text
-st.write('Answer: :green[' + str(text) + ']')
+st.write(':orange[Needs to be run on Hugging Face to access the OpenAssistant model (Run it here https://huggingface.co/spaces/DrBenjamin/AI_Demo).]')
+with st.form('OpenAssistant'):
+  client = InferenceAPIClient("OpenAssistant/oasst-sft-1-pythia-12b")
+  st.subheader('Question')
+  input_text = st.text_input('Ask a question')
+  input_text = '<|prompter|>' + input_text + '<|endoftext|><|assistant|>'
+  submitted = st.form_submit_button('Submit')
+  if submitted:
+    text = client.generate(input_text).generated_text
+    st.subheader('Answer')
+    st.write('Answer: :green[' + str(text) + ']')
 
 
 # Token Streaming

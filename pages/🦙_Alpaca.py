@@ -1,15 +1,24 @@
 ##### `🦙_Alpaca.py`
 ##### Alpaca Model
-##### https://github.com/seemanne/llamacpypy
 ##### https://github.com/shaunabanana/llama.py
+##### https://github.com/seemanne/llamacpypy
+##### https://github.com/thomasantony/llamacpp-python
+##### https://github.com/abetlen/llama-cpp-python
 ##### Please reach out to ben@benbox.org for any questions
 #### Loading needed Python libraries
 import streamlit as st
-#from llamacpypy import Llama
-import llamacpp
-from llama_cpp import Llama
-import os
 import subprocess
+import sys
+sys.path.insert(1, "pages/modules")
+#import llama as llama
+from llama_wrapper import llama_wrapper
+
+
+## Llama libraries
+# produces Errors: zsh: illegal hardware instruction
+from llamacpypy import Llama
+import llamacpp
+#from llama_cpp import Llama
 
 
 
@@ -24,125 +33,22 @@ st.set_page_config(
 
 
 
-
-#### Functions of the Python Wrapper
-def llama_stream(
-        prompt = '',
-        skip_prompt = True,
-        trim_prompt = 0,
-        executable = 'pages/llama.cpp/main',
-        model = 'models/7B/ggml-model-q4_0.bin',
-        threads = 4,
-        temperature = 0.7,
-        top_k = 40,
-        top_p = 0.5,
-        repeat_last_n = 256,
-        repeat_penalty = 1.17647,
-        n = 4096,
-        interactive = False,
-        reverse_prompt = "User:"
-):
-    command = [
-        executable,
-        '-m', model,
-        '-t', str(threads),
-        '--temp', str(temperature),
-        '--top_k', str(top_k),
-        '--top_p', str(top_p),
-        '--repeat_last_n', str(repeat_last_n),
-        '--repeat_penalty', str(repeat_penalty),
-        '-n', str(n),
-        '-p', prompt
-    ]
-    if interactive:
-        command += ['-i', '-r', reverse_prompt]
-    
-    process = subprocess.Popen(
-        command,
-        stdin = subprocess.PIPE,
-        stdout = subprocess.PIPE,
-        stderr = subprocess.PIPE,
-    )
-    
-    token = b''
-    generated = ''
-    while True:
-        token += process.stdout.read(1)
-        if token:  # neither empty string nor None
-            try:
-                decoded = token.decode('utf-8')
-                
-                trimmed_prompt = prompt
-                if trim_prompt > 0:
-                    trimmed_prompt = prompt[:-trim_prompt]
-                prompt_finished = generated.startswith(trimmed_prompt)
-                reverse_prompt_encountered = generated.endswith(reverse_prompt)
-                if not skip_prompt or prompt_finished:
-                    yield decoded
-                if interactive and prompt_finished and reverse_prompt_encountered:
-                    user_input = input()
-                    process.stdin.write(user_input.encode('utf-8') + b'\n')
-                    process.stdin.flush()
-                
-                generated += decoded
-                token = b''
-            except UnicodeDecodeError:
-                continue
-        elif process.poll() is not None:
-            return
-
-
-def llama(
-        prompt = '',
-        stream = False,
-        skip_prompt = False,
-        trim_prompt = 0,
-        executable = 'pages/llama.cpp/main',
-        model = 'models/7B/ggml-model-q4_0.bin',
-        threads = 4,
-        temperature = 0.7,
-        top_k = 40,
-        top_p = 0.5,
-        repeat_last_n = 256,
-        repeat_penalty = 1.17647,
-        n = 4096,
-        interactive = False,
-        reverse_prompt = "User:"
-):
-    streamer = llama_stream(
-        prompt = prompt,
-        skip_prompt = skip_prompt,
-        trim_prompt = trim_prompt,
-        executable = executable,
-        model = model,
-        threads = threads,
-        temperature = temperature,
-        top_k = top_k,
-        top_p = top_p,
-        repeat_last_n = repeat_last_n,
-        repeat_penalty = repeat_penalty,
-        n = n,
-        interactive = interactive,
-        reverse_prompt = reverse_prompt
-    )
-    if stream:
-        return streamer
-    else:
-        return ''.join(list(streamer))
-
-
-
-### Python Wrapper (functions above
-#text = []
-#for token in llama(prompt = 'What is your purpose?', repeat_penalty = 1.05, skip_prompt = False, interactive = False):
-#    print(token, end = '', flush = True)
-#    text.append(token)
-#st.subheader('Debug')
-#st.experimental_show(text[0])
-#st.experimental_show(text[1])
-#st.subheader('Answer')
-#st.write(''.join(text))
-
+#### Main programs
+### Python Wrapper
+with st.form('Alpaca'):
+  st.header('Alpaca LLM')
+  st.write('LLaMA is a collection of foundation language models ranging from 7B to 65B parameters, trained on trillions of tokens to show that it is possible to train state-of-the-art models using publicly available datasets exclusively, without resorting to proprietary and inaccessible datasets. In particular, LLaMA-13B outperforms GPT-3 (175B) on most benchmarks, and LLaMA-65B is competitive with the best models, Chinchilla-70B and PaLM-540B. All models aree publically released to the research community.')
+  st.write(':orange[Needs to be run locally (Follow the instructions on https://github.com/shaunabanana/llama.py).]')
+  st.subheader('Question')
+  input_text = st.text_input('Ask a question')
+  input_text = 'I am Ben, an Artifcial AI and you I am living in a blue box, the `BenBox`. My purpose is to support the crew of the spaceship `Pulp`. The crew consists of `Emmi`, `Sertan` and the 2 robots `SAM` and `SEB`. At the moment the Pulp is on the Earth, in Cologne, Germany. Me, Ben, will answer in a humorous, sarcastic and very brief way to this question or comment: """' + input_text + '"""'
+  submitted = st.form_submit_button('Submit')
+  if submitted:
+    output = llama_wrapper(prompt = input_text, stream = False, temperature = 0.5)
+    output = output[len(input_text):]
+    st.subheader('Answer')
+    st.write('Answer: :green[' + str(output) + ']')
+  
 
 
 ### llamacpypy
@@ -159,11 +65,87 @@ def llama(
 #model = llamacpp.PyLLAMA(model_path, params)
 #text = model.predict("Hello, I'm a llama.", 10)
 #st.write(text)
+#params = llamacpp.gpt_params('./models/7B/ggml-model-q4_0.bin',  # model,
+#    512,  # ctx_size
+#    100,  # n_predict
+#    40,  # top_k
+#    0.95,  # top_p
+#    0.85,  # temp
+#    1.30,  # repeat_penalty
+#    -1,  # seed
+#    8,  # threads
+#    64,  # repeat_last_n
+#    8,  # batch_size
+#)
+#model = llamacpp.PyLLAMA(params)
+#model.add_bos()     # Adds "beginning of string" token
+#model.update_input("A llama is a")
+#model.print_startup_stats()
+#model.prepare_context()
+
+#model.ingest_all_pending_input(True)
+#while not model.is_finished():
+#    text, is_finished = model.infer_text()
+#    print(text, end="")
+
+#    if is_finished:
+#        break
+
+# Flush stdout
+#sys.stdout.flush()
+#model.print_end_stats()
 
 
 
 ### Llama cpp
-llm = Llama(model_path="models/7B/ggml-model-q4_0.bin")
-output = llm("Q: Name the planets in the solar system? A: ", max_tokens = 32, stop = ["Q:", "\n"], echo = True)
-st.write(output)
+# llm = Llama(model_path="models/7B/ggml-model-q4_0.bin")
+# output = llm("Q: Name the planets in the solar system? A: ", max_tokens = 32, stop = ["Q:", "\n"], echo = True)
+# st.write(output)
+
+
+
+### Llama python mapping
+# Initialize llama context
+# params = llama.llama_context_default_params()
+#
+# n = 512
+#
+# params.n_ctx = n
+# params.n_parts = -1
+# params.seed = 1679473604
+# params.f16_kv = False
+# params.logits_all = False
+# params.vocab_only = False
+#
+# # Set model path accordingly
+# ctx = llama.llama_init_from_file('models/ggml-model-q4.bin', params)
+#
+# # Tokenize text
+# tokens = (llama.llama_token * n)()
+# n_tokens = llama.llama_tokenize(ctx, 'Q: What is the capital of France? A: ', tokens, n, True)
+# if n_tokens < 0:
+#     print('Error: llama_tokenize() returned {}'.format(n_tokens))
+#     exit(1)
+#
+# text = "".join(llama.llama_token_to_str(ctx, t) for t in tokens[:n_tokens])
+# print(text)
+#
+# # Evaluate tokens
+# for i in range(3):
+#     r = llama.llama_eval(ctx, tokens, n_tokens, 0, 12)
+#     if r != 0:
+#         print('Error: llama_eval() returned {}'.format(r))
+#         exit(1)
+#     token = llama.llama_sample_top_p_top_k(ctx, tokens, n_tokens , top_k=40, top_p=0.95, temp=0.8, repeat_penalty=1.1)
+#     print(token)
+#     tokens[n_tokens] = token
+#     n_tokens += 1
+#     text = "".join(llama.llama_token_to_str(ctx, t) for t in tokens[:n_tokens])
+#     print(text)
+#
+# # # Print timings
+# llama.llama_print_timings(ctx)
+#
+# # # Free context
+# llama.llama_free(ctx)
         
