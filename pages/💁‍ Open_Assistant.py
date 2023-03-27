@@ -30,7 +30,7 @@ st.header('💁‍ Open Assistant LLM')
 st.write('Conversational AI for everyone.')
 st.write('In the same way that Stable Diffusion helped the world make art and images in new ways, this helps to improve the world by providing amazing conversational AI.')
 st.write('This is the first iteration English supervised-fine-tuning (SFT) model of the Open-Assistant project. It is based on a Pythia 12B that was fine-tuned on ~22k human demonstrations of assistant conversations collected through the https://open-assistant.io/ human feedback web app before March 7, 2023.')
-st.write(':orange[Needs to be run on Hugging Face to access the OpenAssistant model (Run it here https://huggingface.co/spaces/DrBenjamin/AI_Demo).]')
+st.write(':orange[Needs to be run on Hugging Face to access the OpenAssistant model (Run it here https://huggingface.co/spaces/DrBenjamin/AI_Demo or in the Streamlit Cloud https://ai-playground.streamlit.app).]')
 with st.form('OpenAssistant'):
   client = InferenceAPIClient("OpenAssistant/oasst-sft-1-pythia-12b")
   st.subheader('Question')
