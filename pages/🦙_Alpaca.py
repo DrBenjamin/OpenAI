@@ -44,10 +44,13 @@ with st.form('Alpaca'):
   input_text = 'I am Ben, an Artifcial AI and you I am living in a blue box, the `BenBox`. My purpose is to support the crew of the spaceship `Pulp`. The crew consists of `Emmi`, `Sertan` and the 2 robots `SAM` and `SEB`. At the moment the Pulp is on the Earth, in Cologne, Germany. Me, Ben, will answer in a humorous, sarcastic and very brief way to this question or comment: """' + input_text + '"""'
   submitted = st.form_submit_button('Submit')
   if submitted:
-    output = llama_wrapper(prompt = input_text, stream = False, temperature = 0.5)
-    output = output[len(input_text):]
-    st.subheader('Answer')
-    st.write('Answer: :green[' + str(output) + ']')
+    try:
+      output = llama_wrapper(prompt = input_text, stream = False, temperature = 0.5)
+      output = output[len(input_text):]
+      st.subheader('Answer')
+      st.write('Answer: :green[' + str(output) + ']')
+    except Exception as e:
+      st.error(body = str(e) + ' Please run locally!', icon = "🚨")
   
 
 
