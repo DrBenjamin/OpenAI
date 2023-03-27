@@ -9,9 +9,13 @@ import gradio as gr
 from text_generation import Client, InferenceAPIClient
 from text_generation import InferenceAPIClient
 
+
+st.header('💁‍ Open Assistant LLM')
+st.write('This is the first iteration English supervised-fine-tuning (SFT) model of the Open-Assistant project. It is based on a Pythia 12B that was fine-tuned on ~22k human demonstrations of assistant conversations collected through the https://open-assistant.io/ human feedback web app before March 7, 2023.')
+st.write('Question: :green[Why is the sky blue?]')
 client = InferenceAPIClient("OpenAssistant/oasst-sft-1-pythia-12b")
 text = client.generate("<|prompter|>Why is the sky blue?<|endoftext|><|assistant|>").generated_text
-st.write(text)
+st.write('Answer: :green[' + str(text) + ']')
 
 # Token Streaming
 #text = ""

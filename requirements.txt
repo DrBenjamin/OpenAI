@@ -8,7 +8,7 @@ streamlit-scrollable-textbox
 openai
 PyPDF2
 opencv-python-headless
-torch == 1.12.1
+torch == 1.13.1
 langchain
 diffusers
 transformers
