@@ -29,7 +29,7 @@ os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
 #### Streamlit initial setup
 st.set_page_config(
-  page_title = "Hugging Face Diffuser Models",
+  page_title = "🤗 Hugging Face Diffuser Models",
   page_icon = "images/Hugging_Face.png",
   layout = "centered",
   initial_sidebar_state = "expanded"

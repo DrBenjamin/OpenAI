@@ -1,11 +1,25 @@
 ##### `🦙_Alpaca.py`
 ##### Alpaca Model
-##### https://medium.com/@avra42/how-to-build-a-chatbot-with-chatgpt-api-and-a-conversational-memory-in-python-8d856cda4542
+##### https://github.com/seemanne/llamacpypy
+##### https://github.com/shaunabanana/llama.py
 ##### Please reach out to ben@benbox.org for any questions
 #### Loading needed Python libraries
 import streamlit as st
 from llamacpypy import Llama
+import llamacpp
+import os
 import subprocess
+
+
+
+
+#### Streamlit initial setup
+st.set_page_config(
+  page_title = "🦙 Alpaca",
+  page_icon = "images/Logo.png",
+  layout = "centered",
+  initial_sidebar_state = "expanded"
+)
 
 
 def llama_stream(
@@ -125,8 +139,14 @@ def llama(
 #st.write(''.join(text))
 
 
-llama = Llama(model_name = 'models/7B/ggml-model-q4_0.bin', warm_start = True)
-llama.load_model()
-var = llama.generate("This is the weather report, we are reporting a clown fiesta happening at backer street. The clowns ")
-st.write(var)
+#llama = Llama(model_name = 'models/7B/ggml-model-q4_0.bin', warm_start = True)
+#llama.load_model()
+#var = llama.generate("This is the weather report, we are reporting a clown fiesta happening at backer street. The clowns ")
+#st.write(var)
+
+model_path = "./models/7B/ggml-model-q4_0.bin"
+params = llamacpp.gpt_params(model_path, "Hi, I'm a llama.", 4096, 40, 0.1, 0.7, 2.0)
+model = llamacpp.PyLLAMA(model_path, params)
+text = model.predict("Hello, I'm a llama.", 10)
+st.write(text)
         

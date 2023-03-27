@@ -1,6 +1,9 @@
 ##### `💁‍ Open_Assistant.py`
 ##### Chat Llm Streaming
 ##### https://huggingface.co/spaces/olivierdehaene/chat-llm-streaming/blob/main/README.md
+##### https://open-assistant.io/dashboard
+##### https://github.com/LAION-AI/Open-Assistant
+
 ##### Please reach out to ben@benbox.org for any questions
 #### Loading needed Python libraries
 import streamlit as st
@@ -10,12 +13,27 @@ from text_generation import Client, InferenceAPIClient
 from text_generation import InferenceAPIClient
 
 
+
+
+#### Streamlit initial setup
+st.set_page_config(
+  page_title = "💁 Open Assistant LLM",
+  page_icon = "images/OpenAssistant.png",
+  layout = "centered",
+  initial_sidebar_state = "expanded"
+)
+
+
+
+
+#### Main program
 st.header('💁‍ Open Assistant LLM')
 st.write('This is the first iteration English supervised-fine-tuning (SFT) model of the Open-Assistant project. It is based on a Pythia 12B that was fine-tuned on ~22k human demonstrations of assistant conversations collected through the https://open-assistant.io/ human feedback web app before March 7, 2023.')
 st.write('Question: :green[Why is the sky blue?]')
 client = InferenceAPIClient("OpenAssistant/oasst-sft-1-pythia-12b")
 text = client.generate("<|prompter|>Why is the sky blue?<|endoftext|><|assistant|>").generated_text
 st.write('Answer: :green[' + str(text) + ']')
+
 
 # Token Streaming
 #text = ""
