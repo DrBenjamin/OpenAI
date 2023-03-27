@@ -9,6 +9,7 @@ OpenAI.Rproj
 temp.mp3
 PDFs/Ben.docx
 models/7B/ggml-model-q4_0.bin
+models/
 
 # User-specific stuff
 .idea/**/workspace.xml
