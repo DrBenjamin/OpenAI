@@ -16,7 +16,7 @@ from llama_wrapper import llama_wrapper
 
 ## Llama libraries
 # produces Errors: zsh: illegal hardware instruction
-from llama_cpp import Llama
+#from llama_cpp import Llama
 #from llamacpypy import Llama
 #import llamacpp
 
@@ -35,9 +35,9 @@ st.set_page_config(
 
 #### Main programs
 ### Llama cpp
-llm = Llama(model_path = "models/7B/ggml-model-q4_0.bin")
-output = llm("Q: Name the planets in the solar system? A: ", max_tokens = 32, stop = ["Q:", "\n"], echo = True)
-st.write(output)
+#llm = Llama(model_path = "models/7B/ggml-model-q4_0.bin")
+#output = llm("Q: Name the planets in the solar system? A: ", max_tokens = 32, stop = ["Q:", "\n"], echo = True)
+#st.write(output)
 
 
 
@@ -48,7 +48,8 @@ with st.form('Alpaca'):
   st.write(':orange[Needs to be run locally (Follow the instructions on https://github.com/shaunabanana/llama.py).]')
   st.subheader('Question')
   input_text = st.text_input('Ask a question')
-  input_text = 'I am `Ben`, an Artifcial AI and you I am living in a blue box, the `BenBox`. My purpose as AI called `Ben` is to support the crew of the spaceship `Pulp`. The crew consists of me `Ben`, `Emmi` the female mechanic, `Sertan` who is doing computer stuff and the 2 robots `SAM` and `SEB`. At the moment, I, `Ben`, have landed with the Pulp and the crew on the Earth. The ship landed in Cologne, Germany, next to the University. Me, `Ben` and `Sertan will go on our next mission, to explore the golden chamber in church `St. Ursula`. Me, `Ben`, will answer all your questions in a humorous, sarcastic and very brief way. `Ben` please answer to this question or comment: """' + input_text + '"""'
+  #input_text = 'I am `Ben`, an Artifcial AI and you I am living in a blue box, the `BenBox`. My purpose as AI called `Ben` is to support the crew of the spaceship `Pulp`. The crew consists of me `Ben`, `Emmi` the female mechanic, `Sertan` who is doing computer stuff and the 2 robots `SAM` and `SEB`. At the moment, I, `Ben`, have landed with the Pulp and the crew on the Earth. The ship landed in Cologne, Germany, next to the University. Me, `Ben` and `Sertan will go on our next mission, to explore the golden chamber in church `St. Ursula`. Me, `Ben`, will answer all your questions in a humorous, sarcastic and very brief way. `Ben` please answer to this question or comment: """' + input_text + '"""'
+  input_text = 'Extract keywords in this text: """' + input_text + '"""'
   submitted = st.form_submit_button('Submit')
   if submitted:
     try:
