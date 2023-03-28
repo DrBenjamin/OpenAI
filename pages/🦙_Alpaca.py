@@ -16,9 +16,9 @@ from llama_wrapper import llama_wrapper
 
 ## Llama libraries
 # produces Errors: zsh: illegal hardware instruction
-from llamacpypy import Llama
-import llamacpp
-#from llama_cpp import Llama
+from llama_cpp import Llama
+#from llamacpypy import Llama
+#import llamacpp
 
 
 
@@ -34,6 +34,13 @@ st.set_page_config(
 
 
 #### Main programs
+### Llama cpp
+llm = Llama(model_path = "models/7B/ggml-model-q4_0.bin")
+output = llm("Q: Name the planets in the solar system? A: ", max_tokens = 32, stop = ["Q:", "\n"], echo = True)
+st.write(output)
+
+
+
 ### Python Wrapper
 with st.form('Alpaca'):
   st.header('Alpaca LLM')
@@ -102,13 +109,6 @@ with st.form('Alpaca'):
 # Flush stdout
 #sys.stdout.flush()
 #model.print_end_stats()
-
-
-
-### Llama cpp
-# llm = Llama(model_path="models/7B/ggml-model-q4_0.bin")
-# output = llm("Q: Name the planets in the solar system? A: ", max_tokens = 32, stop = ["Q:", "\n"], echo = True)
-# st.write(output)
 
 
 
