@@ -111,16 +111,37 @@ if pdf_usage:
         documents.append(uploaded_file.name)
         index = len(documents) - 1
     
+    
     ## Source selection
     st.write('**:green[or a provided PDF about AI / Programming]**')
-    pdf = st.selectbox(label = 'Choose PDF document?', options = documents, index = index)
+    pdf = st.selectbox(label = 'Choose PDF document to see description', options = documents, index = index)
+    if pdf == "ChatGPT.pdf":
+        st.write('**Titel of Article:** :orange["What Is ChatGPT Doing... and Why Does It Work?"]')
+    elif pdf == "LEAM.pdf":
+        st.write('**Titel of Paper:** :orange["Große KI Modelle für Deutschland"]')
+    elif pdf == "LLM.pdf":
+        st.write('**Titel of Paper:** :orange["Large Language Models Encode Clinical Knowledge"]')
+    elif pdf == "KW.pdf":
+        st.write('**Titel of Article:** :orange["OpenAI Used Kenyan Workers on Less Than $2 Per Hour to Make ChatGPT Less Toxic"]')
+    elif pdf == "AIDH.pdf":
+        st.write('**Titel of Paper:** :orange["AI in Digital Health"]')
+    elif pdf == "Sparks.pdf":
+        st.write('**Titel of Paper:** :orange["Sparks of Artificial General Intelligence: Early experiments with GPT-4"]')
+    elif pdf == "PC.pdf":
+        st.write('**Titel of Script:** :orange["Small Python Script"]')
+    elif pdf == "Source_Code.pdf":
+        st.write('**Titel of Script:** :orange["Python Source Code"]')
+    elif pdf == "Ben.pdf":
+        st.write('**Titel of Script:** :orange["Instruction and Chat preparation for the Ben Chat-Bot"]')
+    else:
+        st.write('No Titel')
     
     # Creating a pdf reader object
     reader = PyPDF2.PdfReader('PDFs/' + pdf)
     
     # Select pages
     if len(reader.pages) > 1:
-        pages_range = st.slider(label = 'Select a range of pages you want to use for the dialog with ChatGPT',
+        pages_range = st.slider(label = 'Select a range of a few pages that you want to use for the dialog with ChatGPT (token limit!)',
                                 min_value = 1, max_value = len(reader.pages), value = (1, 1))
         
         # print the text of the first page
