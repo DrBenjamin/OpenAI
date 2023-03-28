@@ -68,7 +68,6 @@ def benbox(image, text, text2, text3):
 ### Function:
 def chat_message(reader):
     output = []
-    st.experimental_show(len(reader.pages))
     for i in range(len(reader.pages)):
         input = reader.pages[i].extract_text()
         input = input.split(';')
@@ -80,6 +79,7 @@ def chat_message(reader):
             except Exception as e:
                 print(e)
     return output
+
 
 
 
