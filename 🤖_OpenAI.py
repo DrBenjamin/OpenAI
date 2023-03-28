@@ -101,7 +101,7 @@ index = 0
 pdf_usage = st.checkbox('Include a PDF source to feed ChatGPT with data?')
 if pdf_usage:
     st.write('**:green[Use your own PDF]**')
-    documents = ["ChatGPT.pdf", "LEAM.pdf", "LLM.pdf", "KW.pdf", "AIDH.pdf", "PC.pdf", "Source_Code.pdf", "Ben.pdf"]
+    documents = ["ChatGPT.pdf", "LEAM.pdf", "LLM.pdf", "KW.pdf", "AIDH.pdf", "Sparks.pdf", "PC.pdf", "Source_Code.pdf", "Ben.pdf"]
     uploaded_file = st.file_uploader(label = 'Choose a PDF file to upload', type = 'pdf')
     if uploaded_file is not None:
         file_name = os.path.join('PDFs', uploaded_file.name)
