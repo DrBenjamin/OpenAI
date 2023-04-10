@@ -21,6 +21,4 @@ PyQt5
 python-engineio==3.13.0
 python-socketio==4.6.0
 text_generation
-llamacpp
-llamacpypy
 llama-cpp-python

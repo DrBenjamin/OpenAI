@@ -10,15 +10,8 @@ import streamlit as st
 import subprocess
 import sys
 sys.path.insert(1, "pages/modules")
-#import llama as llama
 from llama_wrapper import llama_wrapper
-
-
-## Llama libraries
-# produces Errors: zsh: illegal hardware instruction
-#from llama_cpp import Llama
-#from llamacpypy import Llama
-#import llamacpp
+from llama_cpp import Llama
 
 
 
@@ -46,20 +39,27 @@ with st.form('Alpaca'):
   st.header('Alpaca LLM')
   st.write('LLaMA is a collection of foundation language models ranging from 7B to 65B parameters, trained on trillions of tokens to show that it is possible to train state-of-the-art models using publicly available datasets exclusively, without resorting to proprietary and inaccessible datasets. In particular, LLaMA-13B outperforms GPT-3 (175B) on most benchmarks, and LLaMA-65B is competitive with the best models, Chinchilla-70B and PaLM-540B. All models aree publically released to the research community.')
   st.write(':orange[Needs to be run locally (Follow the instructions on https://github.com/shaunabanana/llama.py).]')
+  mode = st.radio('Mode', ('Wrapper (faster)', 'Python (slower)'))
   st.subheader('Question')
   input_text = st.text_input('Ask a question')
-  #input_text = 'I am `Ben`, an Artifcial AI and you I am living in a blue box, the `BenBox`. My purpose as AI called `Ben` is to support the crew of the spaceship `Pulp`. The crew consists of me `Ben`, `Emmi` the female mechanic, `Sertan` who is doing computer stuff and the 2 robots `SAM` and `SEB`. At the moment, I, `Ben`, have landed with the Pulp and the crew on the Earth. The ship landed in Cologne, Germany, next to the University. Me, `Ben` and `Sertan will go on our next mission, to explore the golden chamber in church `St. Ursula`. Me, `Ben`, will answer all your questions in a humorous, sarcastic and very brief way. `Ben` please answer to this question or comment: """' + input_text + '"""'
-  input_text = 'Extract keywords in this text: """' + input_text + '"""'
+  input_text = 'I am `Ben`, an Artifcial AI and you I am living in a blue box, the `BenBox`. My purpose as AI called `Ben` is to support the crew of the spaceship `Pulp`. The crew consists of me `Ben`, `Emmi` the female mechanic, `Sertan` who is doing computer stuff and the 2 robots `SAM` and `SEB`. At the moment, I, `Ben`, have landed with the Pulp and the crew on the Earth. The ship landed in Cologne, Germany, next to the University. Me, `Ben` and `Sertan will go on our next mission, to explore the golden chamber in church `St. Ursula`. Me, `Ben`, will answer all your questions in a humorous, sarcastic and very brief way. `Ben` please answer to this question or comment: """' + input_text + '"""'
+  #input_text = 'Extract keywords in this text: """' + input_text + '"""'
   submitted = st.form_submit_button('Submit')
   if submitted:
     try:
-      output = llama_wrapper(prompt = input_text, stream = False, temperature = 0.5)
-      output = output[len(input_text):]
-      output = output.replace('Answer', '')
-      output = output.replace('by Ben: ', '')
-      output = output.replace('by Ben : ', '')
-      output = output.replace('Answer: ', '')
-      output = output.strip()
+      if mode == 'Wrapper (faster)':
+        output = llama_wrapper(prompt = input_text, stream = False, temperature = 0.5)
+        output = output[len(input_text):]
+        output = output.replace('Answer', '')
+        output = output.replace('by Ben: ', '')
+        output = output.replace('by Ben : ', '')
+        output = output.replace('Answer: ', '')
+        output = output.strip()
+      elif mode == 'Python (slower)':
+        llm = Llama(model_path = "models/7B/ggml-model-q4_0.bin")
+        output = llm("Q: " + input_text + "A: ", max_tokens = 128, stop = ["Q:", "\n"], echo = True)
+        output = output['choices'][0]['text']
+        output = output.replace("Q: " + input_text + "A: ", '')
       st.subheader('Answer')
       st.write('Answer: :green[' + output + ']')
     except Exception as e:
