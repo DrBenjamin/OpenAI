@@ -1,13 +1,12 @@
-##### `🤖_OpenAI.py`
-##### OpenAI ChatGPT Demo
-##### Open-Source, hosted on https://github.com/DrBenjamin/OpenAI
-##### Please reach out to ben@benbox.org for any questions
-#### Loading needed Python libraries
+### `🤖_OpenAI.py`
+### OpenAI ChatGPT Demo
+### Open-Source, hosted on https://github.com/DrBenjamin/OpenAI
+### Please reach out to ben@benbox.org for any questions
+## Loading needed Python libraries
 import streamlit as st
 import streamlit_scrollable_textbox as sty
 import io
 from openai import OpenAI
-
 client = OpenAI(api_key=st.secrets['openai']['key'])
 import PyPDF2
 from PIL import Image
@@ -15,9 +14,7 @@ from PIL import ImageDraw
 from PIL import ImageFont
 
 
-
-
-#### Streamlit initial setup
+## Streamlit initial setup
 st.set_page_config(
     page_title = "🤖 OpenAI",
     page_icon = "images/Logo.png",
@@ -26,9 +23,7 @@ st.set_page_config(
 )
 
 
-
-
-#### Session states
+## Session states
 if 'benbox' not in st.session_state:
     st.session_state['benbox'] = ''
 if 'messages' not in st.session_state:
@@ -41,16 +36,16 @@ if 'token' not in st.session_state:
     st.session_state['token'] = 128
 if 'used_tokens' not in st.session_state:
     st.session_state['used_tokens'] = 0
+if 'user_input' not in st.session_state:
+    st.session_state['user_input'] = ''
 if 'demo' not in st.session_state:
     st.session_state['demo'] = False
 if 'chat' not in st.session_state:
     st.session_state['chat'] = 0
 
 
-
-
-#### Functions
-### Function benbox() = Write costs to image
+## Functions
+# Function benbox() = Write costs to image
 def benbox(image, text, text2, text3):
     # Open an Image
     img = Image.open(image)
@@ -66,8 +61,7 @@ def benbox(image, text, text2, text3):
     img.save(s, 'png')
     st.session_state['benbox'] = s.getvalue()
 
-
-### Function:
+# Function:
 def chat_message(reader):
     output = []
     for i in range(len(reader.pages)):
@@ -83,10 +77,7 @@ def chat_message(reader):
     return output
 
 
-
-
-
-#### Main program
+## Main program
 st.header('OpenAI ChatGPT language model')
 
 # Set API key
@@ -94,8 +85,7 @@ answer = ''
 used_tokens = 0
 
 
-
-### PDF documents
+## PDF documents
 st.subheader('Use data from a PDF source')
 pdf_text = ' """'
 index = 0
@@ -162,15 +152,14 @@ if pdf_usage:
         sty.scrollableTextbox(reader.pages[0].extract_text(), height = 256, border = True)
 
 
-
-### OpenAI ChatGPT
-## Model selection
+## OpenAI ChatGPT
+# Model selection
 st.subheader('Choose a model')
-model = st.selectbox(label = 'What model to use?', options = ["gpt-4-1106-preview", "gpt-4", "gpt-3.5-turbo", "whisper-1"], index = 0)
+model = st.selectbox(label = 'What model to use?', options = ["gpt-4-turbo", "gpt-4", "gpt-3.5-turbo", "whisper-1"], index = 0)
 
 # Show info about model and set variable costs
 chat_usage = False
-if model == "gpt":
+if model == "gpt-4-turbo":
     cost_co_eff = 0.05
     st.write(':green[Capability of this model:] More capable than any GPT-3.5 model, able to do more complex tasks, and optimized for chat. Will be updated with our latest model iteration. :red[Costs:] $0.03/1k for prompt tokens and $0.06/1k for sampled tokens.')
     chat_usage = st.checkbox('Have an ongoing Chat?')
@@ -209,6 +198,7 @@ if not chat_usage or st.session_state['chat'] < 2:
                 st.subheader('Communicate')
                 if not (chat_usage and pdf_usage):
                     question = st.text_input('What question do you want to ask OpenAI ChatGPT?', disabled = st.session_state['demo'])
+                    st.session_state['text_input'] = question
                 else:
                     question = ''
 
@@ -288,9 +278,8 @@ if not chat_usage or st.session_state['chat'] < 2:
                     st.markdown('**Tokens**\n\n:green[*1 token ~= 4 chars in English*]')
 
 
-
-    ### Outside columns
-    ## Show answer
+    ## Outside columns
+    # Show answer
     if answer != '':
         sty.scrollableTextbox(answer, height = 128, border = True)
 
@@ -351,8 +340,8 @@ else:
                         st.write(':green[SAM:] ', messages_input[i]['content'])
                     else:
                         st.write(':green[User:] ', messages_input[i]['content'])
-        user_input = st.text_input(label = '', label_visibility = 'collapsed')
-        if user_input == 'Exit' or user_input == 'exit' or user_input == 'Quit' or user_input == 'quit':
+        st.session_state['user_input'] = st.text_input(label = '', label_visibility = 'collapsed', value = st.session_state['user_input'], type = 'default')
+        if st.session_state['user_input'].lower() == 'exit' or st.session_state['user_input'].lower() == 'quit':
             st.session_state['chat'] = 0
             st.session_state['messages'] = ''
             st.experimental_rerun()
@@ -366,7 +355,8 @@ else:
         ## Submit button
         submitted = st.form_submit_button('Submit')
         if submitted:
-            messages_input.append({"role": "user", "content": user_input})
+            messages_input.append({"role": "user", "content": st.session_state['user_input']})
+            st.session_state['user_input'] = ''
             try:
                 response_answer = client.chat.completions.create(model = model, messages = messages_input, temperature = st.session_state['temp'], max_tokens = st.session_state['token'])
                 answer = response_answer.choices[0].message.content
