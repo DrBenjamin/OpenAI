@@ -23,6 +23,7 @@ from transformers import VisionEncoderDecoderModel, ViTImageProcessor, AutoToken
 import os
 os.environ['COMMANDLINE_ARGS'] = '--skip-torch-cuda-test --upcast-sampling --no-half-vae --no-half --use-cpu interrogate'
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
+os.environ['PYTORCH_ENABLE_MPS_FALLBACK'] = '1'
 
 
 
@@ -102,7 +103,7 @@ if model_id_or_path == "runwayml/stable-diffusion-v1-5" and control_net_model !=
         st.write('Create an image from text input with an image as template.')
         image = ''
         uploaded_file = st.file_uploader(label = "Upload a picture", type = 'png')
-        prompt = st.text_input(label = 'Prompt', value = 'A picture in comic style, bright colours, a house with red bricks, a dark sky with a full yellow moon, best quality, extremely detailed.')
+        prompt = st.text_input(label = 'Prompt', value = 'A picture in comic style, bright colours, a blue robot, best quality, extremely detailed.')
         submitted = st.form_submit_button('Submit')
         if submitted:
             # Check for image data
@@ -140,7 +141,7 @@ if model_id_or_path == "runwayml/stable-diffusion-v1-5" and control_net_model !=
             pipe.enable_attention_slicing()
         
             # Speed up diffusion process with faster scheduler and memory optimization
-            pipe.scheduler = UniPCMultistepScheduler.from_config(pipe.scheduler.config)
+            #pipe.scheduler = UniPCMultistepScheduler.from_config(pipe.scheduler.config)
             #pipe.enable_model_cpu_offload()
         
             # Generate image
@@ -158,7 +159,7 @@ if model_id_or_path == "runwayml/stable-diffusion-v1-5" and control_net_model ==
         st.write('Create an image from text input with an image as template.')
         image = ''
         uploaded_file = st.file_uploader(label = "Upload a picture", type = 'png')
-        prompt = st.text_input(label = 'Prompt', value = 'A picture in comic style, bright colours, a house with red bricks, a dark sky with a full yellow moon, best quality, extremely detailed.')
+        prompt = st.text_input(label = 'Prompt', value = 'A picture in comic style, bright colours, a blue robot, best quality, extremely detailed.')
         submitted = st.form_submit_button('Submit')
         if submitted:
             # Check for image data
@@ -187,7 +188,7 @@ if model_id_or_path == "runwayml/stable-diffusion-v1-5" and control_net_model ==
             pipe.enable_attention_slicing()
             
             # Speed up diffusion process with faster scheduler and memory optimization
-            pipe.scheduler = UniPCMultistepScheduler.from_config(pipe.scheduler.config)
+            #pipe.scheduler = UniPCMultistepScheduler.from_config(pipe.scheduler.config)
             
             # Create new image
             images = pipe(prompt = prompt, negative_prompt = "monochrome, lowres, bad anatomy, worst quality, low quality", num_inference_steps = 30, image = image, strength = 0.75, guidance_scale = 7.5).images
@@ -206,11 +207,11 @@ if control_net_model == "None" and model_id_or_path != "nlpconnect/vit-gpt2-imag
         st.subheader('Text 2 Image')
         st.write('Create an image from text input.')
         if model_id_or_path == "runwayml/stable-diffusion-v1-5" or model_id_or_path == "stabilityai/stable-diffusion-2-1":
-            value = 'A picture in comic style, bright colours, a house with red bricks, a dark sky with a full yellow moon, best quality, extremely detailed.'
+            value = 'A picture in comic style, bright colours, a blue robot, best quality, extremely detailed.'
         if model_id_or_path == "hakurei/waifu-diffusion":
-            value = 'A picture in Anime style, bright colours, a house with red bricks, a dark sky with a full yellow moon, best quality, extremely detailed.'
+            value = 'A picture in Anime style, bright colours, a blue robot, best quality, extremely detailed.'
         if model_id_or_path == "stabilityai/stable-diffusion-2-base":
-            value = 'A picture in comic style, a castle with grey bricks in the background, a river is going through, a blue sky with a full yellow sun, best quality, extremely detailed.'
+            value = 'A picture in comic style, bright colours, a blue robot, best quality, extremely detailed.'
         
         prompt = st.text_input(label = 'Prompt', value = value)
         submitted = st.form_submit_button('Submit')

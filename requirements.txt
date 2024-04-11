@@ -3,14 +3,14 @@
 ##### Open-Source, hostet on https://github.com/DrBenjamin/OpenAI
 ##### Please reach out to ben@benbox.org for any questions
 ### All needed libraries (and their versions)
-streamlit == 1.20.0
+streamlit
 streamlit-scrollable-textbox
 openai
 PyPDF2
 opencv-python-headless
-torch == 1.13.1
-torchvision==0.1.9
-torchaudio==0.13.1
+torch
+torchvision
+torchaudio
 langchain
 diffusers
 transformers
