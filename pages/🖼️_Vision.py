@@ -18,7 +18,7 @@ def openai_url_request(image_url):
         "content": [
           {
             "type": "text", 
-            "text": "What’s in this image?"
+            "text": "Was ist auf dem Bild?"
           },
           {
             "type": "image_url",
@@ -49,7 +49,7 @@ def openai_image_request(image):
         "content": [
           {
             "type": "text", 
-            "text": "What’s in this image?"
+            "text": "Was ist auf dem Bild?"
           },
           {
             "type": "image_url",
@@ -66,7 +66,7 @@ def openai_image_request(image):
 
 # Image input
 st.title("Was ist auf diesem Bild?")
-image_url = st.text_input("Gib hier den Link zum Bild ein:")
+image_url = st.text_input("Gib hier den Link zum Bild ein")
 if image_url:
   st.image(image_url, caption = 'Remote Bild.', use_column_width = True)
   response = openai_url_request(image_url)
@@ -80,5 +80,5 @@ if uploaded_file is not None:
 try:
   st.write(response)
 except Exception as e:
-  st.write('Choose an option from above.')
+  st.write('Wähle eine der obigen Optionen.')
   print(e)
