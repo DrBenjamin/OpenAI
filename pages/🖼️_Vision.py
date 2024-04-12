@@ -8,6 +8,7 @@ import io
 import base64
 
 # Function to encode the image via url
+response = None
 def openai_url_request(prompt_text, image_url):
   response = client.chat.completions.create(
     model="gpt-4-turbo",
@@ -28,7 +29,7 @@ def openai_url_request(prompt_text, image_url):
         ],
       }
     ],
-    max_tokens=300,
+    max_tokens=1024,
   )
   return response.choices[0].message.content
 
@@ -59,7 +60,7 @@ def openai_image_request(prompt_text, image):
         ],
       }
     ],
-    max_tokens=300,
+    max_tokens=1024,
   )
   return response.choices[0].message.content
 
