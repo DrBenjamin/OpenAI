@@ -71,7 +71,7 @@ def cropping(image):
   if image:
       # Get a cropped image from the frontend
       cropped_img = st_cropper(image, realtime_update = True, box_color = '#0000FF',
-                               aspect_ratio = [1, 1])
+                               aspect_ratio = [1, 1], default_coords = (1, image.width - 1, 1, image.height - 2))
       
       # Manipulate cropped image at will
       st.write("Preview")
