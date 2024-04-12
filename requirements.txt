@@ -5,6 +5,7 @@
 ### All needed libraries (and their versions)
 streamlit
 streamlit-scrollable-textbox
+streamlit-cropper
 openai
 PyPDF2
 opencv-python-headless

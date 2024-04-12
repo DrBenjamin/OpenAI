@@ -1,4 +1,5 @@
 import streamlit as st
+from streamlit_cropper import st_cropper
 from openai import OpenAI
 client = OpenAI(api_key=st.secrets['openai']['key'])
 # OpenAI API Key
@@ -64,6 +65,20 @@ def openai_image_request(prompt_text, image):
   )
   return response.choices[0].message.content
 
+# Function to crop image
+@st.experimental_fragment
+def cropping(image):
+  if image:
+      # Get a cropped image from the frontend
+      cropped_img = st_cropper(image, realtime_update = True, box_color = '#0000FF',
+                               aspect_ratio = [1, 1])
+      
+      # Manipulate cropped image at will
+      st.write("Preview")
+      _ = cropped_img.thumbnail((200,200))
+      st.image(cropped_img, caption = 'Bearbeitetes Bild.')
+      return cropped_img
+
 # Image input
 st.title("Was ist auf diesem Bild?")
 prompt = st.text_input("Gib hier den Text ein, um die Frage anzupassen.", value = "Was ist auf dem Bild?")
@@ -75,8 +90,11 @@ if image_url:
 uploaded_file = st.file_uploader("Wähle ein Bild zum Hochladen aus", type=["jpg", "png"])
 if uploaded_file is not None:
   image = Image.open(uploaded_file)
-  st.image(image, caption = 'Hochgeladenes Bild.', use_column_width = True)
-  response = openai_image_request(prompt, image)
+  #st.image(image, caption = 'Hochgeladenes Bild.', use_column_width = True)
+  
+  # Cropping the image
+  cropped_img = cropping(image)
+  response = openai_image_request(prompt, cropped_img)
 
 try:
   st.write(response)
