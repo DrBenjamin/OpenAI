@@ -12,32 +12,6 @@ from st_audiorec import st_audiorec
 from pydub import AudioSegment
 #pydub.AudioSegment.ffmpeg = "/absolute/path/to/ffmpeg/bin"
 
-# Function to encode the image via url
-response = None
-def openai_url_request(prompt_text, image_url):
-  response = client.chat.completions.create(
-    model="gpt-4o",
-    messages=[
-      {
-        "role": "user",
-        "content": [
-          {
-            "type": "text", 
-            "text": f"{prompt_text}"
-          },
-          {
-            "type": "image_url",
-            "image_url": {
-              "url":f"{image_url}",
-            },
-          },
-        ],
-      }
-    ],
-    max_tokens=1024,
-  )
-  return response.choices[0].message.content
-
 # Function to encode the image
 def openai_request(text, image, transcription):
   image_bytes = io.BytesIO()
@@ -90,11 +64,6 @@ def cropping(image):
 # Image input
 st.title("Was ist auf diesem Bild?")
 prompt = st.text_input("Gib hier den Text ein, um die Frage anzupassen.", value = "Was ist auf dem Bild?")
-image_url = st.text_input("Gib hier den Link zum Bild ein")
-if image_url:
-  st.image(image_url, caption = 'Remote Bild.', use_column_width = True)
-  response = openai_url_request(prompt, image_url)
-  
 uploaded_file = st.file_uploader("Wähle ein Bild zum Hochladen aus", type=["jpg", "png"])
 if uploaded_file is not None:
   image = Image.open(uploaded_file)
@@ -111,25 +80,30 @@ if uploaded_audio_file is not None:
       model="whisper-1",
       file=uploaded_audio_file
   )
-  print(audio_transcription)
 st.write("or record it here")
-wav_audio_data = st_audiorec()
-if wav_audio_data is not None:
-    # Wav to mp3 conversion
-    audio_data_io = io.BytesIO(wav_audio_data)
-    audio = AudioSegment.from_wav(audio_data_io)
-    mp3_audio_data = io.BytesIO()
-    mp3_audio_data.name = "speech.mp3"
-    audio.export(mp3_audio_data, format="mp3")
-    audio_transcription = client.audio.transcriptions.create(
-      model="whisper-1",
-      file=mp3_audio_data
-    )
-
+try:
+  wav_audio_data = st_audiorec()
+except:
+  wav_audio_data = None
+try:
+  if wav_audio_data is not None:
+      # Wav to mp3 conversion
+      audio_data_io = io.BytesIO(wav_audio_data)
+      audio = AudioSegment.from_wav(audio_data_io)
+      mp3_audio_data = io.BytesIO()
+      mp3_audio_data.name = "speech.mp3"
+      audio.export(mp3_audio_data, format="mp3")
+      audio_transcription = client.audio.transcriptions.create(
+        model="whisper-1",
+        file=mp3_audio_data
+      )
+except:
+  audio_transcription = ""
+  
+# Start the analysis
 button_pressed = st.button("Starte die Analyse")
 if button_pressed:
   st.write("Analyse wird gestartet...")
-
   response = openai_request(prompt, cropped_img, audio_transcription)
   st.write(response)
   audio = client.audio.speech.create(
