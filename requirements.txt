@@ -6,6 +6,7 @@
 streamlit
 streamlit-scrollable-textbox
 streamlit-cropper
+st_audiorec
 openai
 PyPDF2
 opencv-python-headless
@@ -23,3 +24,4 @@ python-engineio==3.13.0
 python-socketio==4.6.0
 text_generation
 llama-cpp-python
+pydub
