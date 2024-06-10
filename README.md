@@ -8,13 +8,13 @@ Playground for using OpenAI ChatGPT and Hugging Face state-of-the-art diffusion 
 
 Download the [Package](https://github.com/DrBenjamin/OpenAI/archive/refs/tags/v1.0.zip) and install the needed libraries with
 
-```cmd
+```bash
 python -m pip install -r requirements.txt
 ```
 
 Run the software with
 
-```cmd
+```bash
 python -m streamlit run 🤖_OpenAI.py
 ```
 
