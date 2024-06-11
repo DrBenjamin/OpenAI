@@ -1,5 +1,6 @@
 import streamlit as st
 from streamlit_cropper import st_cropper
+from st_audiorec import st_audiorec
 from openai import OpenAI
 client = OpenAI(api_key=st.secrets['openai']['key'])
 # OpenAI API Key
@@ -8,7 +9,6 @@ from PIL import Image
 import io
 import base64
 from pathlib import Path
-from st_audiorec import st_audiorec
 from pydub import AudioSegment
 #pydub.AudioSegment.ffmpeg = "/absolute/path/to/ffmpeg/bin"
 

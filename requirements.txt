@@ -6,7 +6,7 @@
 streamlit
 streamlit-scrollable-textbox
 streamlit-cropper
-st_audiorec
+streamlit-audiorec
 openai
 PyPDF2
 opencv-python-headless
