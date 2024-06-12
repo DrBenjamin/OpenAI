@@ -1,8 +1,8 @@
 import streamlit as st
 from langchain.memory import ConversationBufferMemory
 from langchain_community.chat_message_histories import StreamlitChatMessageHistory
-from langchain.chains import LLMChain
-from langchain.prompts import PromptTemplate
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_openai import ChatOpenAI
 
 st.set_page_config(page_title="StreamlitChatMessageHistory", page_icon="🧮")
@@ -13,7 +13,8 @@ A basic example of using a local hosted LLM with LM Studio. It uses `StreamlitCh
 remember messages in a conversation. The messages are stored in Session State across re-runs automatically. View the
 [source code for this app](https://github.com/langchain-ai/streamlit-agent/blob/main/streamlit_agent/basic_memory.py).
 """
-    
+
+# Set up memory
 msgs = StreamlitChatMessageHistory(key="langchain_messages")
 memory = ConversationBufferMemory(memory_key="history", chat_memory=msgs)
 if len(msgs.messages) == 0:
@@ -21,24 +22,38 @@ if len(msgs.messages) == 0:
 
 view_messages = st.expander("View the message contents in session state")
 
-template = """You are an AI chatbot having a conversation with a human.
+# Set up the LangChain, passing in Message History
+prompt = ChatPromptTemplate.from_messages(
+    [
+        ("system", "You are an AI chatbot having a conversation with a human."),
+        MessagesPlaceholder(variable_name="history"),
+        ("human", "{question}"),
+    ]
+)
 
-{history}
-Human: {human_input}
-AI: """
-
-prompt = PromptTemplate(input_variables=["history", "human_input"], template=template)
+# Set up the LangChain, passing in Message History
+prompt = ChatPromptTemplate.from_messages(
+    [
+        ("system", "You are an AI chatbot having a conversation with a human."),
+        MessagesPlaceholder(variable_name="history"),
+        ("human", "{question}"),
+    ]
+)
 
 # Setting the LLM
-server_url = "http://localhost:1234/v1"
-model = "" #"LM Studio Community/Meta-Llama-3-8B-Instruct-GGUF"
-llm = ChatOpenAI(
+server_url = "http://192.168.178.24:1234/v1"
+chain = prompt | ChatOpenAI(
   base_url=server_url,
-  model=model,
+  model="",
   temperature=0.5,
   max_tokens=4000
 )
-llm_chain = LLMChain(llm=llm, prompt=prompt, memory=memory)
+chain_with_history = RunnableWithMessageHistory(
+    chain,
+    lambda session_id: msgs,
+    input_messages_key="question",
+    history_messages_key="history",
+)
 
 for msg in msgs.messages:
     st.chat_message(msg.type).write(msg.content)
@@ -47,8 +62,9 @@ if prompt := st.chat_input():
     st.chat_message("human").write(prompt)
 
     # New messages are added to `StreamlitChatMessageHistory` when the Chain is called
-    response = llm_chain.run(prompt)
-    st.chat_message("ai").write(response)
+    config = {"configurable": {"session_id": "any"}}
+    response = chain_with_history.invoke({"question": prompt}, config)
+    st.chat_message("ai").write(response.content)
     
 # Draw the messages at the end, so newly generated ones show up immediately
 with view_messages:
