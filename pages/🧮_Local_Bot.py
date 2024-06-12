@@ -1,35 +1,29 @@
+##### `🧮_Local_Bot.py`
+##### Local Memory Bot Demo
+##### Please reach out to ben@benbox.org for any questions
+#### Loading needed Python libraries
 import streamlit as st
-from langchain.memory import ConversationBufferMemory
 from langchain_community.chat_message_histories import StreamlitChatMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_openai import ChatOpenAI
 
+# Set up the Streamlit app layout
 st.set_page_config(page_title="StreamlitChatMessageHistory", page_icon="🧮")
-st.title("🧮 LM Studio local model")
-
-"""
-A basic example of using a local hosted LLM with LM Studio. It uses `StreamlitChatMessageHistory` to help LLMChain 
-remember messages in a conversation. The messages are stored in Session State across re-runs automatically. View the
+st.title("🧮 Local Bot")
+st.markdown("""
+A basic example of using a local hosted LLM with `StreamlitChatMessageistory` to help LLMChain remember messages in a conversation.
+The messages are stored in Session State across re-runs automatically. You can view the contents of Session State
+in the expander below. View the
 [source code for this app](https://github.com/langchain-ai/streamlit-agent/blob/main/streamlit_agent/basic_memory.py).
-"""
+""")
 
 # Set up memory
 msgs = StreamlitChatMessageHistory(key="langchain_messages")
-memory = ConversationBufferMemory(memory_key="history", chat_memory=msgs)
 if len(msgs.messages) == 0:
     msgs.add_ai_message("How can I help you?")
 
 view_messages = st.expander("View the message contents in session state")
-
-# Set up the LangChain, passing in Message History
-prompt = ChatPromptTemplate.from_messages(
-    [
-        ("system", "You are an AI chatbot having a conversation with a human."),
-        MessagesPlaceholder(variable_name="history"),
-        ("human", "{question}"),
-    ]
-)
 
 # Set up the LangChain, passing in Message History
 prompt = ChatPromptTemplate.from_messages(
@@ -55,12 +49,13 @@ chain_with_history = RunnableWithMessageHistory(
     history_messages_key="history",
 )
 
+# Render current messages from StreamlitChatMessageHistory
 for msg in msgs.messages:
     st.chat_message(msg.type).write(msg.content)
 
+# If user inputs a new prompt, generate and draw a new response
 if prompt := st.chat_input():
     st.chat_message("human").write(prompt)
-
     # New messages are added to `StreamlitChatMessageHistory` when the Chain is called
     config = {"configurable": {"session_id": "any"}}
     response = chain_with_history.invoke({"question": prompt}, config)

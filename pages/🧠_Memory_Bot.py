@@ -34,6 +34,7 @@ prompt = ChatPromptTemplate.from_messages(
     ]
 )
 
+# Setting the LLM
 chain = prompt | ChatOpenAI(
   api_key=st.secrets["openai"]["key"]
 )
