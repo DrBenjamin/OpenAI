@@ -18,7 +18,11 @@ langchain-community
 langchain-openai
 langchain-cli
 diffusers
+bitsandbytes
 transformers
+accelerate
+peft
+trl
 datasets
 audio2numpy
 pydub

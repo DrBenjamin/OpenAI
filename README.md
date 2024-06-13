@@ -29,6 +29,16 @@ image = "images/BenBox_small.png"
 key = "hugging-face-key"
 ```
 
+## Get llama.cpp
+
+```bash
+ git clone https://github.com/ggerganov/llama.cpp.git
+```
+
+## Fine-tuning the Llama3 model
+
+[Link to Kaggle](https://www.kaggle.com/work/collections/14192615)
+
 ## Streamlit Cloud Demo
 
 [![Open in Streamlit][share_badge]][share_link]
