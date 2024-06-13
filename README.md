@@ -37,7 +37,11 @@ key = "hugging-face-key"
 
 ## Fine-tuning the Llama3 model
 
+Example of fine-tuning the Llama3 model on a medical conversation dataset.
+
 [Link to Kaggle](https://www.kaggle.com/work/collections/14192615)
+[Link to Wandb](https://wandb.ai/seriousbenentertainment/Fine-tune%20Llama%203%208B%20on%20Medical%20Dataset)
+[Link to Huggingface](https://huggingface.co/DrBenjamin/llama-3-8b-chat-doctor/tree/main)
 
 ## Streamlit Cloud Demo
 
