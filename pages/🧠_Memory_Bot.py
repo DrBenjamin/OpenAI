@@ -18,6 +18,16 @@ in the expander below. View the
 [source code for this app](https://github.com/langchain-ai/streamlit-agent/blob/main/streamlit_agent/basic_memory.py).
 """)
 
+# Sidebar
+sidebar = st.sidebar
+with sidebar:
+  st.markdown("### 🧠 Memory Bot")
+  on = st.toggle("OpenAI ChatGPT", True)
+  if not on:
+    st.markdown("Local Server Configuration")
+    url = st.text_input("URL:", value="http://localhost")
+    port = st.number_input("Port:", value=1234, min_value=1, max_value=65535)
+
 # Set up memory
 msgs = StreamlitChatMessageHistory(key="langchain_messages")
 if len(msgs.messages) == 0:
@@ -35,9 +45,19 @@ prompt = ChatPromptTemplate.from_messages(
 )
 
 # Setting the LLM
-chain = prompt | ChatOpenAI(
-  api_key=st.secrets["openai"]["key"]
-)
+if on:
+  chain = prompt | ChatOpenAI(
+    api_key=st.secrets["openai"]["key"]
+  ) 
+else:
+  server_url = f"{url}:{str(port)}/v1"
+  chain = prompt | ChatOpenAI(
+    base_url=server_url,
+    model="",
+    temperature=0.5,
+    max_tokens=4000,
+  )
+
 chain_with_history = RunnableWithMessageHistory(
     chain,
     lambda session_id: msgs,
