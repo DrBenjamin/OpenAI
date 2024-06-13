@@ -44,3 +44,4 @@ HRStaffPortal.iml
 # Gradle
 .idea/**/gradle.xml
 .idea/**/libraries
+data/dialogues.parquet
