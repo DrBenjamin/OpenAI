@@ -7,6 +7,7 @@ from langchain_community.chat_message_histories import StreamlitChatMessageHisto
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_openai import ChatOpenAI
+import deepl
 
 # Set up the Streamlit app layout
 st.set_page_config(page_title="StreamlitChatMessageHistory", page_icon="🧠")
@@ -17,6 +18,12 @@ The messages are stored in Session State across re-runs automatically. You can v
 in the expander below. View the
 [source code for this app](https://github.com/langchain-ai/streamlit-agent/blob/main/streamlit_agent/basic_memory.py).
 """)
+
+# DeepL function
+def translate(input_text, target_language = "DE"):
+  translator = deepl.Translator(st.secrets["deepl"]["key"])
+  result = translator.translate_text(input_text, target_lang = target_language) 
+  return str(result)
 
 # Sidebar
 sidebar = st.sidebar
@@ -38,7 +45,7 @@ view_messages = st.expander("View the message contents in session state")
 # Set up the LangChain, passing in Message History
 prompt = ChatPromptTemplate.from_messages(
     [
-        ("system", "You are a medical AI chatbot and act like an doctor having a conversation with a human who is your patient."),
+        ("system", "You are a medical doctor named Dr. Benjamin having a conversation with a patient."),
         MessagesPlaceholder(variable_name="history"),
         ("human", "{question}"),
     ]
@@ -53,7 +60,7 @@ else:
   server_url = f"{url}:{str(port)}/v1"
   chain = prompt | ChatOpenAI(
     base_url=server_url,
-    model="",
+    model="llama-3-8b-chat-doctor-Q4_K_M",
     temperature=0.5,
     max_tokens=4000,
   )
@@ -74,8 +81,8 @@ if prompt := st.chat_input():
     st.chat_message("human").write(prompt)
     # Note: new messages are saved to history automatically by Langchain during run
     config = {"configurable": {"session_id": "any"}}
-    response = chain_with_history.invoke({"question": prompt}, config)
-    st.chat_message("ai").write(response.content)
+    response = chain_with_history.invoke({"question": translate(prompt, "EN-GB")}, config)
+    st.chat_message("ai").write(translate(response.content))
 
 # Draw the messages at the end, so newly generated ones show up immediately
 with view_messages:

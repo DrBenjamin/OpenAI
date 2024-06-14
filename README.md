@@ -29,10 +29,14 @@ image = "images/BenBox_small.png"
 key = "hugging-face-key"
 ```
 
-## Get llama.cpp
+## Llama.cpp
 
+Get the sources, build and run the Llama3 model with the following commands:
 ```bash
  git clone https://github.com/ggerganov/llama.cpp.git
+ cd llama.cpp
+ make
+ ./llama-server -m ~/.cache/lm-studio/models/DrBenjamin/llama-3-8b-chat-doctor/llama-3-8b-chat-doctor-Q4_K_M.gguf --port 1234 -c 2048
 ```
 
 ## Fine-tuning the Llama3 model
