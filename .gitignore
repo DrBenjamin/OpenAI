@@ -45,3 +45,4 @@ HRStaffPortal.iml
 .idea/**/gradle.xml
 .idea/**/libraries
 data/dialogues.parquet
+data/dialogues_original.parquet

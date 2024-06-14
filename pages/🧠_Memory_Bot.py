@@ -38,7 +38,7 @@ with sidebar:
 # Set up memory
 msgs = StreamlitChatMessageHistory(key="langchain_messages")
 if len(msgs.messages) == 0:
-    msgs.add_ai_message("How can I help you?")
+    msgs.add_ai_message("Wie kann ich Ihnen helfen?")
 
 view_messages = st.expander("View the message contents in session state")
 
