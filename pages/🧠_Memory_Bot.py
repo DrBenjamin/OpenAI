@@ -38,7 +38,7 @@ with sidebar:
 # Set up memory
 msgs = StreamlitChatMessageHistory(key="langchain_messages")
 if len(msgs.messages) == 0:
-    msgs.add_ai_message("Wie kann ich Ihnen helfen?")
+    msgs.add_ai_message("How can I help you?")
 
 view_messages = st.expander("View the message contents in session state")
 
@@ -60,7 +60,7 @@ else:
   server_url = f"{url}:{str(port)}/v1"
   chain = prompt | ChatOpenAI(
     base_url=server_url,
-    model="llama-3-8b-chat-doctor-Q4_K_M",
+    model="llama-3-8b-chat-doctor-Q4_K_M_v2",
     temperature=0.5,
     max_tokens=4000,
   )
@@ -81,8 +81,8 @@ if prompt := st.chat_input():
     st.chat_message("human").write(prompt)
     # Note: new messages are saved to history automatically by Langchain during run
     config = {"configurable": {"session_id": "any"}}
-    response = chain_with_history.invoke({"question": translate(prompt, "EN-GB")}, config)
-    st.chat_message("ai").write(translate(response.content))
+    response = chain_with_history.invoke({"question": prompt}, config)
+    st.chat_message("ai").write(response.content)
 
 # Draw the messages at the end, so newly generated ones show up immediately
 with view_messages:
