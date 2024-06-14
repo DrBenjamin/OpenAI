@@ -38,7 +38,7 @@ view_messages = st.expander("View the message contents in session state")
 # Set up the LangChain, passing in Message History
 prompt = ChatPromptTemplate.from_messages(
     [
-        ("system", "You are an AI chatbot having a conversation with a human."),
+        ("system", "You are a medical AI chatbot and act like an doctor having a conversation with a human who is your patient."),
         MessagesPlaceholder(variable_name="history"),
         ("human", "{question}"),
     ]
