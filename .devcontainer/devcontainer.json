@@ -1,0 +1,7 @@
+{  
+  "name": "OpenAI",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "openai",
+  "workspaceFolder": "/app",
+  "shutdownAction": "stopCompose"
+}

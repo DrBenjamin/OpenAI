@@ -8,6 +8,7 @@ streamlit-scrollable-textbox
 streamlit-cropper
 streamlit-audiorec
 openai
+deepl
 PyPDF2
 opencv-python-headless
 torch
@@ -26,7 +27,7 @@ trl
 datasets
 audio2numpy
 pydub
-PyQt5
+#PyQt5
 python-engineio==3.13.0
 python-socketio==4.6.0
 text_generation
