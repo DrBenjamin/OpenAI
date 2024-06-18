@@ -57,5 +57,11 @@ Example of fine-tuning the Llama3 model on a medical conversation dataset.
 [share_badge]: https://static.streamlit.io/badges/streamlit_badge_black_white.svg
 [share_link]: https://ai-playground.streamlit.app/
 
+## Misc
 
+Miscellaneous files and scripts for the project.
 
+```bash
+git repack -a -d -f --depth=250 --window=250
+git gc --aggressive --prune
+```
