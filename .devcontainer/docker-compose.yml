@@ -14,6 +14,6 @@ services:
       - ..:/app
 networks:
   network1:
-    name: openai_default
+    name: llama-cpp_default
     driver: bridge
-    external: false
+    external: true
