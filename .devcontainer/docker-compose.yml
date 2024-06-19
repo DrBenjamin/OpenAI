@@ -6,10 +6,10 @@ services:
       dockerfile: .devcontainer/Dockerfile
     image: openai
     container_name: openai
-    ports:
-      - "8501:8501"
     networks:
       - network1
+    ports:
+      - "8501:8501"
     volumes:
       - ..:/app
 networks:
