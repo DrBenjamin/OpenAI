@@ -8,5 +8,12 @@ services:
     container_name: openai
     ports:
       - "8501:8501"
+    networks:
+      - network1
     volumes:
       - ..:/app
+networks:
+  network1:
+    name: openai_default
+    driver: bridge
+    external: false

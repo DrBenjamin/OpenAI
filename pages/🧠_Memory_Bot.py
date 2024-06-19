@@ -63,6 +63,7 @@ else:
     model="llama-3-8b-chat-doctor-Q4_K_M_v2",
     temperature=0.5,
     max_tokens=4000,
+    api_key="lm-studio"
   )
 
 chain_with_history = RunnableWithMessageHistory(
