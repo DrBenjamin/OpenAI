@@ -90,7 +90,6 @@ if image_url:
 uploaded_file = st.file_uploader("Wähle ein Bild zum Hochladen aus", type=["jpg", "png"])
 if uploaded_file is not None:
   image = Image.open(uploaded_file)
-  #st.image(image, caption = 'Hochgeladenes Bild.', use_column_width = True)
   
   # Cropping the image
   cropped_img = cropping(image)
