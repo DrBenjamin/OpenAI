@@ -30,6 +30,7 @@ sidebar = st.sidebar
 with sidebar:
   st.markdown("### 🧠 Memory Bot")
   on = st.toggle("OpenAI ChatGPT", True)
+  system = st.text_input("System:", value="You are a medical doctor named Dr. Benjamin having a conversation with a patient.")
   if not on:
     st.markdown("Local Server Configuration")
     url = st.text_input("URL:", value="http://localhost")
@@ -45,7 +46,7 @@ view_messages = st.expander("View the message contents in session state")
 # Set up the LangChain, passing in Message History
 prompt = ChatPromptTemplate.from_messages(
     [
-        ("system", "You are a medical doctor named Dr. Benjamin having a conversation with a patient."),
+        ("system", f"{system}"),
         MessagesPlaceholder(variable_name="history"),
         ("human", "{question}"),
     ]
