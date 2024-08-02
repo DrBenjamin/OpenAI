@@ -32,3 +32,4 @@ python-engineio==3.13.0
 python-socketio==4.6.0
 text_generation
 #llama-cpp-python
+snowflake-snowpark-python
