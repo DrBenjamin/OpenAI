@@ -6,6 +6,7 @@ import streamlit as st
 from snowflake.snowpark import Session
 
 st.title('❄️ How to connect Streamlit to a Snowflake database')
+st.write(f"Streamlit Version: {st.__version__}")
 
 # Establish Snowflake session
 @st.cache_resource
