@@ -7,8 +7,4 @@ dependencies:
 - streamlit=1.35.0
 - pandas
 - openai
-- langchain
-- langchain-community
-- langchain-openai
-- langchain-cli
 - snowflake-snowpark-python
