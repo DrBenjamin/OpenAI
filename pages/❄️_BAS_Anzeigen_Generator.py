@@ -4,6 +4,8 @@
 #### Loading needed Python libraries
 import streamlit as st
 import pandas as pd
+import numpy as np
+import json
 from snowflake.snowpark import Session
 from langchain_community.chat_message_histories import StreamlitChatMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
@@ -26,7 +28,7 @@ def create_session():
     return Session.builder.configs(st.secrets.snowflake).create()
 
 session = create_session()
-st.success("Connected to Snowflake!")
+st.success("Datenbankverbindung erfolgreich hergestellt.")
 
 # Load data table
 @st.cache_data
@@ -46,7 +48,7 @@ def load_data(table_name):
 table_name = "BAS.PUBLIC.ANZEIGE_PRE"
 
 # Display data table
-with st.expander("See Table"):
+with st.expander("Datenbankinhalt"):
     df = load_data(table_name)
     st.dataframe(df)
     
@@ -56,7 +58,7 @@ with sidebar:
   kunde = st.text_input("Anbieter:", value="GWQ ServicePlus AG")
   cloud = st.selectbox("Cloud:", ["AWS", "Azure", "Google Cloud"], index=2)
   on = st.toggle("OpenAI ChatGPT", True)
-  system = st.text_input("System:", value = f"Du erstellst einzelne Absätze einer Anzeige beim Bundesamt für Soziale Sicherung über die Verarbeitung von Sozialdaten von {kunde} mittels {cloud} im Auftrag nach § 80 Zehntes Sozialgesetzbuch (SGB X). Tausche <Variabel_Name> durch die entsprechenden Inhalte aus und gebe nur den Text aus und verzichte auf Phrasen wie 'Vielen Dank für die Informationen. Hier sind die angepassten Absätze für die Anzeige beim Bundesamt für Soziale Sicherung:'.")
+  system = st.text_input("System:", value = f"Du erstellst einzelne Absätze einer Anzeige beim Bundesamt für Soziale Sicherung über die Verarbeitung von Sozialdaten im Auftrag (AVV) nach § 80 Zehntes Sozialgesetzbuch (SGB X). Tausche <Variabel_Name> durch die entsprechenden Inhalte aus und gebe nur den Text aus und verzichte auf Phrasen wie z.B. 'Vielen Dank für die Informationen. Hier sind die angepassten Absätze für die Anzeige beim Bundesamt für Soziale Sicherung:'.")
   if not on:
     st.markdown("Local Server Configuration")
     url = st.text_input("URL:", value="http://localhost")
@@ -65,10 +67,10 @@ with sidebar:
 # Set up memory
 msgs = StreamlitChatMessageHistory(key="langchain_messages")
 if len(msgs.messages) == 0:
-    msgs.add_ai_message(f"""Ich erstetze <Kunde> mit {kunde}, 
-                          <Cloud-Anbieter> mit {cloud}""")
+    msgs.add_ai_message(f"""Ich ersetze <Kunde> mit {kunde}, 
+                          <Cloud-Anbieter> mit {cloud}.""")
 
-view_messages = st.expander("Zeige mir die Paragraphen in der Session an.")
+view_messages = st.expander("Zeige mir die Paragraphen an")
 
 # Set up the LangChain, passing in Message History
 prompt = ChatPromptTemplate.from_messages(
@@ -82,6 +84,7 @@ prompt = ChatPromptTemplate.from_messages(
 # Setting the LLM
 if on:
   chain = prompt | ChatOpenAI(
+    model="gpt-4o-mini",
     api_key=st.secrets["openai"]["key"]
   ) 
 else:
@@ -125,3 +128,21 @@ with view_messages:
     Contents of `st.session_state.langchain_messages`:
     """
     view_messages.json(st.session_state.langchain_messages)
+
+# Convert to dataframe
+messages = st.session_state.langchain_messages
+anzeige_temp = pd.DataFrame(columns=['PARAGRAPH', 'PARAGRAPH_TEXT'])
+counter = -1
+paragraph = -1
+for index, message in enumerate(messages):
+    for key, value in message:
+        if key == "content":
+            counter += 1
+            print(index)
+            print(key)
+            print(value)
+            if counter > 0 and counter % 2 == 0:
+                paragraph += 1
+                anzeige_temp = anzeige_temp._append(pd.DataFrame([{'PARAGRAPH': df['PARAGRAPH'][paragraph], 'PARAGRAPH_TEXT': value}]), ignore_index=True)
+
+st.dataframe(anzeige_temp)
