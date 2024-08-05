@@ -12,6 +12,13 @@ Download the [Package](https://github.com/DrBenjamin/OpenAI/archive/refs/tags/v1
 python -m pip install -r requirements.txt
 ```
 
+Create Python Environment
+
+```bash
+conda create --name myenv python=3.10
+conda activate myenv
+```
+
 Run the software with
 
 ```bash

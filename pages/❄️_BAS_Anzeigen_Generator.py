@@ -138,9 +138,6 @@ for index, message in enumerate(messages):
     for key, value in message:
         if key == "content":
             counter += 1
-            print(index)
-            print(key)
-            print(value)
             if counter > 0 and counter % 2 == 0:
                 paragraph += 1
                 anzeige_temp = anzeige_temp._append(pd.DataFrame([{'PARAGRAPH': df['PARAGRAPH'][paragraph], 'PARAGRAPH_TEXT': value}]), ignore_index=True)
