@@ -4,14 +4,11 @@
 #### Loading needed Python libraries
 import streamlit as st
 import pandas as pd
-import numpy as np
-import json
 from snowflake.snowpark import Session
 from langchain_community.chat_message_histories import StreamlitChatMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_openai import ChatOpenAI
-import deepl
 
 st.title('§ BAS Anzeigen Generator')
 st.write(f"Streamlit Version: {st.__version__}")
