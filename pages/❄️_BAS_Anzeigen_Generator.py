@@ -4,6 +4,7 @@
 #### Loading needed Python libraries
 import streamlit as st
 import pandas as pd
+import sys
 from snowflake.snowpark import Session
 from langchain_community.chat_message_histories import StreamlitChatMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
@@ -12,12 +13,7 @@ from langchain_openai import ChatOpenAI
 
 st.title('§ BAS Anzeigen Generator')
 st.write(f"Streamlit Version: {st.__version__}")
-
-# DeepL function
-def translate(input_text, target_language = "DE"):
-  translator = deepl.Translator(st.secrets["deepl"]["key"])
-  result = translator.translate_text(input_text, target_lang = target_language) 
-  return str(result)
+st.write(f"Python Version: {sys.version}")
     
 # Establish Snowflake session
 @st.cache_resource

@@ -11,7 +11,7 @@ native_app:
     - src: src/module-ui/src/*
       dest: streamlit/
 
-# If you added any sql scripts under scripts/, you should add the following snippet after `artifacts` under `native_app`.     
+# If you added any sql scripts under scripts/, you should add the following snippet after `artifacts` under `native_app`.
 #  package:
 #    scripts:
 #    - scripts/any-provider-setup.sql
