@@ -33,3 +33,4 @@ python-socketio==4.6.0
 text_generation
 #llama-cpp-python
 snowflake-snowpark-python
+snowflake-cli-labs
