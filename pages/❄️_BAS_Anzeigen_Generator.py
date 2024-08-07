@@ -1,6 +1,6 @@
 ##### `❄️_BAS_Anzeigen_Generator.py`
 ##### BAS Anzeigen Generator
-##### Please reach out to ben@benbox.org for any questions
+##### Please reach out to benjamin.gross1@adesso.de for any questions
 #### Loading needed Python libraries
 import streamlit as st
 import pandas as pd
@@ -11,7 +11,7 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_openai import ChatOpenAI
 
-st.title('§ BAS Anzeigen Generator')
+st.title('❄️ BAS Anzeigen Generator')
 st.write(f"Streamlit Version: {st.__version__}")
 st.write(f"Python Version: {sys.version}")
     
