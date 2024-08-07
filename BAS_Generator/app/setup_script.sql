@@ -26,7 +26,7 @@ CREATE OR REPLACE FUNCTION core.add(x NUMBER, y NUMBER)
   IMPORTS=('/module-add/add.py')
   HANDLER='add.py_version_proc';
 
-  CREATE OR REPLACE PROCEDURE get_secret_type()
+CREATE OR REPLACE FUNCTION get_secret_type()
   RETURNS STRING
   LANGUAGE PYTHON
   RUNTIME_VERSION = 3.10
@@ -44,6 +44,7 @@ CREATE OR REPLACE FUNCTION core.add(x NUMBER, y NUMBER)
 
 -- 4. Grant appropriate privileges over these objects to your application roles. 
 GRANT USAGE ON FUNCTION core.add(NUMBER, NUMBER) TO APPLICATION ROLE app_public;
+GRANT USAGE ON FUNCTION get_secret_type() TO APPLICATION ROLE app_public;
 GRANT USAGE ON PROCEDURE core.py_version() TO APPLICATION ROLE app_public;
 
 -- 5. Create a streamlit object using the code you wrote in you wrote in src/module-ui, as shown below. 
