@@ -22,7 +22,7 @@ CREATE OR REPLACE PROCEDURE core.increment_by_one(x NUMBER)
   RETURNS NUMBER
   LANGUAGE PYTHON
   RUNTIME_VERSION=3.10
-  PACKAGES=('snowflake-snowpark-python', 'langchain_community.chat_message_histories', 'langchain_core.prompts', 'langchain_core.runnables.history','langchain_openai')
+  PACKAGES=('snowflake-snowpark-python', 'langchain_community', 'langchain-core', 'langchain_openai')
   IMPORTS=('/module-add/add.py')
   HANDLER='add.increment_by_one_fn';
 
