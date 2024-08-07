@@ -26,10 +26,10 @@ CREATE OR REPLACE FUNCTION core.add(x NUMBER, y NUMBER)
   IMPORTS=('/module-add/add.py')
   HANDLER='add.py_version_proc';
 
-  CREATE OR REPLACE FUNCTION get_secret_username_password()
+  CREATE OR REPLACE FUNCTION core.get_secret_username_password()
   RETURNS STRING
   LANGUAGE PYTHON
-  RUNTIME_VERSION = 3.8
+  RUNTIME_VERSION = 3.10
   HANDLER = 'get_secret_username_password'
   EXTERNAL_ACCESS_INTEGRATIONS = (external_access_integration)
   SECRETS = ('OPENAI_KEY' = credentials_secret )
@@ -49,7 +49,7 @@ CREATE OR REPLACE FUNCTION core.add(x NUMBER, y NUMBER)
 
 -- 4. Grant appropriate privileges over these objects to your application roles. 
 GRANT USAGE ON FUNCTION core.add(NUMBER, NUMBER) TO APPLICATION ROLE app_public;
-GRANT USAGE ON FUNCTION get_secret_type() TO APPLICATION ROLE app_public;
+GRANT USAGE ON FUNCTION core.get_secret_username_password() TO APPLICATION ROLE app_public;
 GRANT USAGE ON PROCEDURE core.py_version() TO APPLICATION ROLE app_public;
 
 -- 5. Create a streamlit object using the code you wrote in you wrote in src/module-ui, as shown below. 
