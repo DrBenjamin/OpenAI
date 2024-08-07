@@ -78,7 +78,7 @@ def run_streamlit():
     )
 
     # Setting the LLM
-    openai_key = session.call('core.get_username_password')
+    openai_key = get_username_password('OPENAI_KEY')
     if on:
       chain = prompt | ChatOpenAI(
         model="gpt-4o-mini",
