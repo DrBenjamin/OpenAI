@@ -7,15 +7,17 @@ def run_streamlit():
     from snowflake.snowpark.functions import call_udf, col
     from snowflake.snowpark import Session
 
+    # Get the current credentials
+    session = Session.builder.getOrCreate()
+    
     st.title('Hello Snowflake!')
     st.header('UDF Example')
+    version = session.call('core.py_version')
+    st.write(f"Python version: {version}")
     st.write(
       """The sum of the two numbers is calculated by the Python add_fn() function
           which is called from core.add() UDF defined in your setup_script.sql.
       """)
-
-    # Get the current credentials
-    session = Session.builder.getOrCreate()
 
     num1 = st.number_input('First number', key='numToAdd1', value=1)
     num2 = st.number_input('Second number', key='numToAdd2', value=1)
@@ -39,9 +41,6 @@ def run_streamlit():
     num_to_increment = st.number_input('Number to increment', key='numToIncrement', value=1)
     result = session.call('core.increment_by_one', num_to_increment)
     st.dataframe(pd.DataFrame([[result]]), use_container_width=True)
-    
-    version = session.call('core.py_version')
-    st.write(version)
 
 if __name__ == '__main__':
     run_streamlit()
