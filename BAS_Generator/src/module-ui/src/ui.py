@@ -30,9 +30,7 @@ def run_streamlit():
     # Display the Pandas data frame as a Streamlit data frame.
     st.dataframe(queried_data, use_container_width=True)
 
-
     st.header('Stored Procedure Example')
-
     st.write(
       """Incrementing a number by one is calculated by the Python increment_by_one_fn() function
           which implements the core.increment_by_one() Stored Procedure defined in your setup_script.sql.
