@@ -27,7 +27,7 @@ st.success("Datenbankverbindung erfolgreich hergestellt.")
 @st.cache_data
 def load_data(table_name):
     # Read in data table
-    st.write(f"Here's some example data from `{table_name}`:")
+    st.write(f"Beispieldaten von `{table_name}`:")
     table = session.table(table_name)
     
     # Do some computation on it
