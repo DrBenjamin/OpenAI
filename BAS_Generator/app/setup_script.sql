@@ -26,9 +26,18 @@ CREATE OR REPLACE PROCEDURE core.increment_by_one(x NUMBER)
   IMPORTS=('/module-add/add.py')
   HANDLER='add.increment_by_one_fn';
 
+  CREATE OR REPLACE PROCEDURE core.py_version()
+  RETURNS STRING
+  LANGUAGE PYTHON
+  RUNTIME_VERSION=3.10
+  PACKAGES=('snowflake-snowpark-python')
+  IMPORTS=('/module-add/add.py')
+  HANDLER='add.py_version_fn';
+
 -- 4. Grant appropriate privileges over these objects to your application roles. 
 GRANT USAGE ON FUNCTION core.add(NUMBER, NUMBER) TO APPLICATION ROLE app_public;
 GRANT USAGE ON PROCEDURE core.increment_by_one(NUMBER) TO APPLICATION ROLE app_public;
+GRANT USAGE ON PROCEDURE core.py_version() TO APPLICATION ROLE app_public;
 
 -- 5. Create a streamlit object using the code you wrote in you wrote in src/module-ui, as shown below. 
 -- The `from` value is derived from the stage path described in snowflake.yml
