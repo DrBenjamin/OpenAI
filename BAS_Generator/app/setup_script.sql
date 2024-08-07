@@ -10,8 +10,8 @@ CREATE OR ALTER VERSIONED SCHEMA core;
 GRANT USAGE ON SCHEMA core TO APPLICATION ROLE app_public;
 
 -- 3. Create UDFs and Stored Procedures using the python code you wrote in src/module-add, as shown below.
-CREATE OR REPLACE FUNCTION core.add(x NUMBER, y NUMBER)
-  RETURNS NUMBER
+CREATE OR REPLACE FUNCTION core.add(kunde_string STRING, cloud_string STRING, system_string STRING, on_var BOOLEAN)
+  RETURNS STRING
   LANGUAGE PYTHON
   RUNTIME_VERSION=3.10
   PACKAGES=('snowflake-snowpark-python', 'pandas', 'langchain', 'langchain-community', 'langchain-core', 'openai')
