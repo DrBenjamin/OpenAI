@@ -16,3 +16,7 @@ def add_fn(x: int, y: int) -> int:
 def increment_by_one_fn(session: Session, x: int) -> int:
     df = session.create_dataframe([[]]).select((lit(1) + lit(x)).as_('RESULT'))
     return df.collect()[0]['RESULT']
+  
+# Chatbot example:
+def chatbot_fn(session: Session, chatbot: ChatOpenAI, prompt: str) -> str:
+    return chatbot.get_response(prompt)
