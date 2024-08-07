@@ -14,7 +14,7 @@ CREATE OR REPLACE FUNCTION core.add(x NUMBER, y NUMBER)
   RETURNS NUMBER
   LANGUAGE PYTHON
   RUNTIME_VERSION=3.10
-  PACKAGES=('snowflake-snowpark-python', 'langchain_community', 'langchain-core', 'langchain_openai')
+  PACKAGES=('snowflake-snowpark-python', 'langchain-community', 'langchain-core', 'langchain_openai')
   IMPORTS=('/module-add/add.py')
   HANDLER='add.add_fn';
 
@@ -22,7 +22,7 @@ CREATE OR REPLACE PROCEDURE core.increment_by_one(x NUMBER)
   RETURNS NUMBER
   LANGUAGE PYTHON
   RUNTIME_VERSION=3.10
-  PACKAGES=('snowflake-snowpark-python', 'langchain_community', 'langchain-core', 'langchain_openai')
+  PACKAGES=('snowflake-snowpark-python', 'langchain-community', 'langchain-core', 'langchain_openai')
   IMPORTS=('/module-add/add.py')
   HANDLER='add.increment_by_one_fn';
 
@@ -30,7 +30,7 @@ CREATE OR REPLACE PROCEDURE core.increment_by_one(x NUMBER)
   RETURNS STRING
   LANGUAGE PYTHON
   RUNTIME_VERSION=3.10
-  PACKAGES=('snowflake-snowpark-python', 'langchain_community', 'langchain-core', 'langchain_openai')
+  PACKAGES=('snowflake-snowpark-python', 'langchain-community', 'langchain-core', 'langchain_openai')
   IMPORTS=('/module-add/add.py')
   HANDLER='add.py_version_fn';
 
