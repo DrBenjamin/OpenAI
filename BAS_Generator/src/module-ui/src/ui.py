@@ -1,8 +1,8 @@
 def run_streamlit():
-##### `ui.py`
-##### BAS Anzeigen Generator
-##### Please reach out to benjamin.gross1@adesso.de for any questions
-#### Loading needed Python libraries
+    ##### `ui.py`
+    ##### BAS Anzeigen Generator
+    ##### Please reach out to benjamin.gross1@adesso.de for any questions
+    #### Loading needed Python libraries
     import streamlit as st
     import pandas as pd
     from snowflake.snowpark.functions import call_udf, col
