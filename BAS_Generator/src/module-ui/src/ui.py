@@ -37,8 +37,9 @@ def run_streamlit():
       """)
 
     num_to_increment = st.number_input('Number to increment', key='numToIncrement', value=1)
-    result = session.call('core.increment_by_one', num_to_increment)
+    result, version = session.call('core.increment_by_one', num_to_increment)
 
+    st.write(version)
     st.dataframe(pd.DataFrame([[result]]), use_container_width=True)
 
 if __name__ == '__main__':
