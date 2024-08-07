@@ -81,7 +81,7 @@ def run_streamlit():
     if on:
       chain = prompt | ChatOpenAI(
         model="gpt-4o-mini",
-        api_key=get_openai_api_key()
+        api_key=get_secret_type('openai')
       ) 
     else:
       server_url = f"{url}:{str(port)}/v1"
