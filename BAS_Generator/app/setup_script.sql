@@ -22,7 +22,7 @@ CREATE OR REPLACE FUNCTION core.add(x NUMBER, y NUMBER)
   RETURNS STRING
   LANGUAGE PYTHON
   RUNTIME_VERSION=3.10
-  PACKAGES=('snowflake-snowpark-python')
+  PACKAGES=('snowflake-snowpark-python', 'pandas', 'langchain', 'langchain-community', 'langchain-core', 'openai')
   IMPORTS=('/module-add/add.py')
   HANDLER='add.py_version_fn';
 

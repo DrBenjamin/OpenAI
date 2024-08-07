@@ -5,6 +5,7 @@
 import sys
 from snowflake.snowpark import Session
 from snowflake.snowpark.functions import lit
+from langchain.chat_models import ChatOpenAI
 from langchain_community.chat_message_histories import StreamlitChatMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables.history import RunnableWithMessageHistory
