@@ -26,18 +26,18 @@ CREATE OR REPLACE FUNCTION core.add(x NUMBER, y NUMBER)
   IMPORTS=('/module-add/add.py')
   HANDLER='add.py_version_proc';
 
-  CREATE OR REPLACE PROCEDURE core.get_secret_openai()
+  CREATE OR REPLACE PROCEDURE core.get_openai_api_key()
   RETURNS STRING
   LANGUAGE PYTHON
   RUNTIME_VERSION = 3.10
-  HANDLER = 'get_secret_openai_proc'
+  HANDLER = 'get_openai_api_key_proc'
   EXTERNAL_ACCESS_INTEGRATIONS = (external_access_integration)
   SECRETS = ('openai' = credentials_secret )
   AS
   $$
   import _snowflake
 
-  def get_secret_openai():
+  def get_openai_api_key():
     secret_type = _snowflake.get_secret_type('openai')
     return secret_type
   $$;

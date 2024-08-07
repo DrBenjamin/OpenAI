@@ -14,6 +14,10 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 def add_fn(x: int, y: int) -> int:
     return x + y
 
-# Stored Procedure
-def py_version_fn() -> str:
+# Stored Procedures
+def py_version_proc() -> str:
     return sys.version
+  
+  
+def get_openai_api_key_proc() -> str:
+    return get_secret_type('openai')
