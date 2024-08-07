@@ -26,20 +26,25 @@ CREATE OR REPLACE FUNCTION core.add(x NUMBER, y NUMBER)
   IMPORTS=('/module-add/add.py')
   HANDLER='add.py_version_proc';
 
-  CREATE OR REPLACE FUNCTION get_secret_type()
+  CREATE OR REPLACE FUNCTION get_secret_username_password()
   RETURNS STRING
   LANGUAGE PYTHON
-  RUNTIME_VERSION = 3.10
-  HANDLER = 'get_openai_api_key_proc'
+  RUNTIME_VERSION = 3.8
+  HANDLER = 'get_secret_username_password'
   EXTERNAL_ACCESS_INTEGRATIONS = (external_access_integration)
-  SECRETS = ('openai' oauth_token )
+  SECRETS = ('OPENAI_KEY' = credentials_secret )
   AS
   $$
   import _snowflake
 
-  def get_secret():
-    secret_type = _snowflake.get_secret_type('openai')
-    return secret_type
+  def get_secret_username_password():
+    username_password_object = _snowflake.get_username_password('OPENAI_KEY');
+
+    username_password_dictionary = {}
+    username_password_dictionary["Username"] = username_password_object.username
+    username_password_dictionary["Password"] = username_password_object.password
+
+    return username_password_dictionary
   $$;
 
 -- 4. Grant appropriate privileges over these objects to your application roles. 
