@@ -3,10 +3,10 @@
 import sys
 from snowflake.snowpark import Session
 from snowflake.snowpark.functions import lit
-#from langchain_community.chat_message_histories import StreamlitChatMessageHistory
-#from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-#from langchain_core.runnables.history import RunnableWithMessageHistory
-#from langchain_openai import ChatOpenAI
+from langchain_community.chat_message_histories import StreamlitChatMessageHistory
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.runnables.history import RunnableWithMessageHistory
+from langchain_openai import ChatOpenAI
 
 # UDF example:
 def add_fn(x: int, y: int) -> int:
