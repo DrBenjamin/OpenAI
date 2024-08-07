@@ -26,7 +26,7 @@ CREATE OR REPLACE FUNCTION core.add(x NUMBER, y NUMBER)
   IMPORTS=('/module-add/add.py')
   HANDLER='add.py_version_proc';
 
-CREATE OR REPLACE FUNCTION get_secret_type()
+  CREATE OR REPLACE FUNCTION get_secret_type()
   RETURNS STRING
   LANGUAGE PYTHON
   RUNTIME_VERSION = 3.10
