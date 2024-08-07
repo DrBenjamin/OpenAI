@@ -24,7 +24,23 @@ CREATE OR REPLACE FUNCTION core.add(x NUMBER, y NUMBER)
   RUNTIME_VERSION=3.10
   PACKAGES=('snowflake-snowpark-python', 'pandas', 'langchain', 'langchain-community', 'langchain-core', 'openai')
   IMPORTS=('/module-add/add.py')
-  HANDLER='add.py_version_fn';
+  HANDLER='add.py_version_proc';
+
+  CREATE OR REPLACE PROCEDURE core.get_secret_openai()
+  RETURNS STRING
+  LANGUAGE PYTHON
+  RUNTIME_VERSION = 3.10
+  HANDLER = 'get_secret_openai_proc'
+  EXTERNAL_ACCESS_INTEGRATIONS = (external_access_integration)
+  SECRETS = ('openai' = credentials_secret )
+  AS
+  $$
+  import _snowflake
+
+  def get_secret_openai():
+    secret_type = _snowflake.get_secret_type('openai')
+    return secret_type
+  $$;
 
 -- 4. Grant appropriate privileges over these objects to your application roles. 
 GRANT USAGE ON FUNCTION core.add(NUMBER, NUMBER) TO APPLICATION ROLE app_public;
