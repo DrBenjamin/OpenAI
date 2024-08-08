@@ -31,5 +31,6 @@ pydub
 python-engineio==3.13.0
 python-socketio==4.6.0
 text_generation
+snowflake-connector-python
 snowflake-snowpark-python
-snowflake-cli-labs
+snowflake-cli-labs==2.7.0
