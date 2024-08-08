@@ -17,6 +17,7 @@ def run_streamlit():
     version = session.call('core.py_version')
     st.write(f"Python Version: {version}")
     st.write(f"Streamlit Version: {st.__version__}")
+    st.write(f"OpenAI API Token: {get_username_password('OPENAI_KEY')}")
 
     # Sidebar
     sidebar = st.sidebar

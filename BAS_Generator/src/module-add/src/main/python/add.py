@@ -18,7 +18,7 @@ def add_fn(kunde: str, cloud: str, system: str, on: bool) -> str:
         msgs.add_ai_message(f"""Ich ersetze <Kunde> mit {kunde}, 
                               <Cloud-Anbieter> mit {cloud}.""")
 
-    view_messages = st.expander("Zeige mir die Paragraphen an")
+    #view_messages = st.expander("Zeige mir die Paragraphen an")
 
     # Set up the LangChain, passing in Message History
     prompt = ChatPromptTemplate.from_messages(

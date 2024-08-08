@@ -27,7 +27,7 @@ CREATE OR REPLACE FUNCTION core.add(kunde_string STRING, cloud_string STRING, sy
   HANDLER='add.py_version_proc';
 
 -- 4. Grant appropriate privileges over these objects to your application roles. 
-GRANT USAGE ON FUNCTION core.add(NUMBER, NUMBER) TO APPLICATION ROLE app_public;
+GRANT USAGE ON FUNCTION core.add(STRING, STRING, STRING, BOOLEAN) TO APPLICATION ROLE app_public;
 GRANT USAGE ON PROCEDURE core.py_version() TO APPLICATION ROLE app_public;
 
 -- 5. Create a streamlit object using the code you wrote in you wrote in src/module-ui, as shown below. 
