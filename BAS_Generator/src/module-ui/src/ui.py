@@ -5,6 +5,7 @@ def run_streamlit():
     #### Loading needed Python libraries
     import streamlit as st
     import pandas as pd
+    from _snowflake import get_username_password
     from snowflake.snowpark.functions import call_udf, col
     from snowflake.snowpark.context import get_active_session
 
