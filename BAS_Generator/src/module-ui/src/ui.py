@@ -6,6 +6,7 @@ def run_streamlit():
     import streamlit as st
     import pandas as pd
     from _snowflake import get_username_password
+    from _snowflake import get_generic_secret_string
     from snowflake.snowpark.functions import call_udf, col
     from snowflake.snowpark.context import get_active_session
 
@@ -18,7 +19,10 @@ def run_streamlit():
     version = session.call('core.py_version')
     st.write(f"Python Version: {version}")
     st.write(f"Streamlit Version: {st.__version__}")
-    st.write(f"OpenAI API Token: {get_username_password('OPENAI_KEY')}")
+    openai_key = get_generic_secret_string('OPENAI_KEY')
+    st.write(f"OpenAI API Token: {openai_key}")
+    openai_key = get_username_password('OPENAI_KEY')
+    st.write(f"OpenAI API Token: {openai_key}")
 
     # Sidebar
     sidebar = st.sidebar
