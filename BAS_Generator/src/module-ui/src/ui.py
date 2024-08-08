@@ -19,10 +19,16 @@ def run_streamlit():
     version = session.call('core.py_version')
     st.write(f"Python Version: {version}")
     st.write(f"Streamlit Version: {st.__version__}")
-    openai_key = get_generic_secret_string('OPENAI_KEY')
-    st.write(f"OpenAI API Token: {openai_key}")
-    openai_key = get_username_password('OPENAI_KEY')
-    st.write(f"OpenAI API Token: {openai_key}")
+    try:
+        openai_key = get_generic_secret_string('OPENAI_KEY')
+        st.write(f"OpenAI API Token: {openai_key}")
+    except:
+        st.write("OpenAI API Token: Not Found")
+    try:
+        openai_key = get_username_password('OPENAI_KEY')
+        st.write(f"OpenAI API Token: {openai_key}")
+    except:
+        st.write("OpenAI API Token: Not Found")
 
     # Sidebar
     sidebar = st.sidebar
