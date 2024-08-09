@@ -33,12 +33,16 @@ def run_streamlit():
     # Sidebar
     sidebar = st.sidebar
     with sidebar:
+      st.markdown("Einstellungen")
       kunde = st.text_input("Anbieter:", value="GWQ ServicePlus AG")
       cloud = st.selectbox("Cloud:", ["AWS", "Azure", "Google Cloud"], index=2)
       on = st.toggle("OpenAI ChatGPT", True)
       system = st.text_input("System:", value = f"Du erstellst einzelne Absätze einer Anzeige beim Bundesamt für Soziale Sicherung über die Verarbeitung von Sozialdaten im Auftrag (AVV) nach § 80 Zehntes Sozialgesetzbuch (SGB X). Tausche <Variabel_Name> durch die entsprechenden Inhalte aus und gebe nur den Text aus und verzichte auf Phrasen wie z.B. 'Vielen Dank für die Informationen. Hier sind die angepassten Absätze für die Anzeige beim Bundesamt für Soziale Sicherung:'.")
+      if on:
+        st.markdown("OpenAI API Konfiguration")
+        token = st.text_input("Token:", value="sk-")
       if not on:
-        st.markdown("Local Server Configuration")
+        st.markdown("Lokaler Server Konfiguration")
         url = st.text_input("URL:", value="http://localhost")
         port = st.number_input("Port:", value=1234, min_value=1, max_value=65535)
 
