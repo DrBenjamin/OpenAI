@@ -10,33 +10,25 @@ CREATE OR ALTER VERSIONED SCHEMA core;
 GRANT USAGE ON SCHEMA core TO APPLICATION ROLE app_public;
 
 -- 3. Create UDFs and Stored Procedures using the python code you wrote in src/module-add, as shown below.
-CREATE OR REPLACE FUNCTION core.py_version()
-  RETURNS STRING
+CREATE OR REPLACE FUNCTION core.add(x NUMBER, y NUMBER)
+  RETURNS NUMBER
   LANGUAGE PYTHON
   RUNTIME_VERSION=3.8
   PACKAGES=('snowflake-snowpark-python')
-  IMPORTS=('/module-add/py_version.py')
-  HANDLER='py_version.py_version_fn';
+  IMPORTS=('/module-add/add.py')
+  HANDLER='add.add_fn';
 
-CREATE OR REPLACE FUNCTION core.generation(
-      kunde_string STRING, 
-      cloud_string STRING, 
-      system_string STRING, 
-      on_var BOOLEAN, 
-      openai_api_key STRING, 
-      url STRING, 
-      port STRING
-  )
-  RETURNS STRING
+CREATE OR REPLACE PROCEDURE core.increment_by_one(x NUMBER)
+  RETURNS NUMBER
   LANGUAGE PYTHON
-  RUNTIME_VERSION=3.10
-  PACKAGES=('snowflake-snowpark-python', 'pandas', 'langchain', 'langchain-community', 'langchain-core', 'openai')
-  IMPORTS=('/module-add/generation.py')
-  HANDLER='generation.generation_fn';
+  RUNTIME_VERSION=3.8
+  PACKAGES=('snowflake-snowpark-python')
+  IMPORTS=('/module-add/add.py')
+  HANDLER='add.increment_by_one_fn';
 
 -- 4. Grant appropriate privileges over these objects to your application roles. 
-GRANT USAGE ON FUNCTION core.py_version() TO APPLICATION ROLE app_public;
-GRANT USAGE ON FUNCTION core.generation(STRING, STRING, STRING, BOOLEAN, STRING, STRING, STRING) TO APPLICATION ROLE app_public;
+GRANT USAGE ON FUNCTION core.add(NUMBER, NUMBER) TO APPLICATION ROLE app_public;
+GRANT USAGE ON PROCEDURE core.increment_by_one(NUMBER) TO APPLICATION ROLE app_public;
 
 -- 5. Create a streamlit object using the code you wrote in you wrote in src/module-ui, as shown below. 
 -- The `from` value is derived from the stage path described in snowflake.yml

@@ -6,13 +6,9 @@ native_app:
   artifacts:
     - src: app/*
       dest: ./
+    - src: src/module-add/src/main/python/py_version.py
+      dest: module-add/py_version.py
     - src: src/module-add/src/main/python/generation.py
       dest: module-add/generation.py
     - src: src/module-ui/src/*
       dest: streamlit/
-
-# If you added any sql scripts under scripts/, you should add the following snippet after `artifacts` under `native_app`.
-#  package:
-#    scripts:
-#    - scripts/any-provider-setup.sql
-#    - scripts/shared-content.sql

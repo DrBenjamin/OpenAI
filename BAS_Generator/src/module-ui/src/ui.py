@@ -41,16 +41,17 @@ def run_streamlit():
     try:
         openai_key = get_generic_secret_string('OPENAI_KEY')
         st.write(f"OpenAI API Token: {openai_key}")
-    except:
-        st.write("OpenAI API Token: Not Found")
+    except Exception as e:
+        st.write("OpenAI API Token: Not Found", e)
     try:
-        openai_key = get_username_password('OPENAI_KEY')
+        openai_key = get_username_password('OPENAI_KEY_PW')
         st.write(f"OpenAI API Token: {openai_key}")
-    except:
-        st.write("OpenAI API Token: Not Found")
+    except Exception as e:
+        st.write("OpenAI API Token: Not Found", e)
 
     # Main
-    output = session.call("core.generation", kunde, cloud, system, on, token, url, port)
+    output = session.call('core.py_version')
+    #output = session.call("core.generation", kunde, cloud, system, on, token, url, port)
     st.write(f"Ausgabe: {output}")
 
 if __name__ == '__main__':
