@@ -10,6 +10,7 @@ Download the [Package](https://github.com/DrBenjamin/OpenAI/archive/refs/tags/v1
 
 ```bash
 python -m pip install --upgrade -r requirements.txt
+python -m pip install --upgrade --force-reinstall snowflake-cli-labs==2.7.0
 ```
 
 Create Python Environment
