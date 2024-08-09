@@ -6,8 +6,8 @@ native_app:
   artifacts:
     - src: app/*
       dest: ./
-    - src: src/module-add/src/main/python/add.py
-      dest: module-add/add.py
+    - src: src/module-add/src/main/python/generation.py
+      dest: module-add/generation.py
     - src: src/module-ui/src/*
       dest: streamlit/
 

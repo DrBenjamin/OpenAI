@@ -1,8 +1,7 @@
-##### `add.py`
+##### `generation.py`
 ##### BAS Anzeigen Generator
 ##### Please reach out to benjamin.gross1@adesso.de for any questions
 #### Loading needed Python libraries
-import sys
 from snowflake.snowpark import Session
 from snowflake.snowpark.functions import lit
 from langchain.chat_models import ChatOpenAI
@@ -11,7 +10,7 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables.history import RunnableWithMessageHistory
 
 # UDF
-def add_fn(kunde: str, cloud: str, system: str, on: bool) -> str:
+def generation_fn(kunde: str, cloud: str, system: str, on: bool, openai_api_key: str, url: str, port: str) -> str:
     # Set up memory
     msgs = StreamlitChatMessageHistory(key="langchain_messages")
     if len(msgs.messages) == 0:
@@ -30,11 +29,10 @@ def add_fn(kunde: str, cloud: str, system: str, on: bool) -> str:
     )
 
     # Setting the LLM
-    openai_key = get_username_password('OPENAI_KEY')
     if on:
       chain = prompt | ChatOpenAI(
         model="gpt-4o-mini",
-        api_key=openai_key['Password']
+        api_key=openai_api_key
       ) 
     else:
       server_url = f"{url}:{str(port)}/v1"
@@ -54,46 +52,42 @@ def add_fn(kunde: str, cloud: str, system: str, on: bool) -> str:
     )
 
     # Render current messages from StreamlitChatMessageHistory
-    for msg in msgs.messages:
-        st.chat_message(msg.type).write(msg.content)
+    #for msg in msgs.messages:
+    #    st.chat_message(msg.type).write(msg.content)
 
     # If user inputs a new prompt, generate and draw a new response
     #if prompt := st.chat_input():
-    for prompt in df["PARAGRAPH_TEXT"]:
-        st.chat_message("human").write(prompt)
+    #for prompt in df["PARAGRAPH_TEXT"]:
+        #st.chat_message("human").write(prompt)
         # Note: new messages are saved to history automatically by Langchain during run
-        config = {"configurable": {"session_id": "any"}}
-        response = chain_with_history.invoke({"question": prompt}, config)
-        st.chat_message("ai").write(response.content)
+    #    config = {"configurable": {"session_id": "any"}}
+    #    response = chain_with_history.invoke({"question": prompt}, config)
+        #st.chat_message("ai").write(response.content)
 
     # Draw the messages at the end, so newly generated ones show up immediately
-    with view_messages:
-        """
-        Message History initialized with:
-        ```python
-        msgs = StreamlitChatMessageHistory(key="langchain_messages")
-        ```
+    #with view_messages:
+    #    """
+    #    Message History initialized with:
+    #    ```python
+    #    msgs = StreamlitChatMessageHistory(key="langchain_messages")
+    #    ```
 
-        Contents of `st.session_state.langchain_messages`:
-        """
-        view_messages.json(st.session_state.langchain_messages)
+    #    Contents of `st.session_state.langchain_messages`:
+    #    """
+    #    #view_messages.json(st.session_state.langchain_messages)
 
     # Convert to dataframe
-    messages = st.session_state.langchain_messages
-    anzeige_temp = pd.DataFrame(columns=['PARAGRAPH', 'PARAGRAPH_TEXT'])
-    counter = -1
-    paragraph = -1
-    for index, message in enumerate(messages):
-        for key, value in message:
-            if key == "content":
-                counter += 1
-                if counter > 0 and counter % 2 == 0:
-                    paragraph += 1
-                    anzeige_temp = anzeige_temp._append(pd.DataFrame([{'PARAGRAPH': df['PARAGRAPH'][paragraph], 'PARAGRAPH_TEXT': value}]), ignore_index=True)
+    #messages = st.session_state.langchain_messages
+    #anzeige_temp = pd.DataFrame(columns=['PARAGRAPH', 'PARAGRAPH_TEXT'])
+    #counter = -1
+    #paragraph = -1
+    #for index, message in enumerate(messages):
+    #    for key, value in message:
+    #        if key == "content":
+    #            counter += 1
+    #            if counter > 0 and counter % 2 == 0:
+    #                paragraph += 1
+    #                anzeige_temp = anzeige_temp._append(pd.DataFrame([{'PARAGRAPH': df['PARAGRAPH'][paragraph], 'PARAGRAPH_TEXT': value}]), ignore_index=True)
 
     #st.dataframe(anzeige_temp)
-    return anzeige_temp
-
-# Stored Procedures
-def py_version_proc() -> str:
-    return sys.version
+    return "Generierter Text" #anzeige_temp
