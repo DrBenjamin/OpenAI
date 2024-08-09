@@ -13,7 +13,7 @@ GRANT USAGE ON SCHEMA core TO APPLICATION ROLE app_public;
 CREATE OR REPLACE FUNCTION core.py_version()
   RETURNS STRING
   LANGUAGE PYTHON
-  RUNTIME_VERSION=3.8
+  RUNTIME_VERSION=3.10
   PACKAGES=('snowflake-snowpark-python')
   IMPORTS=('/module-add/py_version.py')
   HANDLER='py_version.py_version_fn';
