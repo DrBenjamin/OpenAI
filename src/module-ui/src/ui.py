@@ -43,7 +43,7 @@ def run_streamlit():
     #st.write(f"OpenAI API key: {openai_key['RESULT'][0]}")
     #session.sql("SELECT core.openai_api_key()")
     
-    data_frame = session.create_dataframe([[]]).select(call_udf('core.add', kunde, cloud, system, on, openai_key['RESULT'][0], url, port).alias('RESULT'))
+    data_frame = session.create_dataframe([[]]).select(call_udf('core.add', kunde, cloud, system, on, token, url, port).alias('RESULT'))
     output = data_frame.to_pandas()
     st.write(f"Ausgabe: {output['RESULT'][0]}")
 
