@@ -24,9 +24,9 @@ session = create_session()
 st.success("Datenbankverbindung erfolgreich hergestellt.")
     
 # Write data table
-def write_data(data):
+def write_data(data, table_name, database, schema):
     # Write data to table
-    session.write_pandas(data, table_name='ANZEIGE_TEMP', database="OPENAI_DATABASE", schema="PUBLIC", overwrite=True)
+    session.write_pandas(data, table_name=table_name, database=database, schema=schema, overwrite=True)
     st.success("Daten erfolgreich geschrieben.")
         
 # Load data table
@@ -43,12 +43,9 @@ def load_data(table_name):
     table = table.collect()
     return pd.DataFrame(table)
 
-# Select and display data table
-table_name = "OPENAI_DATABASE.PUBLIC.ANZEIGE_PRE"
-
 # Display data table
 with st.expander("Datenbankinhalt"):
-    df = load_data(table_name)
+    df = load_data('OPENAI_DATABASE.PUBLIC.ANZEIGE_PRE')
     st.dataframe(df)
     
 # Sidebar
@@ -141,4 +138,4 @@ for index, message in enumerate(messages):
                 anzeige_temp = anzeige_temp._append(pd.DataFrame([{'PARAGRAPH': df['PARAGRAPH'][paragraph], 'PARAGRAPH_TEXT': value}]), ignore_index=True)
 
 st.dataframe(anzeige_temp)
-write_data(anzeige_temp)
+write_data(anzeige_temp, table_name='ANZEIGE_TEMP', database='OPENAI_DATABASE', schema='PUBLIC')
