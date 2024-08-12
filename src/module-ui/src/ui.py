@@ -11,7 +11,34 @@ def run_streamlit():
 
     # Get the current credentials
     session = get_active_session()
+    st.success("Datenbankverbindung erfolgreich hergestellt.")
     
+    # Load data table
+    @st.cache_data
+    def load_data(table_name):
+        # Read in data table
+        st.write(f"Beispieldaten von `{table_name}`:")
+        table = session.table(table_name)
+    
+        # Do some computation on it
+        table = table.limit(100)
+        
+        # Collect the results. This will run the query and download the data
+        table = table.collect()
+        st.success("Daten erfolgreich gelesen.")
+        return pd.DataFrame(table)
+      
+    def write_data(table_name):
+        # Write data to table
+        data = pd.DataFrame(
+                            {
+                              "PRAGRAPGH": ["1.0"],
+                              "PARAGRAPH_TEXT": ["Die GWQ ServicePlus AG (GWQ) ist ein Dienstleister an der Schnittstelle zwischen Krankenkassen und den Erbringern medizinischer Versorgung."]
+                            }
+                           )
+        session.write_pandas(data, table_name, auto_create_table=True)
+        st.success("Daten erfolgreich geschrieben.")
+
     # Sidebar
     sidebar = st.sidebar
     with sidebar:
@@ -36,16 +63,20 @@ def run_streamlit():
     st.header('Generiere ein BAS Anzeigen Dokument')
     st.write(f"Python Version: {sys.version}")
     st.write(f"Streamlit Version: {st.__version__}")
-
-    # Main
-    #data_frame = session.create_dataframe([[]]).select(call_udf('core.openai_api_key').alias('RESULT'))
-    #openai_key = data_frame.to_pandas()
-    #st.write(f"OpenAI API key: {openai_key['RESULT'][0]}")
-    #session.sql("SELECT core.openai_api_key()")
     
+    # Select and display data table
+    table_name = "OPENAI_BENJAMINGROSS1.PUBLIC.ANZEIGE_PRE" #"OPENAI_DATABASE.PUBLIC.ANZEIGE_PRE"
+
+    # Display data table
+    write_data(table_name)
+    with st.expander("Datenbankinhalt"):
+        df = load_data(table_name)
+        st.dataframe(df)
+
+    # Generator
     data_frame = session.create_dataframe([[]]).select(call_udf('core.add', kunde, cloud, system, on, token, url, port).alias('RESULT'))
     output = data_frame.to_pandas()
-    st.write(f"Ausgabe: {output['RESULT'][0]}")
+    st.write(f"UDF Ausgabe: {output['RESULT'][0]}")
 
 if __name__ == '__main__':
     run_streamlit()

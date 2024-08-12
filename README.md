@@ -66,6 +66,8 @@ Example of fine-tuning the Llama3 model on a medical conversation dataset.
 
 ## Snowflake Native App Framework
 
+[Python modules in Snowflake](https://repo.anaconda.com/pkgs/snowflake/)
+
 ```bash
 brew tap snowflakedb/snowflake-cli
 brew install snowflake-cli
