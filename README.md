@@ -1,82 +1,95 @@
-# OpenAI
+## Introduction
 
-[![GitHub][github_badge]][github_link]
+This is an example template for a Snowflake Native App project which demonstrates the use of Python extension code and adding Streamlit code. This template is meant to guide developers towards a possible project structure on the basis of functionality, as well as to indicate the contents of some common and useful files. 
 
-Playground for using OpenAI ChatGPT and Hugging Face state-of-the-art diffusion models for image, text and audio generation in PyTorch.
+Since this template contains Python files only, you do not need to perform any additional steps to build the source code. You can directly go to the next section. However, if there were any source code that needed to be built, you must manually perform the build steps here before proceeding to the next section. 
 
-## Local Installation to use the Hugging Face models
+Similarly, you can also use your own build steps for any other languages supported by Snowflake that you wish to write your code in. For more information on supported languages, visit [docs](https://docs.snowflake.com/en/developer-guide/stored-procedures-vs-udfs#label-sp-udf-languages).
 
-Download the [Package](https://github.com/DrBenjamin/OpenAI/archive/refs/tags/v1.0.zip) and install the needed libraries with
-
-```bash
-python -m pip install --upgrade -r requirements.txt
+## Run the app
+Create or update an application package in your Snowflake account, upload application artifacts to a stage in the application package, and create or update an application object in the same account based on the uploaded artifacts.
+```
+snow app run
 ```
 
-Create Python Environment
+For more information, please refer to the Snowflake Documentation on installing and using Snowflake CLI to create a Snowflake Native App.  
+# Directory Structure
+## `/app`
+This directory holds your Snowflake Native App files.
 
-```bash
-conda create --name myenv python=3.10
-conda activate myenv
+### `/app/README.md`
+Exposed to the account installing the application with details on what it does and how to use it.
+
+### `/app/manifest.yml`
+Defines properties required by the application package. Find more details at the [Manifest Documentation.](https://docs.snowflake.com/en/developer-guide/native-apps/creating-manifest)
+
+### `/app/setup_script.sql`
+Contains SQL statements that are run when a consumer installs or upgrades a Snowflake Native App in their account.
+
+## `/scripts`
+You can add any additional scripts such as `.sql` and `.jinja` files here. One common use case for such a script is to add shared content from external databases to your application package. This allows you to refer to the external database in the setup script that runs when a Snowflake Native App is installed.
+_Note: As of now, `snow app init` does not render these jinja templates for you into the required files, if you decide to use them. You will have to manually render them for now._
+
+
+## `/src`
+This directory contains code organization by functionality, such as one distinct module for Streamlit related code, and another module for "number add" functionality, which is used an example in this template. 
+```
+/src
+   |-module-add
+   |          |-main
+   |          |    |-python
+   |          |           |-add.py
+   |          |
+   |          |-test
+   |               |-python
+   |                      |-add_test.py
+   |
+   |-module-ui
+   |         |-src
+   |             |-ui.py
+   |             |-environment.yml
+   |         |-test
+   |              |-test_ui.py
 ```
 
-Run the software with
+## `snowflake.yml.jinja`
+While this file exists as a Jinja template, it is the only file that is automatically rendered as a `snowflake.yml` file by the `snow app init` command, as described in the [README.md](../README.md). Snowflake CLI uses the `snowflake.yml` file  to discover your project's code and interact with Snowflake using all relevant privileges and grants. 
 
-```bash
-python -m streamlit run 🤖_OpenAI.py
+For more information, please refer to the Snowflake Documentation on installing and using Snowflake CLI to create a Snowflake Native App. 
+
+## Adding a snowflake.local.yml file
+Although your project directory must have a `snowflake.yml` file, an individual developer can choose to customize the behavior of Snowflake CLI by providing local overrides to the `snowflake.yml` file, such as a new role to test out your own application package. This is where you can use the `snowflake.local.yml` file, which is not a version-controlled file.
+
+For more information, please refer to the Snowflake Documentation on installing and using Snowflake CLI to create a Snowflake Native App. 
+
+## Unit tests
+To set up and run unit tests, please follow the steps below.
+
+### Set up testing conda environment (First Time setup)
+
+Go to the project's root directory where you can find `local_test_env.yml` and run the following command once to set up a conda environment with the correct packages. Please note that the version of test packages may differ from the version of packages in Snowflake, so you will need to be careful with any differences in behavior.
+
+```
+conda env create --file local_test_env.yml
 ```
 
-Click on `Hugging Face` in the left sidebar and choose a model from the selectbox. The model will be automatically downloaded (stored in `User/.cache` folder). Create the file `.streamlit/secrets.toml` with this content:
+This will create a conda environment with the name `streamlit-python-testing`.
 
-```toml
-[openai]
-key = "openai-api-key"
-image = "images/BenBox_small.png"
+### Run unit tests
+To run unit tests, follow these steps:
 
-[hugging_face]
-key = "hugging-face-key"
+#### Activate conda environment
+You will need to activate this conda environment once per command line session:
 ```
-
-## Llama.cpp
-
-Get the sources, build and run the Llama3 model with the following commands:
-```bash
- git clone https://github.com/ggerganov/llama.cpp.git
- cd llama.cpp
- make
- ./llama-server -m ~/.cache/lm-studio/models/DrBenjamin/llama-3-8b-chat-doctor/llama-3-8b-chat-doctor-Q4_K_M.gguf --port 1234 -c 2048
+conda activate streamlit-python-testing
 ```
-
-## Fine-tuning the Llama3 model
-
-Example of fine-tuning the Llama3 model on a medical conversation dataset.
-
-[Link to Kaggle](https://www.kaggle.com/work/collections/14192615)
-[Link to Wandb](https://wandb.ai/seriousbenentertainment/Fine-tune%20Llama%203%208B%20on%20Medical%20Dataset)
-[Link to Huggingface](https://huggingface.co/DrBenjamin/llama-3-8b-chat-doctor/tree/main)
-
-## Streamlit Cloud Demo
-
-[![Open in Streamlit][share_badge]][share_link]
-
-[github_badge]: https://badgen.net/badge/icon/GitHub?icon=github&color=black&label
-[github_link]: https://github.com/DrBenjamin/OpenAI
-
-[share_badge]: https://static.streamlit.io/badges/streamlit_badge_black_white.svg
-[share_link]: https://ai-playground.streamlit.app/
-
-## Snowflake Native App Framework
-
-```bash
-brew tap snowflakedb/snowflake-cli
-brew install snowflake-cli
-python -m pip install --upgrade --force-reinstall snowflake-cli-labs
+To deactivate and use your current command line session for other tasks, run the following:
 ```
-
-## Misc
-
-Miscellaneous files and scripts for the project.
-
-```bash
-git repack -a -d -f --depth=250 --window=250
-git gc --aggressive --prune
+conda deactivate
 ```
+#### Run Pytest
+To run the example tests provided, execute the following command from the project's root:
+```
+pytest
+```
+Note that there is a pytest.ini file specifying the location of the source code that we are testing.
