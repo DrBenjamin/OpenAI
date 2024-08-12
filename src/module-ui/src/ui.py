@@ -68,7 +68,6 @@ def run_streamlit():
     table_name = "OPENAI_BENJAMINGROSS1.PUBLIC.ANZEIGE_PRE" #"OPENAI_DATABASE.PUBLIC.ANZEIGE_PRE"
 
     # Display data table
-    write_data(table_name)
     with st.expander("Datenbankinhalt"):
         df = load_data(table_name)
         st.dataframe(df)

@@ -22,7 +22,13 @@ def create_session():
 
 session = create_session()
 st.success("Datenbankverbindung erfolgreich hergestellt.")
-
+    
+# Write data table
+def write_data(data):
+    # Write data to table
+    session.write_pandas(data, table_name='ANZEIGE_TEMP', database="OPENAI_DATABASE", schema="PUBLIC", overwrite=True)
+    st.success("Daten erfolgreich geschrieben.")
+        
 # Load data table
 @st.cache_data
 def load_data(table_name):
@@ -38,7 +44,7 @@ def load_data(table_name):
     return pd.DataFrame(table)
 
 # Select and display data table
-table_name = "BAS.PUBLIC.ANZEIGE_PRE"
+table_name = "OPENAI_DATABASE.PUBLIC.ANZEIGE_PRE"
 
 # Display data table
 with st.expander("Datenbankinhalt"):
@@ -48,7 +54,7 @@ with st.expander("Datenbankinhalt"):
 # Sidebar
 sidebar = st.sidebar
 with sidebar:
-  kunde = st.text_input("Anbieter:", value="GWQ ServicePlus AG")
+  kunde = st.text_input("Kunde:", value="GWQ ServicePlus AG")
   cloud = st.selectbox("Cloud:", ["AWS", "Azure", "Google Cloud"], index=2)
   on = st.toggle("OpenAI ChatGPT", True)
   system = st.text_input("System:", value = f"Du erstellst einzelne Absätze einer Anzeige beim Bundesamt für Soziale Sicherung über die Verarbeitung von Sozialdaten im Auftrag (AVV) nach § 80 Zehntes Sozialgesetzbuch (SGB X). Tausche <Variabel_Name> durch die entsprechenden Inhalte aus und gebe nur den Text aus und verzichte auf Phrasen wie z.B. 'Vielen Dank für die Informationen. Hier sind die angepassten Absätze für die Anzeige beim Bundesamt für Soziale Sicherung:'.")
@@ -102,7 +108,6 @@ for msg in msgs.messages:
     st.chat_message(msg.type).write(msg.content)
 
 # If user inputs a new prompt, generate and draw a new response
-#if prompt := st.chat_input():
 for prompt in df["PARAGRAPH_TEXT"]:
     st.chat_message("human").write(prompt)
     # Note: new messages are saved to history automatically by Langchain during run
@@ -136,3 +141,4 @@ for index, message in enumerate(messages):
                 anzeige_temp = anzeige_temp._append(pd.DataFrame([{'PARAGRAPH': df['PARAGRAPH'][paragraph], 'PARAGRAPH_TEXT': value}]), ignore_index=True)
 
 st.dataframe(anzeige_temp)
+write_data(anzeige_temp)
