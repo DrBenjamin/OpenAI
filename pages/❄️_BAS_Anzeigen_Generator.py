@@ -22,13 +22,13 @@ def create_session():
 
 session = create_session()
 st.success("Datenbankverbindung erfolgreich hergestellt.")
-    
+
 # Write data table
 def write_data(data, table_name, database, schema):
     # Write data to table
     session.write_pandas(data, table_name=table_name, database=database, schema=schema, overwrite=True)
     st.success("Daten erfolgreich geschrieben.")
-        
+
 # Load data table
 @st.cache_data
 def load_data(table_name):
@@ -47,7 +47,7 @@ def load_data(table_name):
 with st.expander("Datenbankinhalt"):
     df = load_data('OPENAI_DATABASE.PUBLIC.ANZEIGE_PRE')
     st.dataframe(df)
-    
+
 # Sidebar
 sidebar = st.sidebar
 with sidebar:
