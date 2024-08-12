@@ -1,9 +1,7 @@
 # This is a project definition file, a required component if you intend to use Snowflake CLI in a project directory such as this template.
-
-
 definition_version: 1
 native_app:
-  name: OpenAI
+  name: BAS_Generator
   source_stage: app_src.stage
   artifacts:
     - src: app/*
@@ -13,9 +11,8 @@ native_app:
     - src: src/module-ui/src/*
       dest: streamlit/
 
-# If you added any sql scripts under scripts/, you should add the following snippet after `artifacts` under `native_app`.     
+# If you added any sql scripts under scripts/, you should add the following snippet after `artifacts` under `native_app`.
 #  package:
 #    scripts:
 #    - scripts/any-provider-setup.sql
 #    - scripts/shared-content.sql
-

@@ -1,10 +1,49 @@
-snowflake.local.yml
-output/
-**/__pycache__/
-**/.pytest_cache/
-create_secret.sql
-.streamlit/secrets.toml
-.streamlit/config.toml
-data/dialogues_original.parquet
-data/dialogues.parquet
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.streamlit
 .DS_Store
+OpenAI.Rproj
+.idea
+temp.mp3
+PDFs/Ben.docx
+models/7B/ggml-model-q4_0.bin
+models/
+create_secret.sql
+
+# User-specific stuff
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf
+.idea/**/codeStyleConfig.xml
+.idea/**/misc.xml
+.idea/**/modules.xml
+.idea/**/profiles_settings.xml
+.idea/**/Project_Default.xml
+.idea/**/vcs.xml
+HRStaffPortal.iml
+.idea/**/.gitignore
+
+# AWS User-specific
+.idea/**/aws.xml
+
+# Generated files
+.idea/**/contentModel.xml
+
+# Sensitive or high-churn files
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+.idea/**/dbnavigator.xml
+
+# Gradle
+.idea/**/gradle.xml
+.idea/**/libraries
+data/dialogues.parquet
+data/dialogues_original.parquet
