@@ -35,20 +35,26 @@ def write_data(data, table_name, database, schema):
 @st.cache_data
 def load_data(table_name):
     # Read in data table
-    st.write(f"Beispieldaten von `{table_name}`:")
     table = session.table(table_name)
-    
-    # Do some computation on it
-    table = table.limit(100)
-    
+
     # Collect the results. This will run the query and download the data
     table = table.collect()
     return pd.DataFrame(table)
+
+# Web Scraper
+def web_scraper(url):
+    info_page = requests.get(url)
+    info_soup = BeautifulSoup(info_page.content, 'html.parser')
+    info = info_soup.get_text()
+    info = info.replace('\n', ' ')
+    return info
 
 # Display data table
 with st.expander("Datenbankinhalt"):
     df = load_data('OPENAI_DATABASE.PUBLIC.ANZEIGE_PRE')
     st.dataframe(df)
+    paragraphs = load_data('OPENAI_DATABASE.PUBLIC.ANZEIGE_PARAGRAPHS')
+    st.dataframe(paragraphs)
 
 # Sidebar
 sidebar = st.sidebar
@@ -57,10 +63,7 @@ with sidebar:
     web = st.toggle("Webscraper", True)
     kunde_url = st.text_input("Kunde Info:", value="https://www.gwq-serviceplus.de/ueber-uns")
     if web:
-        kunde_page = requests.get(kunde_url)
-        kunde_soup = BeautifulSoup(kunde_page.content, 'html.parser')
-        kunde_info = kunde_soup.get_text()
-        kunde_info = kunde_info.replace('\n', ' ')
+        kunde_info = web_scraper(kunde_url)
     cloud = st.selectbox("Cloud:", ["AWS", "Azure", "Google Cloud"], index=2)
     on = st.toggle("OpenAI ChatGPT", True)
     system = st.text_input("System:", value = f"Du erstellst einzelne Absätze einer Anzeige beim Bundesamt für Soziale Sicherung über die Verarbeitung von Sozialdaten im Auftrag (AVV) nach § 80 Zehntes Sozialgesetzbuch (SGB X). Tausche die Platzhalter (z.B. <Kunde>) durch die entsprechenden Inhalte aus und gebe nur den verbesserten Text in einer sachlichen und formellen Form aus und verzichte auf Phrasen wie z.B. 'Vielen Dank für die Informationen. Hier sind die angepassten Absätze für die Anzeige beim Bundesamt für Soziale Sicherung:'.")
@@ -115,16 +118,18 @@ for msg in msgs.messages:
     st.chat_message(msg.type).write(msg.content)
 
 # If user inputs a new prompt, generate and draw a new response
-for prompt in df["PARAGRAPH_TEXT"]:
-    #if '<Kundeninfo>' in paragraph_text and web:
-    #    prompt = paragraph_text.replace('<Kunde>', str(kunde)).replace('<Cloud-Anbieter>', str(cloud)).replace('<Kundeninfo>', str(kunde_info))
-    #else:
-    #    prompt = paragraph_text.replace('<Kunde>', str(kunde)).replace('<Cloud-Anbieter>', str(cloud))
+for paragraph in df["PARAGRAPH_TEXT"]:
+    prompt = paragraph
+    if '<Kundeninfo>' in prompt and web:
+        prompt = prompt.replace('<Kunde>', str(kunde)).replace('<Cloud-Anbieter>', str(cloud)).replace('<Kundeninfo>', str(kunde_info))
+    else:
+        prompt = prompt.replace('<Kunde>', str(kunde)).replace('<Cloud-Anbieter>', str(cloud))
+    if '<§ 80 SGB X>' in prompt:
+        prompt = prompt.replace('<§ 80 SGB X>', 'Verarbeitung von Sozialdaten im Auftrag')
     st.chat_message("human").write(prompt)
     
     # Note: new messages are saved to history automatically by Langchain during run
     config = {"configurable": {"session_id": "any"}}
-    print(prompt)
     response = chain_with_history.invoke({"question": prompt}, config)
     st.chat_message("ai").write(response.content)
 
