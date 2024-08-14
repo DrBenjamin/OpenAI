@@ -118,14 +118,19 @@ for msg in msgs.messages:
     st.chat_message(msg.type).write(msg.content)
 
 # If user inputs a new prompt, generate and draw a new response
-for paragraph in df["PARAGRAPH_TEXT"]:
-    prompt = paragraph
-    if '<Kundeninfo>' in prompt and web:
-        prompt = prompt.replace('<Kunde>', str(kunde)).replace('<Cloud-Anbieter>', str(cloud)).replace('<Kundeninfo>', str(kunde_info))
+for text in df["PARAGRAPH_TEXT"]:
+    if '<Kundeninfo>' in text and web:
+        prompt = text.replace('<Kunde>', str(kunde)).replace('<Cloud-Anbieter>', str(cloud)).replace('<Kundeninfo>', str(kunde_info))
     else:
-        prompt = prompt.replace('<Kunde>', str(kunde)).replace('<Cloud-Anbieter>', str(cloud))
-    if '<§ 80 SGB X>' in prompt:
-        prompt = prompt.replace('<§ 80 SGB X>', 'Verarbeitung von Sozialdaten im Auftrag')
+        prompt = text.replace('<Kunde>', str(kunde)).replace('<Cloud-Anbieter>', str(cloud))
+    if '<§' or '<Art.' in prompt:
+        for paragraph in paragraphs["PARAGRAPH"]:
+            # Checking for matching paragraph
+            if paragraph in prompt:
+                prompt = prompt.replace(f"<{paragraph}>", paragraphs[paragraphs['PARAGRAPH'] == paragraph].drop(columns=paragraphs.columns[-1]).to_string(index=False, header=False))
+                paragraph_info = web_scraper(paragraphs[paragraphs['PARAGRAPH'] == paragraph].drop(columns=paragraphs.columns[:2]).to_string(index=False, header=False))
+                paragraph_info = paragraph_info.replace('\n', ' ')
+                prompt += paragraph_info
     st.chat_message("human").write(prompt)
     
     # Note: new messages are saved to history automatically by Langchain during run
@@ -160,4 +165,6 @@ for index, message in enumerate(messages):
 
 st.dataframe(anzeige_temp)
 write_data(anzeige_temp, table_name='ANZEIGE_TEMP', database='OPENAI_DATABASE', schema='PUBLIC')
-st.expander("Datenbankinhalt", expanded=False).dataframe(load_data('OPENAI_DATABASE.PUBLIC.ANZEIGE_TEMP'))
+with st.expander("Datenbankinhalt", expanded=False):
+    df = load_data('OPENAI_DATABASE.PUBLIC.ANZEIGE_TEMP')
+    st.dataframe(df)
