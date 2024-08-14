@@ -74,6 +74,10 @@ brew install snowflake-cli
 python -m pip install --upgrade --force-reinstall snowflake-cli-labs
 ```
 
+### Snowflake Data Warehouse
+
+https://eur02.safelinks.protection.outlook.com/?url=https%3A%2F%2Fj06yswzb.r.eu-west-1.awstrack.me%2FL0%2Fhttps%3A%252F%252Fffcjeqr-pk52190.snowflakecomputing.com%2F1%2F01020191129e984f-6e5b7a42-b1ec-4d7b-8cc5-11a8d2d8da2e-000000%2FiDdZFp2mYbYtF8GgC0zZik4BShc%3D385&data=05%7C02%7C%7C2241ef25f06d4159b50b08dcb2dd511f%7C2e9f06b016694589878910a06934dc61%7C0%7C0%7C638581910815793088%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=Cvqw%2B276kI9yznl3NXTozxRc%2BI6NjIvdOqefiFuWcdY%3D&reserved=0
+
 ## Misc
 
 Miscellaneous files and scripts for the project.
