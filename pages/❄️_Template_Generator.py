@@ -1,4 +1,4 @@
-##### `❄️_BAS_Anzeigen_Generator.py`
+##### `❄️_Template_Generator.py`
 ##### BAS Anzeigen Generator
 ##### Please reach out to benjamin.gross1@adesso.de for any questions
 #### Loading needed Python libraries
@@ -13,7 +13,7 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_openai import ChatOpenAI
 
-st.title('❄️ BAS Anzeigen Generator')
+st.title('❄️ Template Generator')
 st.write(f"Streamlit Version: {st.__version__}")
 st.write(f"Python Version: {sys.version}")
     
