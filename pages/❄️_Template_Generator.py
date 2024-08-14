@@ -160,4 +160,4 @@ for index, message in enumerate(messages):
 
 st.dataframe(anzeige_temp)
 write_data(anzeige_temp, table_name='ANZEIGE_TEMP', database='OPENAI_DATABASE', schema='PUBLIC')
-st.expander("Datenbankinhalt").dataframe(load_data('OPENAI_DATABASE.PUBLIC.ANZEIGE_TEMP'))
+st.expander("Datenbankinhalt", expanded=False).dataframe(load_data('OPENAI_DATABASE.PUBLIC.ANZEIGE_TEMP'))
