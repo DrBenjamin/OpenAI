@@ -197,9 +197,12 @@ with st.form("form"):
     with template.container(border=True):
         st.subheader("Absätze")
         st.write("Bitte wähle die Absätze aus 📒")
-        st.multiselect("Absätze", options=df["PARAGRAPH"].tolist(), default=df["PARAGRAPH"].tolist())
+        paragraph_list = df["PARAGRAPH"].tolist()
+        paragraph_title_list = df["PARAGRAPH_TITLE"].tolist()
+        combined_list = [f"{p} - {t}" for p, t in zip(paragraph_list, paragraph_title_list)]    
+        st.multiselect("Absätze", options=combined_list, default=combined_list)
     submitted = st.form_submit_button("Template generieren")
-    
+
 if submitted:
     # Set up memory
     msgs = StreamlitChatMessageHistory(key="langchain_messages")
