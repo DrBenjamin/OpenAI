@@ -270,9 +270,7 @@ if submitted:
                             paragraph_info = paragraph_info.replace('\n', ' ')
                             prompt += paragraph_info
                 if '<option_' in prompt:
-                    print('String `<option_` found!')
-                    for option in options['OPTION_DESC']:
-                        print(f"Replacing `<{option}>`!")  
+                    for option in options['OPTION_DESC']: 
                         prompt = prompt.replace(f"<{option}>", str(options[options['OPTION_DESC'] == option].drop(columns=options.columns[:1]).to_string(index=False, header=False)))
 
                 st.chat_message("human").write(prompt)
