@@ -35,6 +35,7 @@ def load_data(table_name):
 
     # Collect the results. This will run the query and download the data
     table = table.collect()
+    st.success("Daten erfolgreich gelesen.")
     return pd.DataFrame(table)
 
 # Web Scraper
@@ -199,8 +200,8 @@ with st.form("form"):
         st.write("Bitte wähle die Absätze aus 📒")
         paragraph_list = df["PARAGRAPH"].tolist()
         paragraph_title_list = df["PARAGRAPH_TITLE"].tolist()
-        combined_list = [f"{p} - {t}" for p, t in zip(paragraph_list, paragraph_title_list)]    
-        st.multiselect("Absätze", options=combined_list, default=combined_list)
+        combined_list = [f"{p:<6} - {t}" for p, t in zip(paragraph_list, paragraph_title_list)]    
+        chapters = st.multiselect("Absätze", options=combined_list, default=combined_list)
     submitted = st.form_submit_button("Template generieren")
 
 if submitted:
@@ -251,24 +252,27 @@ if submitted:
 
     # If user inputs a new prompt, generate and draw a new response
     for text in df["PARAGRAPH_TEXT"]:
-        if '<Kundeninfo>' in text and web:
-            prompt = text.replace('<Kunde>', str(kunde)).replace('<Cloud-Anbieter>', str(cloud)).replace('<Kundeninfo>', str(kunde_info))
-        else:
-            prompt = text.replace('<Kunde>', str(kunde)).replace('<Cloud-Anbieter>', str(cloud))
-        if '<§' or '<Art.' in prompt:
-            for paragraph in paragraphs["PARAGRAPH"]:
-                # Checking for matching paragraph
-                if paragraph in prompt:
-                    prompt = prompt.replace(f"<{paragraph}>", paragraphs[paragraphs['PARAGRAPH'] == paragraph].drop(columns=paragraphs.columns[-1]).to_string(index=False, header=False))
-                    paragraph_info = web_scraper(paragraphs[paragraphs['PARAGRAPH'] == paragraph].drop(columns=paragraphs.columns[:2]).to_string(index=False, header=False))
-                    paragraph_info = paragraph_info.replace('\n', ' ')
-                    prompt += paragraph_info
-        st.chat_message("human").write(prompt)
-        
-        # Note: new messages are saved to history automatically by Langchain during run
-        config = {"configurable": {"session_id": "any"}}
-        response = chain_with_history.invoke({"question": prompt}, config)
-        st.chat_message("ai").write(response.content)
+        for chapter in chapters:
+            if chapter[9:] in df["PARAGRAPH_TITLE"][df["PARAGRAPH_TEXT"] == text].to_string(index=False, header=False):
+                if '<Kundeninfo>' in text and web:
+                    prompt = text.replace('<Kunde>', str(kunde)).replace('<Cloud-Anbieter>', str(cloud)).replace('<Kundeninfo>', str(kunde_info))
+                else:
+                    prompt = text.replace('<Kunde>', str(kunde)).replace('<Cloud-Anbieter>', str(cloud))
+                if '<§' or '<Art.' in prompt:
+                    for paragraph in paragraphs["PARAGRAPH"]:
+                        # Checking for matching paragraph
+                        if paragraph in prompt:
+                            prompt = prompt.replace(f"<{paragraph}>", paragraphs[paragraphs['PARAGRAPH'] == paragraph].drop(columns=paragraphs.columns[-1]).to_string(index=False, header=False))
+                            paragraph_info = web_scraper(paragraphs[paragraphs['PARAGRAPH'] == paragraph].drop(columns=paragraphs.columns[:2]).to_string(index=False, header=False))
+                            paragraph_info = paragraph_info.replace('\n', ' ')
+                            prompt += paragraph_info
+
+                st.chat_message("human").write(prompt)
+
+                # Note: new messages are saved to history automatically by Langchain during run
+                config = {"configurable": {"session_id": "any"}}
+                response = chain_with_history.invoke({"question": prompt}, config)
+                st.chat_message("ai").write(response.content)
 
     # Draw the messages at the end, so newly generated ones show up immediately
     with view_messages:
