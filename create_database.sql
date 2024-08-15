@@ -35,8 +35,8 @@ CREATE TABLE ANZEIGE_PARAGRAPHS (
 );
 
 INSERT INTO ANZEIGE_PARAGRAPHS VALUES
-('§ 80 SGB X', 'Verarbeitung von Sozialdaten im Auftrag', 'https://www.bundesamtsozialesicherung.de/de/themen/alle-sozialversicherungszweige-informationstechnik-und-datenschutz/anzeige-und-meldeverfahren/'),
-('§ 11 BDSG', 'Erhebung, Verarbeitung oder Nutzung personenbezogener Daten im Auftrag', 'https://www.buzer.de/gesetz/3669/a51580.htm/'),
-('Art. 28 DSGVO', 'Auftragsverarbeiter', 'https://datenschutz-grundverordnung.eu/dsgvo/art-28-dsgvo/');
+('§ 80 SGB X', 'Verarbeitung von Sozialdaten im Auftrag', 'https://www.gesetze-im-internet.de/sgb_10/__80.html'),
+('§ 11 BDSG', 'Erhebung, Verarbeitung oder Nutzung personenbezogener Daten im Auftrag', 'https://dejure.org/gesetze/DSGVO/28.html'),
+('Art. 28 DSGVO', 'Auftragsverarbeiter', 'https://dejure.org/gesetze/SGB_V/393.html');
 
 SELECT * FROM ANZEIGE_PARAGRAPHS;

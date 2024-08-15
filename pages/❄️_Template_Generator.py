@@ -75,103 +75,118 @@ with sidebar:
 
 with st.form("form"):
     st.write("Bitte fülle die folgenden Felder aus:")
+    base_informnation = st.container(border=True)
+    base_informnation.write("Grundsätzliche Informationen")
+    base_informnation_0_0 = base_informnation.text_input("Name des Auftragsverarbeiters?", key="base_informnation_0_0")
+    
     options_1 = st.container(border=True)
-    options_1.write("Sozialdaten")
-    options_1_0 = options_1.toggle("Sollen Sozialdaten gespeichert werden?", False)
-    options_1_1 = options_1.text_input("Welche Art von Sozialdaten?", key="option_1_1")
-    options_1_2 = options_1.text_input("Welcher Kreis von betroffenen Personen?", key="option_1_2")
-    options_1_3 = options_1.text_input("Welcher Zweck und welche konkrete Aufgabe der Datenverarbeitung besteht?", key="option_1_3")
+    options_1.header("Sozialdaten")
+    with options_1.container(border=True):
+        st.write("Details zu den Sozialdaten")
+        options_1_0a = st.toggle("Sollen Sozialdaten verarbeitet werden?", False)
+        options_1_0b = st.toggle("Sollen diese persistent gespeichert werden?", False)
+        options_1_1 = st.text_input("Welche Art von Sozialdaten?", key="option_1_1")
+        options_1_2 = st.text_input("Welcher Kreis von betroffenen Personen?", key="option_1_2")
+        options_1_3 = st.text_input("Welcher Zweck und welche konkrete Aufgabe der Datenverarbeitung besteht?", key="option_1_3")
     options_2 = st.container(border=True)
-    options_2.write("Auftragsverhältnisse")
-    options_2_0 = options_2.toggle("Bestehen Unterauftrags-Verhältnisse?", False)
+    options_2.header("Auftragsverhältnisse")
+    with options_2.container(border=True):
+        st.subheader("Unterauftrags-Verhältnisse")
+        options_2_0 = st.toggle("Bestehen Unterauftrags-Verhältnisse?", False)
     options_3 = st.container(border=True)
-    options_3.write("Verarbeitung")
+    options_3.header("Verarbeitung")
     with options_3.container(border=True):
+        st.subheader("Intranet")
         options_3_0 = st.toggle("Sind die Daten oder Dienste über das Intranet erreichbar?", False)
         options_3_1 = st.text_input("Daten", key="option_3_1")
         options_3_2 = st.text_input("Dienste", key="option_3_2")
     with options_3.container(border=True):
+        st.subheader("Internet")
         options_3_3 = st.toggle("Sind die Daten oder Dienste über das Internet erreichbar?", False)
         options_3_4 = st.text_input("Daten", key="option_3_4")
         options_3_5 = st.text_input("Dienste", key="option_3_5")
     with options_3.container(border=True):
+        st.subheader("Anbieterzugang")
         options_3_6 = st.toggle("Muss beim Anbieter ein Zugang beantragt werden?", False)
     with options_3.container(border=True):
+        st.subheader("Webzugang")
         options_3_7 = st.toggle("Sind die Daten oder Dienste mit einem Webbrowser erreichbar?", False)
         options_3_8 = st.text_input("Daten", key="option_3_8")
         options_3_9 = st.text_input("Dienste", key="option_3_9")
     with options_3.container(border=True):
+        st.subheader("App-Zugang")
         options_3_10 = st.toggle("Sind die Daten oder Dienste mit einer App für Smartphones, Tablets oder PCs / Mac erreichbar?", False)
         options_3_11 = st.toggle("Ist diese Lösung von BITMARK bereitgestellt?", False)
         options_3_12 = st.toggle("Handelt es sich um einen Speicherplatz für Daten, der bereitgestellt wird?", False)
     with options_3.container(border=True):
+        st.subheader("KI-Tools und -Services")
         options_3_13 = st.toggle("Werden KI-Tools oder -Services verwendet?", False)
     with options_3.container(border=True):
+        st.subheader("Risiko- und Compliance-Bewertung")
         options_3_14 = st.toggle("Werden Services zur Risiko- und Compliance-Bewertung eingesetzt?", False)
     with options_3.container(border=True):
+        st.subheader("Herausgabe der Daten an US-Behörden")
         options_3_15 = st.toggle("Kann der Anbieter Daten unverschlüsselt an US-amrikanische Behörden übergeben?", False)
     with options_3.container(border=True):
+        st.subheader("Datenverarbeitung in der EU")
         options_3_16 = st.toggle(f"Werden alle {cloud}-SaaS-Dienste speziell für die Einhaltung von § 80 Abs. 2 SGB X konfiguriert, um eine Datenverarbeitung innerhalb der EU sicherzustellen?", False)
     with options_3.container(border=True):
+        st.subheader("Machine Learning")
         options_3_17 = st.toggle("Werden ML-Modelle zur Datenanalyse eingesetzt?", False)
         options_3_18 = st.toggle("Wird sichergestellt, dass ML-Modelle in Infrastruktur, Tools und Workflows ausschließlich in der EU gehostet und genutzt werden?", False)
         options_3_19 = st.toggle("Unterstützt der Anbieter die Erstellung von sicheren und konformen Machine Learning (ML)-Modellen im Sozial- und Gesundheitswesen?", False)
     with options_3.container(border=True):
+        st.subheader("Landing Zone")
         options_3_20 = st.toggle("Ist das Landing Zone Konzept Bestandteil der Cloud-Architektur?", False)
-        options_3_21 = st.toggle("Folgt die Architektur dem AWS Well-Architected Framework?", False)
-        options_3_22 = st.toggle("Folgt die Architektur dem Azure Well-Architected Framework?", False)
-        options_3_23 = st.toggle("Folgt die Architektur dem Google Cloud Architecture Framework?", False)
-    with options_3.container(border=True):
+        if cloud == 'AWS':
+            options_3_21 = st.toggle("Folgt die Architektur dem AWS Well-Architected Framework?", False)
+        if cloud == 'Azure':
+            options_3_22 = st.toggle("Folgt die Architektur dem Azure Well-Architected Framework?", False)
+        if cloud == 'Google Cloud':
+            options_3_23 = st.toggle("Folgt die Architektur dem Google Cloud Architecture Framework?", False)
         options_3_24 = st.text_input("Wie wurde die Landing Zone aufgebaut?", key='options_3_24')
         options_3_25 = st.toggle("Wurde dafür ein Tool genutzt?", False)
-    with options_3.container(border=True):
         options_3_26 = st.text_input("Wie werden Identitäten und Zugriffsrechte innerhalb der Landing Zone verwaltet?", key='options_3_26')
-    with options_3.container(border=True):
         options_3_27 = st.toggle("Werden Maßnahmen zur Netzwerksicherheit in der Architektur der Landing Zone umgesetzt?", False)
     with options_3.container(border=True):
+        st.subheader("Rechtliche Anforderungen")
         options_3_28 = st.text_input(f"Welche Maßnahmen ergreift {cloud}, um sicherzustellen, dass die Datenverarbeitung und -speicherung den rechtlichen Anforderungen entspricht, auch im Hinblick auf US-amerikanische Auskunftsrechte?", key='option_3_28')
-    with options_3.container(border=True):
         options_3_29 = st.text_input(f"Wie adressiert {cloud} die Anforderungen an die Datenverarbeitung von SaaS-Diensten in Drittländern, insbesondere in Bezug auf das Schrems-II-Urteil und § 80 Abs. 2 SGB X?", key='options_3_29')
-    with options_3.container(border=True):
         options_3_30 = st.text_input(f"Wie können GKV-Träger sicherstellen, dass die Nutzung von {cloud}-SaaS-Diensten die Datenverarbeitung auf die EU beschränkt, in Übereinstimmung mit § 80 Abs. 2 SGB X?", key='options_3_30')
-    with options_3.container(border=True):
         options_3_31 = st.text_input("Wie wird die Übermittlung von Daten in Drittländer gehandhabt, insbesondere im Hinblick auf das Schrems-II-Urteil?", key='options_3_31')
-    with options_3.container(border=True):
         options_3_32 = st.text_input(f"Wie schützt {cloud} Kundendaten vor Zugriffen durch US-amerikanische Behörden?", key='options_3_32')
-    with options_3.container(border=True):
         options_3_33 = st.text_input("Wie unterstützt {cloud} die Einhaltung des Bundesdatenschutzgesetzes und der DSGVO?", key='options_3_33')
-    with options_3.container(border=True):
         options_3_34 = st.text_input(f"Wie gewährleistet {cloud} die Einhaltung der DSGVO und des BDSG für GKV-Daten?", key='options_3_34')
-    with options_3.container(border=True):
         options_3_35 = st.text_input(f"Wie gewährleistet {cloud} die Einhaltung von § 80 SGB X und DSGVO beim Umgang mit Sozialdaten?", key='options_3_35')
     with options_3.container(border=True):
+        st.subheader("Compliance Anforderungen")
         options_3_36 = st.text_input(f"Wie können GKV-Träger {cloud}-Tools nutzen, um Compliance-Anforderungen zu überwachen und zu erfüllen?", key='options_3_36')
     with options_3.container(border=True):
+        st.subheader("Backup-Strategien")
         options_3_37 = st.text_input(f"Welche {cloud}-Dienste nutzt die GKV im Bereich Hochverfügbarkeit?", key='options_3_37')
-    with options_3.container(border=True):
         options_3_38 = st.text_input(f"Welche {cloud}-Dienste nutzt die GKV im Bereich Disaster Recovery?", key='options_3_38')
     with options_3.container(border=True):
+        st.subheader("Cloud Agnostik")
         options_3_39 = st.text_input("Welche Mechanismen bietet der Anbieter hinsichtlich eines Umzugs in eine andere Cloud (Cloud-Switching)?", key='options_3_39')
     with options_3.container(border=True):
+        st.subheader("Faire Datennutzung")
         options_3_40 = st.toggle("Gibt es bereits Mechanismen zur Gewährleistung von European Data Act?", False)
-    with options_3.container(border=True):
         options_3_41 = st.text_input(f"Wie nutzt die GKV {cloud}-Dienste, um eine feingranulare Zugriffssteuerung und Governance zu implementieren?", key='options_3_41')
     with options_3.container(border=True):
+        st.subheader("IT-Sicherheit")
+        st.write("Sicherheit")
         options_3_42 = st.text_input(f"Welche Maßnahmen ergreift {cloud} zum Schutz vor internen und externen Angriffen?", key='options_3_42')
-    with options_3.container(border=True):
         options_3_43 = st.text_input("Wie können GKV-Träger die Anforderungen an die physische Sicherheit und den Zugangsschutz in Rechenzentren überprüfen?", key='options_3_43')
         options_3_44 = st.text_input("Wie plant ihre Organisation, dies zu tun?", key='options_3_44')
-    with options_3.container(border=True):
-        options_3_45 = st.text_input(f"Welche Maßnahmen trifft {cloud}, um Daten vor unbefugtem Zugriff durch Dritte, einschließlich {cloud} selbst, zu schützen?", key='options_3_45')
-    with options_3.container(border=True):
-        options_3_46 = st.text_input(f"Wie unterstützt {cloud} die Verschlüsselung von Daten at-rest, in-transit und in-use?", key='options_3_46')
-    with options_3.container(border=True):
-        options_3_47 = st.text_input(f"Wie unterstützt {cloud} die Verschlüsselung von Daten in-transit?", key='options_3_47')
-    with options_3.container(border=True):
-        options_3_48 = st.text_input(f"Welche Bedeutung hat {cloud}-Verschlüsselungs-Dienst für die Verschlüsselung in-use?", key="options_3_48")
-        options_3_49 = st.selectbox(label="Verschlüsselungs-Dienst", options=['AWS Nitro', 'Azure Xy', 'Google Xy'])
-    with options_3.container(border=True):
-        options_3_50 = st.text_input(f"Welche Mechanismen stellt {cloud} zur Verschlüsselung von Patientendaten zur Verfügung? Wie werden Schlüssel gemanaged?", key="options_3_50")
+        options_3_45 = st.text_input(f"Ist für die {cloud}-Lösung ein C5-Testat ausgestellt?", key="options_3_45")
+        st.write("Verschlüsselung")
+        options_3_46 = st.text_input(f"Welche Maßnahmen trifft {cloud}, um Daten vor unbefugtem Zugriff durch Dritte, einschließlich {cloud} selbst, zu schützen?", key='options_3_46')
+        options_3_47 = st.text_input(f"Wie unterstützt {cloud} die Verschlüsselung von Daten at-rest, in-transit und in-use?", key='options_3_47')
+        options_3_48 = st.text_input(f"Wie unterstützt {cloud} die Verschlüsselung von Daten in-transit?", key='options_3_48')
+        options_3_49 = st.text_input(f"Welche Bedeutung hat {cloud}-Verschlüsselungs-Dienst für die Verschlüsselung in-use?", key="options_3_49")
+        options_3_50 = st.selectbox(label="Verschlüsselungs-Dienst", options=['AWS Nitro', 'Azure Managed HSM', 'Google Cloud KMS'])
+
+        options_3_51 = st.text_input(f"Welche Mechanismen stellt die {cloud}-Lösung zur Verschlüsselung von Patientendaten zur Verfügung? Wie werden Schlüssel gemanaged?", key="options_3_51")
 
 
     submitted = st.form_submit_button("Submit")
