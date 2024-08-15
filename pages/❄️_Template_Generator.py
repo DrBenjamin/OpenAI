@@ -74,15 +74,15 @@ with sidebar:
       port = st.number_input("Port:", value=1234, min_value=1, max_value=65535)
 
 with st.form("form"):
-    st.write("Bitte fülle die folgenden Felder aus:")
+    st.title("BAS Anzeige")
+    st.header("Konfiguration")
     base_informnation = st.container(border=True)
     base_informnation.write("Grundsätzliche Informationen")
     base_informnation_0_0 = base_informnation.text_input("Name des Auftragsverarbeiters?", key="base_informnation_0_0")
-    
     options_1 = st.container(border=True)
     options_1.header("Sozialdaten")
     with options_1.container(border=True):
-        st.write("Details zu den Sozialdaten")
+        st.subheader("Details zu den Sozialdaten")
         options_1_0a = st.toggle("Sollen Sozialdaten verarbeitet werden?", False)
         options_1_0b = st.toggle("Sollen diese persistent gespeichert werden?", False)
         options_1_1 = st.text_input("Welche Art von Sozialdaten?", key="option_1_1")
@@ -188,8 +188,17 @@ with st.form("form"):
 
         options_3_51 = st.text_input(f"Welche Mechanismen stellt die {cloud}-Lösung zur Verschlüsselung von Patientendaten zur Verfügung? Wie werden Schlüssel gemanaged?", key="options_3_51")
 
-
-    submitted = st.form_submit_button("Submit")
+    st.header("Template")
+    template = st.container(border=True)
+    with template.container(border=True):
+        st.subheader("Optionen")
+        st.write("Bitte wähle die gewünschten Optionen aus 🔘")
+        st.selectbox("Format", options=["Word"])
+    with template.container(border=True):
+        st.subheader("Absätze")
+        st.write("Bitte wähle die Absätze aus 📒")
+        st.multiselect("Absätze", options=df["PARAGRAPH"].tolist(), default=df["PARAGRAPH"].tolist())
+    submitted = st.form_submit_button("Template generieren")
     
 if submitted:
     # Set up memory
