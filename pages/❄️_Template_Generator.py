@@ -269,6 +269,10 @@ if submitted:
                             paragraph_info = web_scraper(paragraphs[paragraphs['PARAGRAPH'] == paragraph].drop(columns=paragraphs.columns[:2]).to_string(index=False, header=False))
                             paragraph_info = paragraph_info.replace('\n', ' ')
                             prompt += paragraph_info
+                if '<option_' in prompt:
+                    for option in options['OPTION_DESC']:
+                        if option in prompt:
+                            prompt = prompt.replace(f"<{option}>", str(options[options['OPTION_TEXT'] == option].drop(columns=options.columns[:1]).to_string(index=False, header=False)))
 
                 st.chat_message("human").write(prompt)
 
