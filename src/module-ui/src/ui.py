@@ -65,7 +65,7 @@ def run_streamlit():
     st.write(f"Streamlit Version: {st.__version__}")
     
     # Select and display data table
-    table_name = "OPENAI_BENJAMINGROSS1.PUBLIC.ANZEIGE_PRE" #"OPENAI_DATABASE.PUBLIC.ANZEIGE_PRE"
+    table_name = "OPENAI_DATABASE.PUBLIC.ANZEIGE_PRE"
 
     # Display data table
     with st.expander("Datenbankinhalt"):
