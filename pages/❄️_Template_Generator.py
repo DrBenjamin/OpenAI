@@ -272,7 +272,7 @@ if submitted:
                 if '<option_' in prompt:
                     for option in options['OPTION_DESC']:
                         if option in prompt:
-                            prompt = prompt.replace(f"<{option}>", str(options[options['OPTION_TEXT'] == option].drop(columns=options.columns[:1]).to_string(index=False, header=False)))
+                            prompt = prompt.replace(f"<{option}>", str(options[options['OPTION_DESC'] == option].drop(columns=options.columns[:1]).to_string(index=False, header=False)))
 
                 st.chat_message("human").write(prompt)
 
