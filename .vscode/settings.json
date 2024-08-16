@@ -1,3 +1,25 @@
 {
-  "cmake.sourceDirectory": "/Users/benjamin.gross1/Library/Mobile Documents/com~apple~CloudDocs/Python/Streamlit/OpenAI/llama.cpp"
+"cmake.sourceDirectory": "/Users/benjamin.gross1/Library/Mobile Documents/com~apple~CloudDocs/Python/Streamlit/OpenAI/llama.cpp",
+"sqltools.connections": [
+    {
+        "authenticator": "SNOWFLAKE",
+        "ocspOptions": {
+            "ocspFailOpen": true
+        },
+        "snowflakeOptions": {
+            "clientSessionKeepAlive": true,
+            "clientSessionKeepAliveHeartbeatFrequency": 3600,
+            "schema": "PUBLIC",
+            "role": "ACCOUNTADMIN"
+        },
+        "previewLimit": 50,
+        "driver": "Snowflake",
+        "name": "OPENAI_DATABASE",
+        "database": "OPENAI_DATABASE",
+        "warehouse": "COMPUTE_WH",
+        "account": "ffcjeqr-pk52190",
+        "username": "DrBenjamin",
+        "password": "nerne9-Sipmaw-repcow"
+    }
+]
 }
