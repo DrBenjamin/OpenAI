@@ -107,11 +107,16 @@ INSERT INTO ANZEIGE_OPTIONS VALUES
 ('option_3_43', 'Zertifizierungen und Audits. Physische Sicherheitskontrollen. Zugangsprotokolle und Überwachung. Regelmäßige Audits und Inspektionen. Zusammenarbeit mit dem Rechenzentrumsanbieter.'),
 ('option_3_44', 'Zertifizierungen und Audits. Physische Sicherheitskontrollen. Zugangsprotokolle und Überwachung. Regelmäßige Audits und Inspektionen. Zusammenarbeit mit dem Rechenzentrumsanbieter.'),
 ('option_3_45', 'True'),
-('option_3_46', 'Zugriffskontrolle und Authentifizierung. Verschlüsselung. Überwachung und Auditierung. Netzwerksicherheit. Zero-Trust-Architektur. Schulung und Sensibilisierung.'),
-('option_3_47', 'Daten werden im Ruhezustand standardmäßig mit AES-256 verschlüsselt. Daten werden während der Übertragung zwischen den Systemen verschlüsselt mittels TLS (Transport Layer Security). Mit Confidential Computing und Confidential VMs bleiben Daten auch während der Verarbeitung verschlüsselt.'),
-('option_3_48', 'TLS (Transport Layer Security). IPSec-Tunnel. Managed SSL-Zertifikate. Verschlüsselung von VM-zu-VM-Datenverkehr.'),
-('option_3_49', 'Confidential Computing und Confidential VMs werden Daten in-use verschlüsselt.'),
-('option_3_50', '2'),
-('option_3_51', 'Verschlüsselung at-rest. Verschlüsselung in-transit. Verschlüsselung in-use. KMS Schlüsselmanagement');
+('option_3_46', 'True'),
+('option_3_47', 'Diese Protokollierung erfolgt in sogenannten Audit-Logs und Zugriffprotokollen, die aufzeichnen, wer wann welche Änderungen an den Daten vorgenommen hat.'),
+('option_3_48', 'Datenexport mitels APIs zur Verfügung. Datenzugriff für einen begrenzten Zeitraum nach Vertragsbeendigung. Datenlöschung nach der Beendigung des Vertrags. Unterstützung bei der Migration.'),
+('option_3_49', 'Datenmigration, Datenexport und Datenlöschung'),
+('option_3_50', 'Datenlöschungsprozess, Zertifizierung und Nachweis (Löschbestätigung und Audit-Logs).'),
+('option_3_51', 'Zugriffskontrolle und Authentifizierung. Verschlüsselung. Überwachung und Auditierung. Netzwerksicherheit. Zero-Trust-Architektur. Schulung und Sensibilisierung.'),
+('option_3_52', 'Daten werden im Ruhezustand standardmäßig mit AES-256 verschlüsselt. Daten werden während der Übertragung zwischen den Systemen verschlüsselt mittels TLS (Transport Layer Security). Mit Confidential Computing und Confidential VMs bleiben Daten auch während der Verarbeitung verschlüsselt.'),
+('option_3_53', 'TLS (Transport Layer Security). IPSec-Tunnel. Managed SSL-Zertifikate. Verschlüsselung von VM-zu-VM-Datenverkehr.'),
+('option_3_54', 'Confidential Computing und Confidential VMs werden Daten in-use verschlüsselt.'),
+('option_3_55', '2'),
+('option_3_56', 'Verschlüsselung at-rest. Verschlüsselung in-transit. Verschlüsselung in-use. KMS Schlüsselmanagement');
 
 SELECT * FROM ANZEIGE_OPTIONS;
