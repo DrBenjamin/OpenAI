@@ -6,7 +6,10 @@ import streamlit as st
 import pandas as pd
 import sys
 import requests
+from io import BytesIO
 from bs4 import BeautifulSoup
+from docx import Document
+from docx.enum.text import WD_ALIGN_PARAGRAPH
 from snowflake.snowpark import Session
 from langchain_community.chat_message_histories import StreamlitChatMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
@@ -45,6 +48,25 @@ def web_scraper(url):
     info = info_soup.get_text()
     info = info.replace('\n', ' ')
     return info
+
+# Word export
+def export_doc(data):
+    document = Document()
+
+    # Adding header
+    document.add_heading('BAS Anzeige', 0)
+
+    # Writing paragraphs
+    for index, row in data.iterrows():
+        document.add_heading(f"{row['PARAGRAPH']} - {row['PARAGRAPH_TITLE']}", level=len(row['PARAGRAPH']))
+        paragraph = document.add_paragraph()
+        paragraph.add_run(f"\n{row['PARAGRAPH_TEXT']}\n") 
+
+    # Download button
+    buffer = BytesIO()
+    document.save(buffer)
+    st.toast('Das Dukument ist fertig!', icon ='📃')
+    st.download_button(label='Download Template', data=buffer, file_name='BAS_Anzeige_Template.docx', mime='application/vnd.openxmlformats')
 
 # Title
 st.title('❄️ Template Generator')
@@ -215,8 +237,6 @@ if submitted:
                                 Form um und ersetze <Kunde> mit {kunde}, 
                                 <Cloud-Anbieter> mit {cloud}.""")
 
-    view_messages = st.expander("Zeige mir die Paragraphen an")
-
     # Set up the LangChain, passing in Message History
     prompt = ChatPromptTemplate.from_messages(
         [
@@ -250,38 +270,41 @@ if submitted:
     )
 
     # Render current messages from StreamlitChatMessageHistory
-    for msg in msgs.messages:
-        st.chat_message(msg.type).write(msg.content)
+    view_messages = st.status("Anzeige wird generiert...")
+    with view_messages:
+        for msg in msgs.messages:
+            st.chat_message(msg.type).write(msg.content)
 
-    # If user inputs a new prompt, generate and draw a new response
-    for text in df["PARAGRAPH_TEXT"]:
-        for chapter in chapters:
-            if chapter[9:] in df["PARAGRAPH_TITLE"][df["PARAGRAPH_TEXT"] == text].to_string(index=False, header=False):
-                if '<Kundeninfo>' in text and web:
-                    prompt = text.replace('<Kunde>', str(kunde)).replace('<Cloud-Anbieter>', str(cloud)).replace('<Kundeninfo>', str(kunde_info))
-                else:
-                    prompt = text.replace('<Kunde>', str(kunde)).replace('<Cloud-Anbieter>', str(cloud))
-                if '<§' or '<Art.' in prompt:
-                    for paragraph in paragraphs["PARAGRAPH"]:
-                        # Checking for matching paragraph
-                        if paragraph in prompt:
-                            prompt = prompt.replace(f"<{paragraph}>", paragraphs[paragraphs['PARAGRAPH'] == paragraph].drop(columns=paragraphs.columns[-1]).to_string(index=False, header=False))
-                            paragraph_info = web_scraper(paragraphs[paragraphs['PARAGRAPH'] == paragraph].drop(columns=paragraphs.columns[:2]).to_string(index=False, header=False))
-                            paragraph_info = paragraph_info.replace('\n', ' ')
-                            prompt += paragraph_info
-                if '<option_' in prompt:
-                    for option in options['OPTION_DESC']: 
-                        prompt = prompt.replace(f"<{option}>", str(options[options['OPTION_DESC'] == option].drop(columns=options.columns[:1]).to_string(index=False, header=False)))
+        # If user inputs a new prompt, generate and draw a new response
+        for text in df["PARAGRAPH_TEXT"]:
+            for chapter in chapters:
+                if chapter[9:] in df["PARAGRAPH_TITLE"][df["PARAGRAPH_TEXT"] == text].to_string(index=False, header=False):
+                    if '<Kundeninfo>' in text and web:
+                        prompt = text.replace('<Kunde>', str(kunde)).replace('<Cloud-Anbieter>', str(cloud)).replace('<Kundeninfo>', str(kunde_info))
+                    else:
+                        prompt = text.replace('<Kunde>', str(kunde)).replace('<Cloud-Anbieter>', str(cloud))
+                    if '<§' or '<Art.' in prompt:
+                        for paragraph in paragraphs["PARAGRAPH"]:
+                            # Checking for matching paragraph
+                            if paragraph in prompt:
+                                prompt = prompt.replace(f"<{paragraph}>", paragraphs[paragraphs['PARAGRAPH'] == paragraph].drop(columns=paragraphs.columns[-1]).to_string(index=False, header=False))
+                                paragraph_info = web_scraper(paragraphs[paragraphs['PARAGRAPH'] == paragraph].drop(columns=paragraphs.columns[:2]).to_string(index=False, header=False))
+                                paragraph_info = paragraph_info.replace('\n', ' ')
+                                prompt += paragraph_info
+                    if '<option_' in prompt:
+                        for option in options['OPTION_DESC']: 
+                            prompt = prompt.replace(f"<{option}>", str(options[options['OPTION_DESC'] == option].drop(columns=options.columns[:1]).to_string(index=False, header=False)))
 
-                st.chat_message("human").write(prompt)
+                    st.chat_message("human").write(prompt)
 
-                # Note: new messages are saved to history automatically by Langchain during run
-                config = {"configurable": {"session_id": "any"}}
-                response = chain_with_history.invoke({"question": prompt}, config)
-                st.chat_message("ai").write(response.content)
+                    # Note: new messages are saved to history automatically by Langchain during run
+                    config = {"configurable": {"session_id": "any"}}
+                    response = chain_with_history.invoke({"question": prompt}, config)
+                    st.chat_message("ai").write(response.content)
 
     # Draw the messages at the end, so newly generated ones show up immediately
-    with view_messages:
+    view_chat_messages = st.expander("Zeige die Daten des Chatbots.")
+    with view_chat_messages:
         """
         Message History initialized with:
         ```python
@@ -290,11 +313,11 @@ if submitted:
 
         Contents of `st.session_state.langchain_messages`:
         """
-        view_messages.json(st.session_state.langchain_messages)
+        view_chat_messages.json(st.session_state.langchain_messages)
 
     # Convert to dataframe
     messages = st.session_state.langchain_messages
-    anzeige_temp = pd.DataFrame(columns=['PARAGRAPH', 'PARAGRAPH_TEXT'])
+    anzeige_temp = pd.DataFrame(columns=['PARAGRAPH', 'PARAGRAPH_TITLE', 'PARAGRAPH_TEXT'])
     counter = -1
     paragraph = -1
     for index, message in enumerate(messages):
@@ -303,10 +326,18 @@ if submitted:
                 counter += 1
                 if counter > 0 and counter % 2 == 0:
                     paragraph += 1
-                    anzeige_temp = anzeige_temp._append(pd.DataFrame([{'PARAGRAPH': df['PARAGRAPH'][paragraph], 'PARAGRAPH_TEXT': value}]), ignore_index=True)
+                    anzeige_temp = anzeige_temp._append(pd.DataFrame([{
+                                                                        'PARAGRAPH': df['PARAGRAPH'][paragraph],
+                                                                        'PARAGRAPH_TITLE': df['PARAGRAPH_TITLE'][paragraph],
+                                                                        'PARAGRAPH_TEXT': value
+                                                                      }]), 
+                                                        ignore_index=True)
 
     st.dataframe(anzeige_temp)
     write_data(anzeige_temp, table_name='ANZEIGE_TEMP', database='OPENAI_DATABASE', schema='PUBLIC')
     with st.expander("Datenbankinhalt", expanded=False):
         df = load_data('OPENAI_DATABASE.PUBLIC.ANZEIGE_TEMP')
         st.dataframe(df)
+    
+    # Export to Word
+    export_doc(anzeige_temp)

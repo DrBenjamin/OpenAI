@@ -9,6 +9,8 @@ streamlit-cropper
 streamlit-audiorec
 openai
 beautifulsoup4
+python-docx
+argparse
 deepl
 pillow
 PyPDF2

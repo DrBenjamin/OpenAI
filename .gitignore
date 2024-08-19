@@ -8,3 +8,5 @@ create_secret.sql
 data/dialogues_original.parquet
 data/dialogues.parquet
 .DS_Store
+vba_extract.py
+extract.py
