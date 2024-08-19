@@ -147,9 +147,10 @@ def export_doc(data):
         paragraph.add_run(f"\n{row['PARAGRAPH_TEXT']}\n")
         paragraph.style.font.size = Pt(12)
         paragraph.alignment = WD_ALIGN_PARAGRAPH.LEFT
+        document.add_page_break()
 
     # Adding summary
-    counter = 5
+    counter = int(last_chapter)
     if paragraph_of_summary:
         counter += 1
         document.add_heading(f"{counter} - Zusammenfassung", level=1)
@@ -425,11 +426,11 @@ if submitted:
         chosen_chapters = []
         for chapter in chapters:
             # Erasing the first 9 letters
+            last_chapter = chapter[0]
             chapter = chapter[9:]
             chosen_chapters.append(chapter)
-        print(chosen_chapters)
+
         for text in df["PARAGRAPH_TEXT"]:
-            print(text)
             if df["PARAGRAPH_TITLE"][df["PARAGRAPH_TEXT"] == text].to_string(index=False, header=False) in chosen_chapters:
                 if '<Kundeninfo>' in text and web:
                     prompt = text.replace('<Kunde>', str(kunde)).replace('<Cloud-Anbieter>', str(cloud)).replace('<Kundeninfo>', str(kunde_info))
