@@ -5,11 +5,15 @@
 import streamlit as st
 import pandas as pd
 import sys
+import datetime
 import requests
 from io import BytesIO
 from bs4 import BeautifulSoup
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.shared import Pt
+from docx.oxml.ns import qn
+from docx.oxml import OxmlElement
 from snowflake.snowpark import Session
 from langchain_community.chat_message_histories import StreamlitChatMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
@@ -53,19 +57,103 @@ def web_scraper(url):
 def export_doc(data):
     document = Document()
 
-    # Adding header
-    document.add_heading('BAS Anzeige', 0)
+    # Adding Image
+    document.add_picture('images/gwq_logo_header.png')
+    
+    # Adding centered text
+    centered_text = f"""\n\n\n
+                        {cloud} 
+                        inkl.
+                        {service_1}
+                        {service_2}
+                        \n\n
+                        Anforderungen 
+                        Regulatorik
+                        """
+    paragraph = document.add_paragraph(centered_text)
+    paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run = paragraph.runs[0]
+    run.font.size = Pt(24)
+    centered_date = f"""\n\n
+                        {datetime.date.today()}"""
+    paragraph = document.add_paragraph(centered_date)
+    paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run = paragraph.runs[0]
+    run.font.size = Pt(14)
+    document.add_page_break()
+    
+    # Adding table of changes
+    def set_table_borders(table):
+        tbl = table._element
+        tblBorders = OxmlElement('w:tblBorders')
+        for border_name in ['top', 'left', 'bottom', 'right', 'insideH', 'insideV']:
+            border = OxmlElement(f'w:{border_name}')
+            border.set(qn('w:val'), 'single')
+            border.set(qn('w:sz'), '4')  # Border size
+            border.set(qn('w:space'), '0')
+            border.set(qn('w:color'), '000000')  # Border color
+            tblBorders.append(border)
+        tbl.tblPr.append(tblBorders)
+    paragraph = document.add_paragraph('Änderungshistorie des Dokumentes')
+    table = document.add_table(rows=5, cols=7)
+    set_table_borders(table)
+    hdr_cells = table.rows[0].cells
+    headers = ['Nr.', 'Datum', 'Version', 'Kapitel', 'Beschreibung der Änderung', 'Autor', 'Bearbeitungszustand']
+    for i, header in enumerate(headers):
+        run = hdr_cells[i].add_paragraph().add_run(header)
+        run.bold = True
+        run.font.size = Pt(10)
+    row_cells = table.rows[1].cells
+    contents = [str(1), str(datetime.date.today()), '1.0', 'alle', 'Erstellung des Dokuments', 'Groß, Benjamin', 'Erl.']
+    for i, content in enumerate(contents):
+        run = row_cells[i].add_paragraph().add_run(content)
+        run.font.size = Pt(10)
+    document.add_page_break()
+
+    # Adding Table of Contents
+    paragraph = document.add_paragraph()
+    paragraph.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    run = paragraph.add_run('Inhaltsverzeichnis')
+    run.font.size = Pt(16)
+
+    fldChar = OxmlElement('w:fldChar')  # creates a new element
+    fldChar.set(qn('w:fldCharType'), 'begin')  # sets attribute on element
+
+    instrText = OxmlElement('w:instrText')
+    instrText.set(qn('xml:space'), 'preserve')  # sets attribute on element
+    instrText.text = 'TOC \\o "1-3" \\h \\z \\u'   # change 1-3 depending on heading levels you need
+
+    fldChar2 = OxmlElement('w:fldChar')
+    fldChar2.set(qn('w:fldCharType'), 'separate')
+
+    fldChar3 = OxmlElement('w:t')
+    fldChar3.text = " (Rechts-click um Inhaltsverzeichnis hinzuzufügen - Update Feld)"
+
+    fldChar2.append(fldChar3)
+
+    fldChar4 = OxmlElement('w:fldChar')
+    fldChar4.set(qn('w:fldCharType'), 'end')
+
+    r_element = run._r
+    r_element.append(fldChar)
+    r_element.append(instrText)
+    r_element.append(fldChar2)
+    r_element.append(fldChar4)
+    p_element = paragraph._p
+    document.add_page_break()
 
     # Writing paragraphs
     for index, row in data.iterrows():
-        document.add_heading(f"{row['PARAGRAPH']} - {row['PARAGRAPH_TITLE']}", level=len(row['PARAGRAPH']))
+        document.add_heading(f"{row['PARAGRAPH']} - {row['PARAGRAPH_TITLE']}", level=len(row['PARAGRAPH'].replace('.', '')))
         paragraph = document.add_paragraph()
-        paragraph.add_run(f"\n{row['PARAGRAPH_TEXT']}\n") 
+        paragraph.add_run(f"\n{row['PARAGRAPH_TEXT']}\n")
+        paragraph.style.font.size = Pt(12)
+        paragraph.alignment = WD_ALIGN_PARAGRAPH.LEFT
 
     # Download button
     buffer = BytesIO()
     document.save(buffer)
-    st.toast('Das Dukument ist fertig!', icon ='📃')
+    st.toast('Das Dokument ist fertig!', icon ='📃')
     st.download_button(label='Download Template', data=buffer, file_name='BAS_Anzeige_Template.docx', mime='application/vnd.openxmlformats')
 
 # Title
@@ -91,6 +179,8 @@ with sidebar:
     if web:
         kunde_info = web_scraper(kunde_url)
     cloud = st.selectbox("Cloud:", ["AWS", "Azure", "Google Cloud"], index=2)
+    service_1 = 'Google Cloud Vision'
+    service_2 = 'Google Translate'
     on = st.toggle("OpenAI ChatGPT", True)
     system = st.text_input("System:", value = f"Du erstellst einzelne Absätze einer Anzeige beim Bundesamt für Soziale Sicherung über die Verarbeitung von Sozialdaten im Auftrag (AVV) nach § 80 Zehntes Sozialgesetzbuch (SGB X). Tausche die Platzhalter (z.B. <Kunde>) durch die entsprechenden Inhalte aus und gebe nur den verbesserten Text in einer sachlichen und formellen Form aus und verzichte auf Phrasen wie z.B. 'Vielen Dank für die Informationen. Hier sind die angepassten Absätze für die Anzeige beim Bundesamt für Soziale Sicherung:'.")
     if not on:
@@ -230,6 +320,9 @@ with st.form("form"):
     submitted = st.form_submit_button("Template generieren")
 
 if submitted:
+    # Erase previous messages
+    st.session_state.pop("langchain_messages", None)
+    
     # Set up memory
     msgs = StreamlitChatMessageHistory(key="langchain_messages")
     if len(msgs.messages) == 0:

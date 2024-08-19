@@ -11,6 +11,8 @@ openai
 beautifulsoup4
 python-docx
 argparse
+#pypiwin32
+#docopt
 deepl
 pillow
 PyPDF2
