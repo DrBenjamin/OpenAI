@@ -148,32 +148,32 @@ def export_doc(data):
         paragraph.style.font.size = Pt(12)
         paragraph.alignment = WD_ALIGN_PARAGRAPH.LEFT
 
-    # Adding table of certifications
-    if table_of_certs:
-        paragraph = document.add_paragraph('Zertifizierungen')
-        document.add_page_break()
-
     # Adding summary
+    counter = 5
     if paragraph_of_summary:
-        document.add_heading('Zusammenfassung', level=1)
+        counter += 1
+        document.add_heading(f"{counter} - Zusammenfassung", level=1)
         paragraph = document.add_paragraph('Zusammenfassung')
         document.add_page_break()
 
     # Adding glossar
     if table_of_glossar:
-        document.add_heading('Glossar', level=1)
+        counter += 1
+        document.add_heading(f"{counter} - Glossar", level=1)
         paragraph = document.add_paragraph('Glossar')
         document.add_page_break()
 
     # Adding stakeholders
     if table_of_stakeholders:
-        document.add_heading('Stakeholder', level=1)
+        counter += 1
+        document.add_heading(f"{counter} - Stakeholder", level=1)
         paragraph = document.add_paragraph('Stakeholder')
         document.add_page_break()
 
     # Adding attachments
     if table_of_attachments:
-        document.add_heading('Anhänge', level=1)
+        counter += 1
+        document.add_heading(f"{counter} - Anhänge", level=1)
         paragraph = document.add_paragraph('Anhänge')
 
     # Download button
@@ -365,7 +365,7 @@ with st.form("form"):
         chapters = st.multiselect("Absätze", options=combined_list, default=combined_list)
         with st.expander("Weitere Absätze"):
             table_of_contents = st.checkbox("Inhaltsverzeichnis hinzufügen?", value=True)
-            table_of_certs = st.checkbox("Zertifizierungen hinzufügen?", value=True)
+            #table_of_certs = st.checkbox("Zertifizierungen hinzufügen?", value=True)
             paragraph_of_summary = st.checkbox("Zusammenfassung hinzufügen?", value=True)
             table_of_glossar = st.checkbox("Glossar hinzufügen?", value=True)
             table_of_stakeholders = st.checkbox("Stakeholder hinzufügen?", value=True)
@@ -422,31 +422,37 @@ if submitted:
             st.chat_message(msg.type).write(msg.content)
 
         # If user inputs a new prompt, generate and draw a new response
+        chosen_chapters = []
+        for chapter in chapters:
+            # Erasing the first 9 letters
+            chapter = chapter[9:]
+            chosen_chapters.append(chapter)
+        print(chosen_chapters)
         for text in df["PARAGRAPH_TEXT"]:
-            for chapter in chapters:
-                if chapter[9:] in df["PARAGRAPH_TITLE"][df["PARAGRAPH_TEXT"] == text].to_string(index=False, header=False):
-                    if '<Kundeninfo>' in text and web:
-                        prompt = text.replace('<Kunde>', str(kunde)).replace('<Cloud-Anbieter>', str(cloud)).replace('<Kundeninfo>', str(kunde_info))
-                    else:
-                        prompt = text.replace('<Kunde>', str(kunde)).replace('<Cloud-Anbieter>', str(cloud))
-                    if '<§' or '<Art.' in prompt:
-                        for paragraph in paragraphs["PARAGRAPH"]:
-                            # Checking for matching paragraph
-                            if paragraph in prompt:
-                                prompt = prompt.replace(f"<{paragraph}>", paragraphs[paragraphs['PARAGRAPH'] == paragraph].drop(columns=paragraphs.columns[-1]).to_string(index=False, header=False))
-                                paragraph_info = web_scraper(paragraphs[paragraphs['PARAGRAPH'] == paragraph].drop(columns=paragraphs.columns[:2]).to_string(index=False, header=False))
-                                paragraph_info = paragraph_info.replace('\n', ' ')
-                                prompt += paragraph_info
-                    if '<option_' in prompt:
-                        for option in options['OPTION_DESC']: 
-                            prompt = prompt.replace(f"<{option}>", str(options[options['OPTION_DESC'] == option].drop(columns=options.columns[:1]).to_string(index=False, header=False)))
+            print(text)
+            if df["PARAGRAPH_TITLE"][df["PARAGRAPH_TEXT"] == text].to_string(index=False, header=False) in chosen_chapters:
+                if '<Kundeninfo>' in text and web:
+                    prompt = text.replace('<Kunde>', str(kunde)).replace('<Cloud-Anbieter>', str(cloud)).replace('<Kundeninfo>', str(kunde_info))
+                else:
+                    prompt = text.replace('<Kunde>', str(kunde)).replace('<Cloud-Anbieter>', str(cloud))
+                if '<§' or '<Art.' in prompt:
+                    for paragraph in paragraphs["PARAGRAPH"]:
+                        # Checking for matching paragraph
+                        if paragraph in prompt:
+                            prompt = prompt.replace(f"<{paragraph}>", paragraphs[paragraphs['PARAGRAPH'] == paragraph].drop(columns=paragraphs.columns[-1]).to_string(index=False, header=False))
+                            paragraph_info = web_scraper(paragraphs[paragraphs['PARAGRAPH'] == paragraph].drop(columns=paragraphs.columns[:2]).to_string(index=False, header=False))
+                            paragraph_info = paragraph_info.replace('\n', ' ')
+                            prompt += paragraph_info
+                if '<option_' in prompt:
+                    for option in options['OPTION_DESC']: 
+                        prompt = prompt.replace(f"<{option}>", str(options[options['OPTION_DESC'] == option].drop(columns=options.columns[:1]).to_string(index=False, header=False)))
 
-                    st.chat_message("human").write(prompt)
+                st.chat_message("human").write(prompt)
 
-                    # Note: new messages are saved to history automatically by Langchain during run
-                    config = {"configurable": {"session_id": "any"}}
-                    response = chain_with_history.invoke({"question": prompt}, config)
-                    st.chat_message("ai").write(response.content)
+                # Note: new messages are saved to history automatically by Langchain during run
+                config = {"configurable": {"session_id": "any"}}
+                response = chain_with_history.invoke({"question": prompt}, config)
+                st.chat_message("ai").write(response.content)
 
     # Draw the messages at the end, so newly generated ones show up immediately
     view_chat_messages = st.expander("Zeige die Daten des Chatbots.")
