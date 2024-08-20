@@ -97,7 +97,7 @@ with st.expander('ChatBot'):
     pdf_usage = st.checkbox('Füge ein PDF Dokument hinzu.')
     if pdf_usage:
         st.write('**:green[Nutze dein eigenes PDF]**')
-        documents = ["ChatGPT.pdf", "LEAM.pdf", "LLM.pdf", "KW.pdf", "AIDH.pdf", "Sparks.pdf", "PC.pdf", "Source_Code.pdf", "Ben.pdf"]
+        documents = ["2019-09-30 Cloud-Computing_aus_Sicht_des_BVA.pdf"]
         uploaded_file = st.file_uploader(label = 'Wähle ein PDF Dokument für den Upload', type = 'pdf')
         if uploaded_file is not None:
             file_name = os.path.join('PDFs', uploaded_file.name)
@@ -286,7 +286,7 @@ with st.expander('ChatBot'):
             if st.session_state['demo']:
                 st.session_state['temp'] = 0.9
                 st.session_state['token'] = 300
-                reader = PyPDF2.PdfReader('PDFs/Ben.pdf')
+                reader = PyPDF2.PdfReader('PDFs/2019-09-30 Cloud-Computing_aus_Sicht_des_BVA.pdf')
                 messages_input = chat_message(reader)
             else:
                 if pdf_usage:
@@ -299,7 +299,7 @@ with st.expander('ChatBot'):
                             output.append(dict(zip(('role', 'content'), (items[0][8:].replace('"', '').replace(': ', ''), items[1][11:].replace('"', '')))))
                         messages_input = output
                     except:
-                        if output[0]['role'] == 'system':
+                        if output and output[0]['role'] == 'system':
                             messages_input = output
                         else:
                             messages_input = [
