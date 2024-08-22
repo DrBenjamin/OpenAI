@@ -16,12 +16,12 @@ from PIL import ImageFont
 
 
 ## Streamlit initial setup
-st.set_page_config(
-    page_title = "Template Generator",
-    #page_icon = "images/Logo.png",
-    layout = "centered",
-    initial_sidebar_state = "expanded"
-)
+# st.set_page_config(
+#     page_title = "Template Generator",
+#     #page_icon = "images/Logo.png",
+#     layout = "centered",
+#     initial_sidebar_state = "expanded"
+# )
 
 
 ## Session states
@@ -79,9 +79,6 @@ def chat_message(reader):
 
 
 ## Main program
-# Title
-st.title('❄️ Template Generator')
-st.write('Dieses Tool erstellt ein Template-Dokument zu einer BAS-Anzeige zum Thema Sozialdatenverarbeitung.')
 with st.expander('ChatBot'):
     st.header('OpenAI ChatGPT')
 

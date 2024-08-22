@@ -28,7 +28,6 @@ pages = {
 }
 
 pg = st.navigation(pages, position="sidebar")
-pg.run()
 
 # Establish Snowflake session
 @st.cache_resource
@@ -193,25 +192,6 @@ def export_doc(data):
     st.toast('Das Dokument ist fertig!', icon ='📃')
     st.download_button(label='Download Template', data=buffer, file_name='BAS_Anzeige_Template.docx', mime='application/vnd.openxmlformats')
 
-# Title
-#st.title('❄️ Template Generator')
-#st.write('Dieses Tool erstellt ein Template-Dokument zu einer BAS-Anzeige zum Thema Sozialdatenverarbeitung.')
-
-# Display data table
-with st.expander("Datenbankinhalt"):
-    # Establish Snowflake session
-    session = create_session()
-    st.success("Datenbankverbindung erfolgreich hergestellt.")
-    st.write(f"Streamlit Version: {st.__version__}")
-    st.write(f"Python Version: {sys.version}")
-
-    df = load_data('OPENAI_DATABASE.PUBLIC.ANZEIGE_PRE')
-    st.dataframe(df)
-    paragraphs = load_data('OPENAI_DATABASE.PUBLIC.ANZEIGE_PARAGRAPHS')
-    st.dataframe(paragraphs)
-    options = load_data('OPENAI_DATABASE.PUBLIC.ANZEIGE_OPTIONS')
-    st.dataframe(options)
-
 # Sidebar
 sidebar = st.sidebar
 with sidebar:
@@ -231,6 +211,29 @@ with sidebar:
       st.markdown("Local Server Configuration")
       url = st.text_input("URL:", value="http://localhost")
       port = st.number_input("Port:", value=1234, min_value=1, max_value=65535)
+
+# Title
+st.title('❄️ Template Generator')
+st.write('Dieses Tool erstellt ein Template-Dokument zu einer BAS-Anzeige zum Thema Sozialdatenverarbeitung.')
+
+# Display data table
+with st.expander("Datenbankinhalt"):
+    # Establish Snowflake session
+    session = create_session()
+    st.success("Datenbankverbindung erfolgreich hergestellt.")
+    st.write(f"Streamlit Version: {st.__version__}")
+    st.write(f"Python Version: {sys.version}")
+
+    df = load_data('OPENAI_DATABASE.PUBLIC.ANZEIGE_PRE')
+    st.dataframe(df)
+    paragraphs = load_data('OPENAI_DATABASE.PUBLIC.ANZEIGE_PARAGRAPHS')
+    st.dataframe(paragraphs)
+    options = load_data('OPENAI_DATABASE.PUBLIC.ANZEIGE_OPTIONS')
+    st.dataframe(options)
+
+
+# Show ChatBot
+pg.run()
 
 with st.form("form"):
     st.title("Konfiguration")
