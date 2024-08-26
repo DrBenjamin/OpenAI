@@ -36,7 +36,9 @@ pydub
 python-engineio==3.13.0
 python-socketio==4.6.0
 text_generation
-tomlkit
-snowflake-connector-python==3.11.0
+tomlkit==0.13.0
+snowflake-connector-python
+#==3.11.0
 snowflake-snowpark-python
-snowflake-cli-labs==2.7.0
+snowflake-cli-labs
+#==2.7.0
