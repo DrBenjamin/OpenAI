@@ -1,6 +1,6 @@
 ##### `🧠_Memory_Bot.py`
 ##### Memory Bot Demo
-##### Please reach out to ben@benbox.org for any questions
+##### Please reach out to drdrbenjamin@icloud.com for any questions
 #### Loading needed Python libraries
 import streamlit as st
 from langchain_community.chat_message_histories import StreamlitChatMessageHistory

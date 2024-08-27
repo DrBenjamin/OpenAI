@@ -1,3 +1,7 @@
+##### `📟_ChatGPT-4o.py`
+##### ChatGPT 4o
+##### Please reach out to drdrbenjamin@icloud.com for any questions
+#### Loading needed Python libraries
 import streamlit as st
 from streamlit_cropper import st_cropper
 from st_audiorec import st_audiorec

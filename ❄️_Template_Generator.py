@@ -1,6 +1,6 @@
 ##### `❄️_Template_Generator.py`
 ##### BAS Anzeigen Generator
-##### Please reach out to benjamin.gross1@adesso.de for any questions
+##### Please reach out to drdrbenjamin@icloud.com for any questions
 #### Loading needed Python libraries
 import streamlit as st
 import pandas as pd

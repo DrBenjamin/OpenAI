@@ -1,3 +1,8 @@
+### `🖼️_Vision.py`
+### Vision
+### Open-Source, hosted on https://github.com/DrBenjamin/OpenAI
+### Please reach out to drdrbenjamin@icloud.com for any questions
+## Loading needed Python libraries
 import streamlit as st
 from streamlit_cropper import st_cropper
 from openai import OpenAI

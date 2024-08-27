@@ -4,7 +4,7 @@
 ##### https://github.com/cocktailpeanut/dalai (download models)
 ##### https://github.com/shaunabanana/llama.py (llama wrapper)
 ##### https://github.com/abetlen/llama-cpp-python (python package for bindings)
-##### Please reach out to ben@benbox.org for any questions
+##### Please reach out to drdrbenjamin@icloud.com for any questions
 #### Loading needed Python libraries
 import streamlit as st
 import subprocess

@@ -3,8 +3,7 @@
 ##### https://huggingface.co/spaces/olivierdehaene/chat-llm-streaming/blob/main/README.md
 ##### https://open-assistant.io/dashboard
 ##### https://github.com/LAION-AI/Open-Assistant
-
-##### Please reach out to ben@benbox.org for any questions
+##### Please reach out to drdrbenjamin@icloud.com for any questions
 #### Loading needed Python libraries
 import streamlit as st
 import os
