@@ -6,16 +6,27 @@
 import streamlit as st
 from streamlit_cropper import st_cropper
 from openai import OpenAI
-client = OpenAI(api_key=st.secrets['openai']['key'])
-# OpenAI API Key
-api_key = st.secrets['openai']['key']
+from mistralai import Mistral
+import os
 from PIL import Image
 import io
 import base64
 
+# Sidebar
+with st.sidebar:
+    mistral = st.toggle("Mistral", value = True)
+
+# AI APIs
+if mistral:
+    client = Mistral(api_key=st.secrets['mistral']['key'])
+    model = "pixtral-12b-2409"
+else:
+    client = OpenAI(api_key=st.secrets['openai']['key'])
+    model="gpt-4-turbo"
+
 # Function to encode the image via url
 response = None
-def openai_url_request(system_text, prompt_text, image_url):
+def ai_url_request(system_text, prompt_text, image_url):
   response = client.chat.completions.create(
     model="gpt-4-turbo",
     messages=[
@@ -35,7 +46,7 @@ def openai_url_request(system_text, prompt_text, image_url):
           {
             "type": "image_url",
             "image_url": {
-              "url":f"{image_url}",
+              "url": f"{image_url}",
             },
           },
         ],
@@ -46,22 +57,18 @@ def openai_url_request(system_text, prompt_text, image_url):
   return response.choices[0].message.content
 
 # Function to encode the image
-def openai_image_request(system_text, prompt_text, image):
+def ai_image_request(system_text, prompt_text, image):
   image_bytes = io.BytesIO()
   image = image.convert("RGB")
   image.save(image_bytes, format='JPEG', quality=95)
   image_bytes = image_bytes.getvalue()
   base64_image = base64.b64encode(image_bytes).decode('utf-8')
-  
-  response = client.chat.completions.create(
-    model="gpt-4-turbo",
-    messages=[
+  messages=[
       {
         "role": "system",
         "content": [{
             "type": "text",
             "text:": f"{system_text}"
-            
         }],
         "role": "user",
         "content": [
@@ -72,14 +79,23 @@ def openai_image_request(system_text, prompt_text, image):
           {
             "type": "image_url",
             "image_url": {
-              "url": f"data:image/jpeg;base64,{base64_image}"
+               "url": f"data:image/jpeg;base64,{base64_image}"
             }
           },
         ],
       }
-    ],
-    max_tokens=1024,
-  )
+    ]
+  if mistral:
+    response = client.chat.complete(
+      model=f"{model}",
+      messages=messages
+    )
+  else:
+    response = client.chat.completions.create(
+      model=f"{model}",
+      messages=messages,
+      max_tokens=1024
+    )
   return response.choices[0].message.content
 
 # Function to crop image
@@ -115,9 +131,9 @@ with st.form(key='image_form'):
     if submitted:
         try:
             if image_url:
-                response = openai_url_request(system, prompt, image_url)
+                response = ai_url_request(system, prompt, image_url)
             if uploaded_file:
-                response = openai_image_request(system, prompt, cropped_img)
+                response = ai_image_request(system, prompt, cropped_img)
             st.write(response)
         except Exception as e:
             st.write('Wähle eine der obigen Optionen.')

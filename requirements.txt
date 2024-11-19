@@ -8,6 +8,7 @@ streamlit-scrollable-textbox
 streamlit-cropper
 streamlit-audiorec
 openai
+mistralai
 beautifulsoup4
 python-docx
 argparse
