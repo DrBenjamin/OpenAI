@@ -15,11 +15,17 @@ import base64
 
 # Function to encode the image via url
 response = None
-def openai_url_request(prompt_text, image_url):
+def openai_url_request(system_text, prompt_text, image_url):
   response = client.chat.completions.create(
     model="gpt-4-turbo",
     messages=[
-      {
+        {
+        "role": "system",
+        "content": [{
+            "type": "text",
+            "text:": f"{system_text}"
+            
+        }],
         "role": "user",
         "content": [
           {
@@ -40,10 +46,10 @@ def openai_url_request(prompt_text, image_url):
   return response.choices[0].message.content
 
 # Function to encode the image
-def openai_image_request(prompt_text, image):
+def openai_image_request(system_text, prompt_text, image):
   image_bytes = io.BytesIO()
   image = image.convert("RGB")
-  image.save(image_bytes, format='JPEG')
+  image.save(image_bytes, format='JPEG', quality=95)
   image_bytes = image_bytes.getvalue()
   base64_image = base64.b64encode(image_bytes).decode('utf-8')
   
@@ -51,6 +57,12 @@ def openai_image_request(prompt_text, image):
     model="gpt-4-turbo",
     messages=[
       {
+        "role": "system",
+        "content": [{
+            "type": "text",
+            "text:": f"{system_text}"
+            
+        }],
         "role": "user",
         "content": [
           {
@@ -85,23 +97,28 @@ def cropping(image):
       return cropped_img
 
 # Image input
-st.title("Was ist auf diesem Bild?")
-prompt = st.text_input("Gib hier den Text ein, um die Frage anzupassen.", value = "Was ist auf dem Bild?")
 image_url = st.text_input("Gib hier den Link zum Bild ein")
 if image_url:
-  st.image(image_url, caption = 'Remote Bild.', use_column_width = True)
-  response = openai_url_request(prompt, image_url)
-  
+    st.image(image_url, caption = 'Remote Bild.', use_column_width = True)
 uploaded_file = st.file_uploader("Wähle ein Bild zum Hochladen aus", type=["jpg", "png"])
 if uploaded_file is not None:
-  image = Image.open(uploaded_file)
-  
-  # Cropping the image
-  cropped_img = cropping(image)
-  response = openai_image_request(prompt, cropped_img)
+    image = Image.open(uploaded_file)
 
-try:
-  st.write(response)
-except Exception as e:
-  st.write('Wähle eine der obigen Optionen.')
-  print(e)
+    # Cropping the image
+    cropped_img = cropping(image)
+
+with st.form(key='image_form'):
+    st.title("Was ist auf diesem Bild?")
+    system = st.text_input("Systemtext", value = "Analysiere den Screenshot vom NAVIS KIS (Krankenhausinformationssystem). Achte insebsondere auf die roten Rahmen und extrahiere die im Rahmen hervorgehobenen Informationen wie z.B. `Fälle & Besuche`.")
+    prompt = st.text_input("Gib hier den Text ein, um die Frage anzupassen.", value = "Was ist auf dem Bild?")
+    submitted = st.form_submit_button("Absenden")
+    if submitted:
+        try:
+            if image_url:
+                response = openai_url_request(system, prompt, image_url)
+            if uploaded_file:
+                response = openai_image_request(system, prompt, cropped_img)
+            st.write(response)
+        except Exception as e:
+            st.write('Wähle eine der obigen Optionen.')
+            print(e)
