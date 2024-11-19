@@ -71,7 +71,7 @@ def openai_image_request(prompt_text, image):
   return response.choices[0].message.content
 
 # Function to crop image
-@st.experimental_fragment
+@st.fragment
 def cropping(image):
   if image:
       # Get a cropped image from the frontend
